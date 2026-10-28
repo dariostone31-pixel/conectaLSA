@@ -1,0 +1,1 @@
+Poné acá los videos validados (<id>.mp4) y declaralos en js/content.js (C.MEDIA). Ver README.md.
