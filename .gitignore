@@ -1,0 +1,11 @@
+# Fotos de bancos de imágenes del experimento: sin licencia para redistribuir. NUNCA subirlas.
+_test/
+# Capturas generadas por los scripts de prueba (se regeneran con _pruebas/capturas.py)
+capturas/
+# Archivos del sistema y de Python
+.DS_Store
+Thumbs.db
+__pycache__/
+*.pyc
+# Configuración local de Vercel
+.vercel

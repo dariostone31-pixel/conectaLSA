@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ConectaLSA</title>
+  <meta name="description" content="Aprendé Lengua de Señas Argentina con lecciones cortas, videos de personas sordas, práctica con la cámara y repaso inteligente. Gratis, sin publicidad y sin cuenta.">
+  <meta name="theme-color" content="#0F6B6F">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <a class="skip" href="#main">Saltar al contenido</a>
+  <header class="topbar" id="topbar">
+    <a class="brand" href="#/niveles" aria-label="ConectaLSA, ir a los niveles">
+      <span class="brand-mark" aria-hidden="true">🤟</span>
+      <span class="brand-text"><strong>ConectaLSA</strong><small>Lengua de Señas Argentina</small></span>
+    </a>
+    <div class="topstats" id="topstats" aria-live="polite"></div>
+  </header>
+  <div class="layout">
+    <nav class="mainnav" id="mainnav" aria-label="Secciones principales"></nav>
+    <main id="main" tabindex="-1"></main>
+  </div>
+  <div class="toast-zone" id="toasts" aria-live="assertive" aria-atomic="true"></div>
+  <noscript><p style="padding:24px">ConectaLSA necesita JavaScript activado.</p></noscript>
+  <!-- Scripts clásicos: la app abre con doble clic. La cámara necesita https o localhost (ver README). -->
+  <script src="js/core.js"></script>
+  <script src="js/content.js"></script>
+  <script src="js/vision.js"></script>
+  <script src="js/media.js"></script>
+  <script src="js/views-learn.js"></script>
+  <script src="js/views-profile.js"></script>
+  <script src="js/views-ai.js"></script>
+  <script src="js/views-ref.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
