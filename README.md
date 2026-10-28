@@ -117,3 +117,5 @@ Ver **[TRABAJO_EN_EQUIPO.md](TRABAJO_EN_EQUIPO.md)**: configuración inicial, tr
 
 - `_pruebas/`: scripts. `ci.py` es la prueba integral (la usa GitHub). `pruebas_app.py`, `todas_lecciones.py` y `aviso.py` son recorridos detallados. `capturas.py` genera las capturas. `experimento.py` y `umbral.py` reproducen el experimento del informe técnico v3 (necesitan las fotos de `_test/`).
 - `_test/`: fotos de manos de bancos de imágenes, usadas **solo** para el experimento. **No se suben a GitHub** (`.gitignore`) porque no tienen licencia para redistribuirse.
+
+- App publicada en: https://conectalsa.vercel.app
