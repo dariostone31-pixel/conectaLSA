@@ -67,8 +67,8 @@ window.App = window.App || {};
 
   function signCard(it) {
     var has = App.Media.has(it.id), ok = App.mastered(it.id);
-    return App.el('<a class="sign-card" href="#/sena/' + encodeURIComponent(it.id) + '"><span class="sc-label">' + esc(it.kind === "letra" ? it.label : it.label) + '</span>' +
-      '<span class="sc-meta">' + (has ? "🎬" : '<span title="Video en producción">⏳</span>') + (ok ? ' <span title="Dominada">✅</span>' : "") + '</span></a>');
+    return App.el('<a class="sign-card" href="#/sena/' + encodeURIComponent(it.id) + '"><span class="sc-label">' + esc(it.label) + '</span>' +
+      '<span class="sc-meta"><span class="sc-dot" title="' + (has ? "Video disponible" : "Video en producción") + '">' + (has ? "🎬" : "⏳") + '</span>' + (ok ? ' <span title="Dominada">✅</span>' : "") + '</span></a>');
   }
 
   /* =======================================================

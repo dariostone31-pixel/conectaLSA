@@ -57,16 +57,16 @@ window.App = window.App || {};
 
   /* ---------- Niveles (equivalentes funcionales a los de ComuSeñas, organización propia) ---------- */
   C.LEVELS = [
-    { id: "vocales", n: 1, title: "Vocales", ico: "🅰️", color: "#F0643C", tip: "mano", groups: [["A", "E", "I"], ["O", "U"]] },
-    { id: "colores", n: 2, title: "Colores", ico: "🎨", color: "#2E9E8F", tip: "parametros", groups: [["rojo", "azul", "amarillo", "verde"], ["blanco", "negro", "gris", "marron"], ["naranja", "violeta", "rosa", "celeste"]] },
-    { id: "dias", n: 3, title: "Días de la semana", ico: "📆", color: "#3D8BD9", tip: "espacio", groups: [["lunes", "martes", "miercoles", "jueves"], ["viernes", "sabado", "domingo"]] },
-    { id: "saludos1", n: 4, title: "Saludos y cortesía 1", ico: "👋", color: "#FFC23D", tip: "cara", groups: [["hola", "chau", "buen-dia"], ["buenas-tardes", "buenas-noches", "como-estas", "bien"]] },
-    { id: "cons1", n: 5, title: "Consonantes B a G", ico: "🔡", color: "#0F6B6F", tip: "camara", groups: [["B", "C", "D"], ["F", "G"]] },
-    { id: "cons2", n: 6, title: "Consonantes H a M", ico: "🔡", color: "#0F6B6F", tip: "mano", groups: [["H", "J", "K"], ["L", "M"]] },
-    { id: "cons3", n: 7, title: "Consonantes N a S", ico: "🔡", color: "#0F6B6F", tip: "espacio", groups: [["N", "Ñ", "P"], ["Q", "R", "S"]] },
-    { id: "cons4", n: 8, title: "Consonantes T a Z", ico: "🔡", color: "#0F6B6F", tip: "camara", groups: [["T", "V", "W"], ["X", "Y", "Z"]] },
-    { id: "meses", n: 9, title: "Meses del año", ico: "🗓️", color: "#7A4B3A", tip: "parametros", groups: [["enero", "febrero", "marzo", "abril"], ["mayo", "junio", "julio", "agosto"], ["septiembre", "octubre", "noviembre", "diciembre"]] },
-    { id: "saludos2", n: 10, title: "Saludos y cortesía 2", ico: "🤝", color: "#F0643C", tip: "cara", groups: [["gracias", "por-favor", "perdon", "de-nada"], ["mucho-gusto", "me-llamo", "como-te-llamas", "nos-vemos"]] }
+    { id: "vocales", n: 1, title: "Vocales", ico: "🅰️", color: "#1A5FD0", tip: "mano", groups: [["A", "E", "I"], ["O", "U"]] },
+    { id: "colores", n: 2, title: "Colores", ico: "🎨", color: "#0F7FC4", tip: "parametros", groups: [["rojo", "azul", "amarillo", "verde"], ["blanco", "negro", "gris", "marron"], ["naranja", "violeta", "rosa", "celeste"]] },
+    { id: "dias", n: 3, title: "Días de la semana", ico: "📆", color: "#3F51D6", tip: "espacio", groups: [["lunes", "martes", "miercoles", "jueves"], ["viernes", "sabado", "domingo"]] },
+    { id: "saludos1", n: 4, title: "Saludos y cortesía 1", ico: "👋", color: "#0369A1", tip: "cara", groups: [["hola", "chau", "buen-dia"], ["buenas-tardes", "buenas-noches", "como-estas", "bien"]] },
+    { id: "cons1", n: 5, title: "Consonantes B a G", ico: "🔡", color: "#2C6BE8", tip: "camara", groups: [["B", "C", "D"], ["F", "G"]] },
+    { id: "cons2", n: 6, title: "Consonantes H a M", ico: "🔡", color: "#5B4BDB", tip: "mano", groups: [["H", "J", "K"], ["L", "M"]] },
+    { id: "cons3", n: 7, title: "Consonantes N a S", ico: "🔡", color: "#0A3F94", tip: "espacio", groups: [["N", "Ñ", "P"], ["Q", "R", "S"]] },
+    { id: "cons4", n: 8, title: "Consonantes T a Z", ico: "🔡", color: "#1673D1", tip: "camara", groups: [["T", "V", "W"], ["X", "Y", "Z"]] },
+    { id: "meses", n: 9, title: "Meses del año", ico: "🗓️", color: "#045D8C", tip: "parametros", groups: [["enero", "febrero", "marzo", "abril"], ["mayo", "junio", "julio", "agosto"], ["septiembre", "octubre", "noviembre", "diciembre"]] },
+    { id: "saludos2", n: 10, title: "Saludos y cortesía 2", ico: "🤝", color: "#4F46D6", tip: "cara", groups: [["gracias", "por-favor", "perdon", "de-nada"], ["mucho-gusto", "me-llamo", "como-te-llamas", "nos-vemos"]] }
   ];
   // Normaliza ids de los grupos y arma las lecciones: una por grupo + «Desafío del nivel».
   C.LEVELS.forEach(function (lv) {

@@ -33,7 +33,7 @@ window.App = window.App || {};
     var first = !App.profiles().length;
     var f = { name: "", avatar: "fox", hand: "right", goal: 30 };
     root.innerHTML = '<section class="welcome">' +
-      (first ? '<div class="welcome-hero"><span class="brand-mark xl" aria-hidden="true">🤟</span><h1>Aprendé Lengua de Señas Argentina</h1><p>Lecciones cortas con videos de personas sordas, práctica con la cámara y repaso para no olvidarte. Gratis, sin publicidad y sin crear cuenta.</p></div>' : '<a class="link" href="#/perfiles">← Perfiles</a><h1>Nuevo perfil</h1>') +
+      (first ? '<div class="welcome-hero"><span class="brand-mark xl" aria-hidden="true"><img src="icons/logo-blanco.svg" alt="" width="58" height="58"></span><h1>Aprendé Lengua de Señas Argentina</h1><p>Lecciones cortas con videos de personas sordas, práctica con la cámara y repaso para no olvidarte. Gratis, sin publicidad y sin crear cuenta.</p></div>' : '<a class="link" href="#/perfiles">← Perfiles</a><h1>Nuevo perfil</h1>') +
       (first ? App.betaNote() : "") +
       '<form class="card stack" data-f autocomplete="off">' +
         '<label class="field"><span>¿Cómo te llamás?</span><input type="text" data-name maxlength="20" placeholder="Tu nombre o apodo" required></label>' +

@@ -1,0 +1,25 @@
+CONECTALSA v1.0.5 · COPIA PARA MIRAR EN TU COMPU
+=================================================
+
+Esto NO es el paquete que se sube a GitHub. Es una copia completa de la app
+para que puedas verla funcionando antes de publicarla.
+
+CÓMO VERLA
+----------
+Doble clic en "index.html". Se abre en el navegador y funciona.
+
+QUÉ NO FUNCIONA EN ESTA COPIA
+-----------------------------
+- La cámara y el reconocimiento de manos: los navegadores solo permiten la
+  cámara en internet (https) o con un servidor local. En la versión publicada
+  sí funciona.
+- Instalarla como app en el celular: eso se hace desde la dirección web.
+- El funcionamiento sin internet: necesita estar publicada.
+
+El resto funciona todo: niveles, lecciones, diccionario, deletreo, repaso,
+perfiles, ajustes, modo oscuro, progreso.
+
+PARA PUBLICARLA
+---------------
+El archivo que va a GitHub es el otro: ConectaLSA_actualizacion_v1.0.5.zip
+(22 archivos). Este que estás viendo no se sube.

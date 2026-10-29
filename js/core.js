@@ -246,7 +246,7 @@ window.App = window.App || {};
     var st = S.settings, r = document.documentElement;
     var dark = st.theme === "dark" || (st.theme === "auto" && window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches);
     r.dataset.theme = dark ? "dark" : "light"; r.dataset.fs = st.fs; r.dataset.contrast = st.contrast; r.dataset.motion = st.motion;
-    var meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.content = dark ? "#0D171B" : "#0F6B6F";
+    var meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.content = dark ? "#0A1322" : "#0A3F94";
   };
 
   /* ---------- Archivos ---------- */

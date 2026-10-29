@@ -130,7 +130,9 @@ window.App = window.App || {};
     return box;
   };
   function placeholder(item, opts, extra) {
-    var big = item.kind === "letra" && !opts.hideLabel ? esc(item.label) : "🤟";
+    var big = item.kind === "letra" && !opts.hideLabel
+      ? '<span class="ph-letter">' + esc(item.label) + '</span>'
+      : '<img class="ph-logo" src="icons/logo-blanco.svg" alt="" width="84" height="84">';
     return '<div class="placeholder"><div class="big-hand">' + big + '</div>' +
       (opts.hideLabel ? "" : '<strong>' + esc(App.itemTitle(item)) + '</strong>') +
       '<p>' + esc(extra || "Video en producción. Mientras tanto, pedile a una persona sorda o a tu docente que te muestre esta seña.") + '</p></div>';

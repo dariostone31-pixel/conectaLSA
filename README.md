@@ -71,10 +71,24 @@ js/views-profile.js bienvenida, perfiles, perfil, panel de progreso, ajustes, ac
 js/views-ai.js     prueba de cámara, entrenar la cámara, deletreo libre
 js/views-ref.js    modo referente: grabar, validar, compartir
 js/main.js         navegación
+icons/            logo y juego completo de íconos (logo.svg, icon-192/512, maskable)
 vendor/mediapipe/  IA local (Apache 2.0) · fonts/ Atkinson Hyperlegible (OFL)
 ```
 
 Al publicar cambios, subí `VERSION` en `sw.js`.
+
+## Identidad visual (v1.0.5)
+
+- **Logo:** mano en «te quiero» (🤟) dibujada en trazo, azul `#02669A`. Está vectorizada en
+  `icons/logo.svg` (azul) y `icons/logo-blanco.svg` (blanca, para los fondos azules).
+  Los íconos de la app (`icon-192`, `icon-512`, `icon-maskable-512`) son la mano blanca
+  sobre un degradé azul. Se generan con `herramientas/build_icons.py`.
+- **Paleta:** acento `#1553C4`, degradé de marca `#0A3F94 → #1A5FD0 → #12A3E3`, fondo
+  `#F0F5FC`, texto `#0B1B33`, secundario `#4C5D78`, sol `#FFC23D` (solo para logros).
+- **Modo oscuro:** fondo `#0A1322`, acento `#7FB2FF`.
+- Todo el texto cumple **WCAG 2.0 AA** (contraste ≥ 4,5:1), también en modo oscuro. El modo
+  alto contraste sigue disponible en Ajustes.
+- La tipografía es la misma: **Atkinson Hyperlegible**.
 
 ## Pendiente (trabajo humano)
 
