@@ -124,7 +124,7 @@ window.App = window.App || {};
       ctr.appendChild(mir);
     } else ctr.remove();
     cr.innerHTML = info.validatedBy
-      ? '<span class="tag good">✔ Validado</span> Seña: ' + esc(info.signer || "—") + ' · Validó: ' + esc(info.validatedBy)
+      ? '<span class="tag good">' + App.ico("check-simple") + ' Validado</span> Seña: ' + esc(info.signer || "—") + ' · Validó: ' + esc(info.validatedBy)
       : '<span class="tag warn">Pendiente de validación</span> Seña: ' + esc(info.signer || "—") + '. Falta la revisión de otro referente.';
     if (opts.compact) cr.remove();
     return box;

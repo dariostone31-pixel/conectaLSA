@@ -114,6 +114,16 @@ Un video grabado desde **Modo referente** queda guardado **solo en ese equipo** 
    `C.MEDIA["buen-dia"] = { src: "media/senas/buen-dia.mp4", signer: "Nombre de quien señó", validatedBy: "Nombre de quien validó" };`
 3. Subí `VERSION` en `sw.js` y volvé a subir la carpeta.
 
+
+## Novedades de la versión 1.1
+
+1. **Acceso con perfiles y PIN local.** Al abrir, la app pregunta quién va a practicar. Cada perfil puede tener un PIN de 4 números (Ajustes → «Pedir un PIN al entrar»). El PIN se guarda como resumen (hash de 4.000 vueltas) en el propio dispositivo: no es una cuenta, no viaja a internet y no se puede recuperar. «Cerrar sesión» deja la app en la pantalla de acceso sin borrar nada.
+2. **Cinco perfiles visuales por discapacidad** (Ajustes → Perfil visual): Estándar, Oscuro, Alto contraste, Daltonismo (paleta Okabe-Ito, sin depender del rojo/verde) y Calma (tonos suaves, sin halos ni movimiento, para autismo y TDAH). Se aplican al instante y se recuerdan en el dispositivo.
+3. **Íconos propios.** Se reemplazaron los emojis del sistema por un set dibujado a medida en `js/iconos.js` (trazo de 24×24, hereda el color del texto). Los avatares de animales se mantienen como stickers de identidad.
+4. **Política de privacidad 2.0.** 17 secciones: acceso y PIN, almacenamiento local y cookies, permisos del dispositivo, «qué no hace la app», transferencias internacionales, menores, derechos (Ley 25.326) y método. Misma fuente para la pantalla y el PDF.
+
+Archivos nuevos: `js/iconos.js` y `js/views-acceso.js`. Si actualizás, subí también `index.html` y `sw.js` (la versión del caché pasó a `conectalsa-v1.1.0`).
+
 ## Trabajo en equipo (GitHub + Vercel)
 
 Ver **[TRABAJO_EN_EQUIPO.md](TRABAJO_EN_EQUIPO.md)**: configuración inicial, trabajo diario con ramas y pull requests, vistas previas para compartir por WhatsApp y pruebas automáticas.

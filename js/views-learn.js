@@ -21,9 +21,9 @@ window.App = window.App || {};
     root.innerHTML =
       '<section class="hello">' +
         '<div class="hello-main"><span class="ava big">' + av.ico + '</span><div><span class="eyebrow">Hola, ' + esc(p.name) + '</span><h1>¿Seguimos aprendiendo?</h1></div></div>' +
-        '<div class="hello-goal"><div class="ring" style="--p:' + pct + '"><span>' + tx + '/' + goal + '</span></div><div><strong>Meta de hoy</strong><br><span class="small">🔥 ' + App.streak() + (App.streak() === 1 ? ' día seguido' : ' días seguidos') + ' · ⭐ ' + App.totalStars() + (App.totalStars() === 1 ? ' estrella' : ' estrellas') + '</span></div></div>' +
-        '<div class="row">' + (next ? '<a class="btn big" href="#/leccion/' + next.level.id + '/' + next.lesson.id + '">▶ Continuar: ' + esc(next.level.title) + '</a>' : '<span class="tag good">🏆 ¡Completaste todos los niveles!</span>') +
-        (due ? '<a class="btn alt" href="#/repaso">🔁 Repasar (' + due + ')</a>' : "") + '</div>' +
+        '<div class="hello-goal"><div class="ring" style="--p:' + pct + '"><span>' + tx + '/' + goal + '</span></div><div><strong>Meta de hoy</strong><br><span class="small">' + App.ico("fuego") + ' ' + App.streak() + (App.streak() === 1 ? ' día seguido' : ' días seguidos') + ' · ' + App.ico("estrella-llena") + ' ' + App.totalStars() + (App.totalStars() === 1 ? ' estrella' : ' estrellas') + '</span></div></div>' +
+        '<div class="row">' + (next ? '<a class="btn big" href="#/leccion/' + next.level.id + '/' + next.lesson.id + '">' + App.ico("play") + ' Continuar: ' + esc(next.level.title) + '</a>' : '<span class="tag good">' + App.ico("trofeo") + ' ¡Completaste todos los niveles!</span>') +
+        (due ? '<a class="btn alt" href="#/repaso">' + App.ico("repaso") + ' Repasar (' + due + ')</a>' : "") + '</div>' +
       '</section>' + App.betaNote() +
       '<div class="section-title"><h2>Niveles</h2><span class="small muted">Todos abiertos: empezá por donde quieras</span></div>' +
       '<ol class="path" data-path></ol>' +
@@ -33,15 +33,15 @@ window.App = window.App || {};
     C.LEVELS.forEach(function (lv, i) {
       var pr = App.levelProgress(lv.id), isNext = next && next.level.id === lv.id;
       var li = App.el('<li class="lvl' + (pr.pct >= 1 ? " done" : "") + (isNext ? " next" : "") + '" style="--c:' + lv.color + '">' +
-        '<a href="#/nivel/' + lv.id + '"><span class="lvl-n">' + (pr.pct >= 1 ? "✔" : lv.n) + '</span>' +
-        '<span class="lvl-ico" aria-hidden="true">' + lv.ico + '</span>' +
+        '<a href="#/nivel/' + lv.id + '"><span class="lvl-n">' + (pr.pct >= 1 ? App.ico("check-simple") : lv.n) + '</span>' +
+        '<span class="lvl-ico" aria-hidden="true">' + App.icoNivel(lv.id) + '</span>' +
         '<span class="lvl-body"><small>Nivel ' + lv.n + (isNext ? ' · <b>Recomendado</b>' : "") + '</small><strong>' + esc(lv.title) + '</strong><span class="small muted">' + esc(lv.desc) + '</span>' +
         '<span class="bar"><i style="width:' + Math.round(pr.pct * 100) + '%"></i></span></span>' +
         '<span class="lvl-stars">' + pr.stars + '/' + pr.max + ' ★</span></a></li>');
       path.appendChild(li);
     });
     var tips = App.$("[data-tips]", root);
-    C.CONSEJOS.slice(0, 3).forEach(function (t) { tips.appendChild(App.el('<a class="tip" href="#/consejos#' + t.id + '"><span class="tip-ico">' + t.ico + '</span><strong>' + esc(t.title) + '</strong><span class="small muted">' + esc(t.short) + '</span></a>')); });
+    C.CONSEJOS.slice(0, 3).forEach(function (t) { tips.appendChild(App.el('<a class="tip" href="#/consejos#' + t.id + '"><span class="tip-ico">' + App.icoTip(t.id) + '</span><strong>' + esc(t.title) + '</strong><span class="small muted">' + esc(t.short) + '</span></a>')); });
   };
 
   /* =======================================================
@@ -51,14 +51,14 @@ window.App = window.App || {};
     var lv = App.level(params[0]); if (!lv) return App.go("#/niveles", true);
     var p = App.P(), pr = App.levelProgress(lv.id), tip = C.CONSEJOS.filter(function (t) { return t.id === lv.tip; })[0];
     root.innerHTML = '<a class="link" href="#/niveles">← Niveles</a>' +
-      '<div class="lvl-head" style="--c:' + lv.color + '"><span class="lvl-ico big">' + lv.ico + '</span><div><span class="eyebrow">Nivel ' + lv.n + '</span><h1>' + esc(lv.title) + '</h1><p class="muted">' + esc(lv.desc) + ' · ' + pr.stars + ' de ' + pr.max + ' ★</p></div></div>' +
+      '<div class="lvl-head" style="--c:' + lv.color + '"><span class="lvl-ico big">' + App.icoNivel(lv.id) + '</span><div><span class="eyebrow">Nivel ' + lv.n + '</span><h1>' + esc(lv.title) + '</h1><p class="muted">' + esc(lv.desc) + ' · ' + pr.stars + ' de ' + pr.max + ' ★</p></div></div>' +
       '<ul class="lesson-list" data-list></ul>' +
-      (tip ? '<a class="tip wide" href="#/consejos#' + tip.id + '"><span class="tip-ico">' + tip.ico + '</span><span><strong>Consejo: ' + esc(tip.title) + '</strong><br><span class="small muted">' + esc(tip.short) + '</span></span></a>' : "") +
+      (tip ? '<a class="tip wide" href="#/consejos#' + tip.id + '"><span class="tip-ico">' + App.icoTip(tip.id) + '</span><span><strong>Consejo: ' + esc(tip.title) + '</strong><br><span class="small muted">' + esc(tip.short) + '</span></span></a>' : "") +
       '<div class="section-title"><h2>Señas de este nivel</h2><a class="small" href="#/diccionario/' + lv.id + '">Abrir en el diccionario</a></div><div class="sign-grid" data-signs></div>';
     var list = App.$("[data-list]", root);
     lv.lessons.forEach(function (l, i) {
       var s = p.stars[lv.id + "/" + l.id] || 0;
-      list.appendChild(App.el('<li class="lesson-row' + (s ? " done" : "") + '"><a href="#/leccion/' + lv.id + '/' + l.id + '"><span class="num">' + (l.challenge ? "🏁" : i + 1) + '</span>' +
+      list.appendChild(App.el('<li class="lesson-row' + (s ? " done" : "") + '"><a href="#/leccion/' + lv.id + '/' + l.id + '"><span class="num">' + (l.challenge ? App.ico("meta") : i + 1) + '</span>' +
         '<span class="grow"><strong>' + (l.challenge ? "Desafío del nivel" : "Lección " + (i + 1)) + '</strong><br><span class="small muted">' + esc(l.challenge ? "Todas las señas mezcladas" : l.title) + '</span></span>' + stars(s) + '</a></li>'));
     });
     var grid = App.$("[data-signs]", root);
@@ -68,7 +68,7 @@ window.App = window.App || {};
   function signCard(it) {
     var has = App.Media.has(it.id), ok = App.mastered(it.id);
     return App.el('<a class="sign-card" href="#/sena/' + encodeURIComponent(it.id) + '"><span class="sc-label">' + esc(it.label) + '</span>' +
-      '<span class="sc-meta"><span class="sc-dot" title="' + (has ? "Video disponible" : "Video en producción") + '">' + (has ? "🎬" : "⏳") + '</span>' + (ok ? ' <span title="Dominada">✅</span>' : "") + '</span></a>');
+      '<span class="sc-meta"><span class="sc-dot" title="' + (has ? "Video disponible" : "Video en producción") + '">' + (has ? App.ico("camara") : App.ico("reloj")) + '</span>' + (ok ? ' <span class="ico" title="Dominada">' + App.ico("check-simple") + '</span>' : "") + '</span></a>');
   }
 
   /* =======================================================
@@ -83,7 +83,7 @@ window.App = window.App || {};
     function stopCam() { if (st.cam) { try { st.cam.stop(); } catch (e) {} st.cam = null; } }
     function render() {
       stopCam();
-      root.innerHTML = '<div class="player-top"><a class="icon-btn" href="' + cfg.exit + '" aria-label="Salir">✕</a><div class="bar"><i style="width:' + Math.round(st.i / steps.length * 100) + '%"></i></div><span class="small muted">' + Math.min(st.i + 1, steps.length) + ' / ' + steps.length + '</span></div><section class="stage" data-stage></section>';
+      root.innerHTML = '<div class="player-top"><a class="icon-btn" href="' + cfg.exit + '" aria-label="Salir"><span class="ico">' + App.ico("cerrar") + '</span></a><div class="bar"><i style="width:' + Math.round(st.i / steps.length * 100) + '%"></i></div><span class="small muted">' + Math.min(st.i + 1, steps.length) + ' / ' + steps.length + '</span></div><section class="stage" data-stage></section>';
       var stage = App.$("[data-stage]", root);
       if (st.i >= steps.length) return finish(stage);
       var s = steps[st.i];
@@ -108,7 +108,7 @@ window.App = window.App || {};
     /* --- 1. Observá --- */
     function stepObserve(stage, s) {
       var it = s.item; App.track(it.id, "seen");
-      stage.innerHTML = '<span class="step-kicker">👀 Observá</span><h2>' + title(it) + '</h2><p class="muted">' + esc(it.uso) + '</p>';
+      stage.innerHTML = '<span class="step-kicker">" + App.ico("ojo") + " Observá</span><h2>' + title(it) + '</h2><p class="muted">' + esc(it.uso) + '</p>';
       stage.appendChild(App.mediaFor(it));
       stage.appendChild(App.el('<p class="small muted" style="margin-top:10px">Fijate en la forma de la mano, hacia dónde mira la palma, dónde se hace, el movimiento y la cara. Usá «Lento» y «Espejo» si te ayuda.</p>'));
       actions(stage, { skip: false });
@@ -119,7 +119,7 @@ window.App = window.App || {};
       var it = s.item, label = it.aiLabel, M = App.Vision.Model, camOn = App.state().settings.camera !== false;
       var aiReady = camOn && M.has(label) && M.ready(), done = false, nx;
       st.scored++;
-      stage.innerHTML = '<span class="step-kicker">✋ Practicá</span><h2>' + title(it) + '</h2>' +
+      stage.innerHTML = '<span class="step-kicker">" + App.ico("mano") + " Practicá</span><h2>' + title(it) + '</h2>' +
         '<p class="muted">' + (aiReady ? "Hacé la seña frente a la cámara. Te vamos a decir qué tan parecida está y qué ajustar." : camOn ? "Usá la cámara como espejo y compará con el video. Después contanos cómo te salió." : "Hacé la seña mirando el video y contanos cómo te salió.") + '</p>' +
         '<div class="lab-grid">' + (camOn ? '<div data-cam></div>' : "") + '<div data-side></div></div>';
       var side = App.$("[data-side]", stage);
@@ -141,7 +141,7 @@ window.App = window.App || {};
               return '<li><span>' + esc(nm) + '</span><span class="bar ' + (x.label === label ? "good" : "") + '"><i style="width:' + Math.round(x.p * 100) + '%"></i></span><span>' + Math.round(x.p * 100) + '%</span></li>';
             }).join("");
             var hs = App.Vision.hints(h.canon, label);
-            hintEl.innerHTML = hs.length ? hs.map(function (x) { return "<li>💡 " + esc(x.text) + "</li>"; }).join("") : '<li class="ok">👌 La forma se parece a la de referencia</li>';
+            hintEl.innerHTML = hs.length ? hs.map(function (x) { return '<li><span class="ico">' + App.ico("bombilla") + '</span> ' + esc(x.text) + "</li>"; }).join("") : '<li class="ok"><span class="ico">' + App.ico("check-simple") + '</span> La forma se parece a la de referencia</li>';
             st.cam.root.classList.toggle("success", res.label === label);
             if (res.full && res.label === label && res.ratio >= 0.6 && res.p >= 0.5) success(true);
           } });
@@ -149,7 +149,7 @@ window.App = window.App || {};
       } else {
         if (camOn) {
           st.cam = new App.Vision.Camera(App.$("[data-cam]", stage), { intro: "Usá la cámara como espejo", autostart: App.camOK, onStart: function () { App.camOK = true; } });
-          side.appendChild(App.el('<p class="small muted" style="margin-top:10px">🤖 La cámara todavía no aprendió esta seña: necesita ejemplos de referentes sordos. Mientras tanto, autoevaluate.</p>'));
+          side.appendChild(App.el('<p class="small muted" style="margin-top:10px"><span class="ico">' + App.ico("mano") + '</span> La cámara todavía no aprendió esta seña: necesita ejemplos de referentes sordos. Mientras tanto, autoevaluate.</p>'));
         }
         var self = App.el('<div><p style="margin:14px 0 0;font-weight:700">¿Cómo te salió?</p><div class="self-eval"><button type="button" data-v="ok" data-focus><span>😄</span>Me salió</button><button type="button" data-v="casi"><span>🙂</span>Casi</button><button type="button" data-v="rep"><span>🔁</span>Repetir</button></div></div>');
         side.appendChild(self);
@@ -175,12 +175,12 @@ window.App = window.App || {};
     /* --- 3. ¿Cómo se escribe? (corrección tolerante: tildes, mayúsculas y signos no importan) --- */
     function stepWrite(stage, s) {
       var it = s.item, tries = 0, solved = false; st.scored++;
-      stage.innerHTML = '<span class="step-kicker">✍️ ¿Cómo se escribe?</span><h2>¿Qué ' + (it.kind === "letra" ? "letra" : "seña") + ' es?</h2>';
+      stage.innerHTML = '<span class="step-kicker">" + App.ico("texto") + " ¿Cómo se escribe?</span><h2>¿Qué ' + (it.kind === "letra" ? "letra" : "seña") + ' es?</h2>';
       stage.appendChild(App.mediaFor(it, { hideLabel: true }));
       var f = App.el('<form class="write" autocomplete="off"><label class="sr" for="wr">Tu respuesta</label><input id="wr" type="text" inputmode="text" autocapitalize="' + (it.kind === "letra" ? "characters" : "sentences") + '" maxlength="' + (it.kind === "letra" ? 2 : 30) + '" placeholder="' + (it.kind === "letra" ? "Escribí la letra" : "Escribí la palabra") + '" spellcheck="false"><button class="btn" type="submit">Comprobar</button></form>');
       stage.appendChild(f);
       var fbBox = App.el('<div aria-live="polite"></div>'); stage.appendChild(fbBox);
-      var hint = App.el('<button class="link small" type="button">💡 Pista</button>'); stage.appendChild(hint);
+      var hint = App.el('<button class="link small" type="button"><span class="ico">' + App.ico("bombilla") + '</span> Pista</button>'); stage.appendChild(hint);
       var input = App.$("input", f); setTimeout(function () { input.focus(); }, 50);
       hint.addEventListener("click", function () { var w = it.write; fbBox.innerHTML = '<div class="feedback info">Empieza con «' + esc(w.replace(/^[¿¡]/, "").charAt(0).toUpperCase()) + '» y tiene ' + App.norm(w).replace(/ /g, "").length + ' letras.</div>'; });
       f.addEventListener("submit", function (e) {
@@ -208,7 +208,7 @@ window.App = window.App || {};
       var it = s.item, answered = false; st.scored++;
       var pool = (s.pool || []).filter(function (id) { return id !== it.id; });
       var opts = App.shuffle([it].concat(App.sample(pool, 3).map(function (id) { return C.ITEMS[id]; })));
-      stage.innerHTML = '<span class="step-kicker">🎯 ¿Cuál es?</span><h2>Elegí la seña que ves</h2>';
+      stage.innerHTML = '<span class="step-kicker">" + App.ico("buscar") + " ¿Cuál es?</span><h2>Elegí la seña que ves</h2>';
       stage.appendChild(App.mediaFor(it, { hideLabel: true }));
       var box = App.el('<div class="options"></div>'); stage.appendChild(box);
       var fb = App.el('<div aria-live="polite"></div>'); stage.appendChild(fb);
@@ -230,8 +230,8 @@ window.App = window.App || {};
     /* --- 4b. Tarjeta de memoria (funciona aunque no haya video) --- */
     function stepCard(stage, s) {
       var it = s.item; st.scored++;
-      stage.innerHTML = '<span class="step-kicker">🔁 ¿Te acordás?</span><h2>¿Cómo se hace «' + esc(it.label) + '»?</h2><p class="muted">Hacé la seña de memoria y después mirá si te salió igual.</p>';
-      var reveal = App.el('<button class="btn big alt" type="button" data-focus>👀 Ver la seña</button>'); stage.appendChild(reveal);
+      stage.innerHTML = '<span class="step-kicker">" + App.ico("repaso") + " ¿Te acordás?</span><h2>¿Cómo se hace «' + esc(it.label) + '»?</h2><p class="muted">Hacé la seña de memoria y después mirá si te salió igual.</p>';
+      var reveal = App.el('<button class="btn big alt" type="button" data-focus>" + App.ico("ojo") + " Ver la seña</button>'); stage.appendChild(reveal);
       var holder = App.el('<div></div>'); stage.appendChild(holder);
       reveal.addEventListener("click", function () {
         reveal.remove(); holder.appendChild(App.mediaFor(it));
@@ -246,7 +246,7 @@ window.App = window.App || {};
     /* --- 5. Deletreá (niveles de letras) --- */
     function stepSpell(stage, s) {
       st.scored++;
-      stage.innerHTML = '<span class="step-kicker">🔤 Deletreá</span><h2>Hacé las letras en orden</h2><p class="muted">' + (App.state().settings.camera === false ? "Hacé cada letra y tocá «Siguiente letra»." : "Si la cámara conoce la letra, avanza sola cuando te reconoce. Si no, tocá «Siguiente letra».") + '</p>';
+      stage.innerHTML = '<span class="step-kicker">" + App.ico("dado") + " Deletreá</span><h2>Hacé las letras en orden</h2><p class="muted">' + (App.state().settings.camera === false ? "Hacé cada letra y tocá «Siguiente letra»." : "Si la cámara conoce la letra, avanza sola cuando te reconoce. Si no, tocá «Siguiente letra».") + '</p>';
       var nx;
       st.cam = App.spellWidget(stage, s.word, function () { st.ok++; App.P().spelled++; App.addXp(8); nx.disabled = false; nx.focus(); });
       nx = actions(stage, { nextDisabled: true });
@@ -257,7 +257,7 @@ window.App = window.App || {};
       var n = ratio >= 0.9 ? 3 : ratio >= 0.6 ? 2 : 1;
       var res = cfg.onFinish ? cfg.onFinish(n, ratio) : {};
       App.fx("win");
-      stage.innerHTML = '<div class="celebrate"><div class="big">' + (n === 3 ? "🏆" : n === 2 ? "🎉" : "👏") + '</div><h2>' + esc(res.title || "¡Lección terminada!") + '</h2>' +
+      stage.innerHTML = '<div class="celebrate"><div class="big">' + (n === 3 ? App.ico("trofeo") : n === 2 ? App.ico("fuego") : App.ico("mano")) + '</div><h2>' + esc(res.title || "¡Lección terminada!") + '</h2>' +
         '<div class="stars xl">' + stars(n) + '</div>' +
         '<p class="muted">' + (st.scored ? Math.round(ratio * 100) + "% de aciertos" : "") + (st.ai ? " · " + st.ai + " señas reconocidas por la cámara" : "") + '</p>' +
         (n < 3 ? '<p class="small muted">Podés repetirla cuando quieras para sumar estrellas. Nada se bloquea.</p>' : "") +
@@ -313,7 +313,7 @@ window.App = window.App || {};
   V.repaso = function (root) {
     var due = App.dueItems().slice(0, 10);
     if (!due.length) {
-      root.innerHTML = '<a class="link" href="#/niveles">← Niveles</a><section class="stage celebrate"><div class="big">✨</div><h2>No tenés señas para repasar</h2><p class="muted">Las señas que te cuestan vuelven acá automáticamente: al día siguiente, a los 2 días, a la semana…</p><a class="btn big" href="#/niveles">Seguir aprendiendo</a></section>';
+      root.innerHTML = '<a class="link" href="#/niveles">← Niveles</a><section class="stage celebrate"><div class="big">' + App.ico("estrella-llena") + '</div><h2>No tenés señas para repasar</h2><p class="muted">Las señas que te cuestan vuelven acá automáticamente: al día siguiente, a los 2 días, a la semana…</p><a class="btn big" href="#/niveles">Seguir aprendiendo</a></section>';
       return;
     }
     var mediaPool = App.allItems().filter(function (it) { return App.Media.has(it.id); }).map(function (it) { return it.id; });
@@ -354,7 +354,7 @@ window.App = window.App || {};
       });
       var g = App.$("[data-grid]", root); g.innerHTML = "";
       list.forEach(function (it) { g.appendChild(signCard(it)); });
-      App.$("[data-count]", root).textContent = list.length + " señas · 🎬 con video · ⏳ video en producción · ✅ dominada";
+      App.$("[data-count]", root).textContent = list.length + " señas · con video · video en producción · dominada";
     }
     draw();
   };
@@ -366,9 +366,9 @@ window.App = window.App || {};
     root.innerHTML = '<a class="link" href="#/diccionario/' + lv.id + '">← Diccionario</a>' +
       '<div class="sena-grid"><div><span class="eyebrow">' + esc(lv.title) + '</span><h1>' + esc(App.itemTitle(it)) + '</h1><p class="muted">' + esc(it.uso) + '</p><div data-media></div></div>' +
       '<div class="stack"><div class="card"><span class="eyebrow">Tu progreso con esta seña</span>' +
-        (r ? '<p>Vista ' + r.seen + ' ' + (r.seen === 1 ? "vez" : "veces") + ' · escrita bien ' + r.wOk + ' · reconocida por la cámara ' + r.ai + '</p><p class="small muted">' + (App.mastered(it.id) ? "✅ Dominada" : "Seguí practicando: aparece en tu repaso.") + '</p>' : '<p class="muted">Todavía no la practicaste.</p>') +
-        '<a class="btn block" href="#/practicar/' + encodeURIComponent(it.id) + '">✋ Practicar esta seña</a></div>' +
-        '<div class="card"><span class="eyebrow">Cámara</span><p class="small" style="margin:0">' + (ai ? "🤖 La cámara puede reconocer esta seña (forma de la mano)." : "⏳ La cámara todavía no aprendió esta seña.") + '</p></div></div></div>';
+        (r ? '<p>Vista ' + r.seen + ' ' + (r.seen === 1 ? "vez" : "veces") + ' · escrita bien ' + r.wOk + ' · reconocida por la cámara ' + r.ai + '</p><p class="small muted">' + (App.mastered(it.id) ? "Dominada" : "Seguí practicando: aparece en tu repaso.") + '</p>' : '<p class="muted">Todavía no la practicaste.</p>') +
+        '<a class="btn block" href="#/practicar/' + encodeURIComponent(it.id) + '">" + App.ico("mano") + " Practicar esta seña</a></div>' +
+        '<div class="card"><span class="eyebrow">Cámara</span><p class="small" style="margin:0">' + (ai ? "La cámara puede reconocer esta seña (forma de la mano)." : "La cámara todavía no aprendió esta seña.") + '</p></div></div></div>';
     App.$("[data-media]", root).appendChild(App.mediaFor(it));
   };
 
@@ -379,7 +379,7 @@ window.App = window.App || {};
     root.innerHTML = '<a class="link" href="#/niveles">← Niveles</a><span class="eyebrow" style="margin-top:10px">Consejos</span><h1>Para señar mejor</h1><div data-list></div>';
     var list = App.$("[data-list]", root);
     C.CONSEJOS.forEach(function (t) {
-      list.appendChild(App.el('<article class="card consejo" id="' + t.id + '"><h2><span aria-hidden="true">' + t.ico + '</span> ' + esc(t.title) + '</h2>' + t.body.map(function (b) { return '<p>' + esc(b).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>") + '</p>'; }).join("") + '</article>'));
+      list.appendChild(App.el('<article class="card consejo" id="' + t.id + '"><h2><span class="ico" aria-hidden="true">' + App.icoTip(t.id) + '</span> ' + esc(t.title) + '</h2>' + t.body.map(function (b) { return '<p>' + esc(b).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>") + '</p>'; }).join("") + '</article>'));
     });
     var h = location.hash.split("#")[2]; if (h) { var el = document.getElementById(h); if (el) setTimeout(function () { el.scrollIntoView({ block: "start" }); }, 50); }
   };
@@ -399,7 +399,7 @@ window.App = window.App || {};
     function draw() {
       disp.innerHTML = letters.map(function (c, j) { return '<span class="' + (j < i ? "ok" : j === i ? "cur" : "") + '">' + c + '</span>'; }).join("");
       if (i >= letters.length) {
-        if (!finished) { finished = true; info.innerHTML = '<div class="feedback good">¡Palabra deletreada! 🎉<p>' + (aiCount ? aiCount + " letras reconocidas por la cámara." : "Practicá con una persona sorda para recibir devolución.") + '</p></div>'; App.fx("win"); onDone(aiCount); }
+        if (!finished) { finished = true; info.innerHTML = '<div class="feedback good">¡Palabra deletreada!<p>' + (aiCount ? aiCount + " letras reconocidas por la cámara." : "Practicá con una persona sorda para recibir devolución.") + '</p></div>'; App.fx("win"); onDone(aiCount); }
         return;
       }
       var L = letters[i], has = camOn && M.has(L) && M.ready();
@@ -420,7 +420,7 @@ window.App = window.App || {};
         var res = sm.push(top ? top.label : null, top ? top.p : 0);
         var conf = App.$("[data-conf]", info); if (!conf) return;
         conf.innerHTML = r.unknown ? '<li class="muted">No reconozco esta forma…</li>' : r.top.slice(0, 3).map(function (x) { return '<li><span>' + esc(x.label) + '</span><span class="bar ' + (x.label === L ? "good" : "") + '"><i style="width:' + Math.round(x.p * 100) + '%"></i></span><span>' + Math.round(x.p * 100) + '%</span></li>'; }).join("");
-        App.$("[data-hints]", info).innerHTML = App.Vision.hints(h.canon, L).map(function (x) { return "<li>💡 " + esc(x.text) + "</li>"; }).join("");
+        App.$("[data-hints]", info).innerHTML = App.Vision.hints(h.canon, L).map(function (x) { return '<li><span class="ico">' + App.ico("bombilla") + '</span> ' + esc(x.text) + "</li>"; }).join("");
         if (res.full && res.label === L && res.ratio >= 0.6 && res.p >= 0.5) advance(true);
       } });
     draw();

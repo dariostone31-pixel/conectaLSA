@@ -1,11 +1,11 @@
 /* ConectaLSA · Service worker
    Guarda la app completa (incluida la IA) para que funcione sin internet.
    Al publicar una nueva versión, cambiá VERSION para que se actualice en todos los dispositivos. */
-var VERSION = "conectalsa-v1.0.5";
+var VERSION = "conectalsa-v1.1.0";
 var CORE = [
   "./", "index.html", "manifest.webmanifest",
   "css/app.css",
-  "js/core.js", "js/content.js", "js/vision.js", "js/media.js", "js/views-learn.js", "js/views-profile.js", "js/views-ai.js", "js/views-ref.js", "js/main.js",
+  "js/core.js", "js/iconos.js", "js/content.js", "js/vision.js", "js/media.js", "js/views-learn.js", "js/privacidad.js", "js/views-acceso.js", "js/views-profile.js", "js/views-ai.js", "js/views-ref.js", "js/main.js",
   "fonts/atkinson-hyperlegible-latin-400-normal.woff2", "fonts/atkinson-hyperlegible-latin-700-normal.woff2",
   "icons/icon.svg", "icons/icon-192.png", "icons/icon-512.png", "icons/icon-maskable-512.png", "icons/icon-180.png", "icons/logo.svg", "icons/logo-blanco.svg",
   "vendor/mediapipe/vision_bundle.mjs", "vendor/mediapipe/vision_wasm_internal.js", "vendor/mediapipe/vision_wasm_internal.wasm",

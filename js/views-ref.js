@@ -32,17 +32,17 @@ window.App = window.App || {};
     var total = App.allItems().length;
     root.innerHTML = '<a class="link" href="#/perfil">← Perfil</a><span class="eyebrow" style="margin-top:10px">Modo referente</span><h1>Videos de las señas</h1>' +
       '<p class="muted" style="max-width:72ch">Las señas de ConectaLSA las enseñan <strong>personas sordas</strong>. Desde acá grabás o subís el video de cada seña, otra persona referente lo valida y después lo compartís con todos los equipos.</p>' +
-      '<div class="stats"><div class="stat"><span class="stat-ico">🎬</span><strong>' + Md.count() + '/' + total + '</strong><small>con video</small></div><div class="stat"><span class="stat-ico">✔</span><strong>' + Md.validatedCount() + '</strong><small>validados</small></div><div class="stat"><span class="stat-ico">🤖</span><strong>' + Object.keys(App.Vision.Model.labels()).length + '</strong><small>señas en la cámara</small></div></div>' +
+      '<div class="stats"><div class="stat"><span class="stat-ico">' + App.ico("camara") + '</span><strong>' + Md.count() + '/' + total + '</strong><small>con video</small></div><div class="stat"><span class="stat-ico">' + App.ico("check") + '</span><strong>' + Md.validatedCount() + '</strong><small>validados</small></div><div class="stat"><span class="stat-ico">' + App.ico("mano") + '</span><strong>' + Object.keys(App.Vision.Model.labels()).length + '</strong><small>señas en la cámara</small></div></div>' +
       '<div class="grid two" style="margin-top:14px">' +
         '<div class="card"><span class="eyebrow">Quién sos</span><label class="field"><span>Tu nombre o código (aparece en los créditos del video)</span><input type="text" data-me maxlength="40" value="' + esc(me) + '" placeholder="Ej.: María G. — Asociación de Sordos"></label></div>' +
-        '<div class="card"><span class="eyebrow">Compartir entre equipos</span><p class="small muted" style="margin-top:0">Descargá un paquete con todos los videos y créditos, y cargalo en los otros equipos.</p><div class="row"><button class="btn" type="button" data-exp>⬇ Exportar paquete</button><label class="btn ghost">⬆ Importar paquete<input type="file" accept=".json,application/json" data-imp hidden></label></div></div>' +
+        '<div class="card"><span class="eyebrow">Compartir entre equipos</span><p class="small muted" style="margin-top:0">Descargá un paquete con todos los videos y créditos, y cargalo en los otros equipos.</p><div class="row"><button class="btn" type="button" data-exp><span class="ico">' + App.ico("descarga") + '</span> Exportar paquete</button><label class="btn ghost"><span class="ico">' + App.ico("subir") + '</span> Importar paquete<input type="file" accept=".json,application/json" data-imp hidden></label></div></div>' +
       '</div>' +
-      '<details class="card" style="margin-top:14px"><summary><strong>📋 Cómo grabar un buen video</strong></summary><ul>' +
+      '<details class="card" style="margin-top:14px"><summary><strong><span class="ico">' + App.ico("documento") + '</span> Cómo grabar un buen video</strong></summary><ul>' +
         '<li>Fondo liso y ropa lisa que contraste con la piel. Luz de frente.</li><li>Encuadre de la cabeza a la cintura, con espacio a los costados para el movimiento.</li>' +
         '<li>Empezá y terminá con las manos abajo. Hacé la seña con la expresión facial correspondiente.</li><li>Celular o cámara fija y horizontal. Máximo 6 segundos.</li>' +
         '<li>Antes de grabar, confirmá que la persona dio su consentimiento para publicar el video.</li></ul></details>' +
       '<div class="section-title"><h2>Señas</h2><div class="row chips" data-f></div></div><div data-list></div>' +
-      '<div class="grid two" style="margin-top:18px"><a class="card link-card" href="#/entrenar"><span class="tip-ico">🤖</span><strong>Enseñarle señas a la cámara</strong><span class="small muted">Capturá ejemplos de varias personas y medí el falso rechazo.</span></a>' +
+      '<div class="grid two" style="margin-top:18px"><a class="card link-card" href="#/entrenar"><span class="tip-ico">' + App.ico("mano") + '</span><strong>Enseñarle señas a la cámara</strong><span class="small muted">Capturá ejemplos de varias personas y medí el falso rechazo.</span></a>' +
         '<div class="card"><span class="eyebrow">PIN del modo referente</span><p class="small muted" style="margin-top:0">' + (R.pin ? "Hay un PIN configurado." : "Sin PIN: cualquiera puede entrar.") + '</p><form class="row" data-pinf><input type="password" inputmode="numeric" maxlength="8" placeholder="Nuevo PIN (vacío = sin PIN)" data-pin style="flex:1;min-width:140px"><button class="btn ghost" type="submit">Guardar PIN</button></form></div></div>';
     App.$("[data-me]", root).addEventListener("change", function () { App.data.set("ref-name", this.value.trim()); App.toast("Guardado"); });
     var fEl = App.$("[data-f]", root);
@@ -58,13 +58,13 @@ window.App = window.App || {};
           var m = Md.info(it.id); return filter === "todos" || (filter === "sin" && !m) || (filter === "pend" && m && !m.validatedBy) || (filter === "ok" && m && m.validatedBy);
         });
         if (!rows.length) return;
-        var box = App.el('<div class="card ref-level"><h3>' + lv.ico + ' ' + esc(lv.title) + '</h3><ul class="ref-list"></ul></div>');
+        var box = App.el('<div class="card ref-level"><h3><span class="ico">' + App.icoNivel(lv.id) + '</span> ' + esc(lv.title) + '</h3><ul class="ref-list"></ul></div>');
         var ul = App.$("ul", box);
         rows.forEach(function (it) {
           var m = Md.info(it.id);
-          var st = !m ? '<span class="tag">Sin video</span>' : m.validatedBy ? '<span class="tag good">✔ ' + esc(m.validatedBy) + '</span>' : '<span class="tag warn">Por validar</span>';
+          var st = !m ? '<span class="tag">Sin video</span>' : m.validatedBy ? '<span class="tag good"><span class="ico">' + App.ico("check-simple") + '</span> ' + esc(m.validatedBy) + '</span>' : '<span class="tag warn">Por validar</span>';
           var li = App.el('<li><span class="grow"><strong>' + esc(App.itemTitle(it)) + '</strong> ' + st + (m ? '<br><small class="muted">Seña: ' + esc(m.signer || "—") + (m.source === "file" ? " · archivo de la app" : "") + '</small>' : "") + '</span>' +
-            '<a class="btn small" href="#/grabar/' + encodeURIComponent(it.id) + '">' + (m ? "🎬 Ver / regrabar" : "⏺ Grabar") + '</a></li>');
+            '<a class="btn small" href="#/grabar/' + encodeURIComponent(it.id) + '">' + (m ? "Ver / regrabar" : "Grabar") + '</a></li>');
           ul.appendChild(li);
         });
         list.appendChild(box);
@@ -103,7 +103,7 @@ window.App = window.App || {};
         act.appendChild(App.el('<div class="card"><span class="eyebrow">Video actual</span><p>Seña: <strong>' + esc(m.signer || "—") + '</strong><br>' + (m.validatedBy ? "Validó: <strong>" + esc(m.validatedBy) + "</strong>" : "Todavía no lo validó otra persona.") + '</p></div>'));
         if (m.source === "local") {
           if (!m.validatedBy) {
-            var vb = App.el('<button class="btn block good" type="button">✔ Validar este video</button>');
+            var vb = App.el('<button class="btn block good" type="button"><span class="ico">' + App.ico("check-simple") + '</span> Validar este video</button>');
             vb.addEventListener("click", function () {
               if (!me) { App.toast("Escribí tu nombre en el panel del referente"); return; }
               if (me === m.signer) { App.toast("La validación tiene que hacerla otra persona referente"); return; }
@@ -111,7 +111,7 @@ window.App = window.App || {};
             });
             act.appendChild(vb);
           }
-          var dl = App.el('<button class="btn ghost block" type="button">⬇ Descargar video</button>');
+          var dl = App.el('<button class="btn ghost block" type="button"><span class="ico">' + App.ico("descarga") + '</span> Descargar video</button>');
           dl.addEventListener("click", function () { Md.blob(it.id).then(function (b) { App.download("conectalsa-" + it.id + (/mp4/.test(b.type) ? ".mp4" : ".webm"), b); }); });
           act.appendChild(dl);
           var del = App.el('<button class="btn bad block" type="button">Borrar video</button>');
@@ -121,7 +121,7 @@ window.App = window.App || {};
       } else cur.appendChild(App.mediaFor(it));
       var recb = App.el('<button class="btn big block" type="button">⏺ ' + (m ? "Grabar de nuevo" : "Grabar con la cámara") + '</button>');
       recb.addEventListener("click", recorder); act.appendChild(recb);
-      var up = App.el('<label class="btn ghost block">📁 Subir un archivo de video<input type="file" accept="video/*" hidden></label>');
+      var up = App.el('<label class="btn ghost block"><span class="ico">' + App.ico("subir") + '</span> Subir un archivo de video<input type="file" accept="video/*" hidden></label>');
       App.$("input", up).addEventListener("change", function () { var f = this.files[0]; if (!f) return; if (f.size > 25e6) { App.toast("El archivo es muy grande (máx. 25 MB)"); return; } blob = f; review(); });
       act.appendChild(up);
     }
@@ -167,7 +167,7 @@ window.App = window.App || {};
       if (stream) { stream.getTracks().forEach(function (t) { t.stop(); }); stream = null; }
       var url = URL.createObjectURL(blob);
       root.innerHTML = '<h1>¿Quedó bien?</h1><p class="muted">Revisá que se vea la seña completa, con buena luz, y la expresión facial.</p><div class="media"><div class="media-box"><video src="' + url + '" playsinline muted loop autoplay controls></video></div></div>' +
-        '<div class="row" style="margin-top:14px"><button class="btn ghost" type="button" data-re>↺ Repetir</button><button class="btn big" type="button" data-save>✔ Guardar video</button></div>';
+        '<div class="row" style="margin-top:14px"><button class="btn ghost" type="button" data-re><span class="ico">' + App.ico("recargar") + '</span> Repetir</button><button class="btn big" type="button" data-save><span class="ico">' + App.ico("check-simple") + '</span> Guardar video</button></div>';
       App.$("[data-re]", root).addEventListener("click", function () { URL.revokeObjectURL(url); view(); });
       App.$("[data-save]", root).addEventListener("click", function () {
         Md.put(it.id, blob, me || "Sin nombre").then(function () { URL.revokeObjectURL(url); App.fx("ok"); App.toast("Video guardado. Falta que lo valide otra persona."); view(); })

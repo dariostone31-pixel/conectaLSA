@@ -550,3 +550,193 @@ details.card summary { cursor: pointer; }
 :root[data-contrast="high"] .beta-note { background: #fff; color: #000; border: 3px solid #000; }
 :root[data-theme="dark"][data-contrast="high"] .beta-note { background: #000; color: #fff; border-color: #fff; }
 :root[data-contrast="high"] .beta-note .link { color: inherit; }
+
+/* =========================================================
+   ÍCONOS PROPIOS (js/iconos.js)
+   Trazo de 24×24 que hereda el color del texto.
+   ========================================================= */
+.ico { display: inline-flex; align-items: center; justify-content: center; flex: none; }
+.ico > svg, svg.ico { width: 1.15em; height: 1.15em; display: block; }
+.mainnav a .ico > svg { width: 1.5em; height: 1.5em; }
+.btn .ico > svg { width: 1.2em; height: 1.2em; }
+.icon-btn .ico > svg { width: 1.25em; height: 1.25em; }
+.hub-ico { display: flex; align-items: center; justify-content: center; width: 52px; height: 52px; border-radius: 16px; background: var(--accent-soft); color: var(--accent); }
+.hub-ico > svg { width: 30px; height: 30px; }
+.hub-card.coral .hub-ico { background: var(--coral-soft); color: var(--coral); }
+.lvl-ico > svg { width: 28px; height: 28px; }
+.lvl-ico.big > svg { width: 40px; height: 40px; }
+.stat-ico { display: flex; align-items: center; justify-content: center; color: var(--accent); }
+.stat-ico > svg { width: 26px; height: 26px; }
+.tip-ico, .link-card .tip-ico { display: inline-flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 13px; background: var(--accent-soft); color: var(--accent); }
+.tip-ico > svg { width: 24px; height: 24px; }
+.badge > .b-ico { display: flex; justify-content: center; margin-bottom: 6px; color: var(--muted); opacity: .5; }
+.badge.on > .b-ico { color: var(--accent); opacity: 1; }
+.badge > .b-ico > svg { width: 34px; height: 34px; }
+.pill > .ico > svg { width: 1.05em; height: 1.05em; }
+.tag > .ico > svg { width: 1em; height: 1em; vertical-align: -.15em; }
+.step-kicker { display: inline-flex; align-items: center; gap: 6px; }
+.step-kicker > svg { width: 1.1em; height: 1.1em; }
+.pin-brand > .ico > svg, .acceso-hero > .ico > svg { width: 1em; height: 1em; }
+
+/* =========================================================
+   PERFILES VISUALES POR DISCAPACIDAD
+   data-vision = "estandar" | "daltonico" | "calma"
+   (el alto contraste y el oscuro siguen usando data-theme / data-contrast)
+   ========================================================= */
+
+/* --- Daltonismo (deuteranopía / protanopía): paleta Okabe-Ito ---
+   Evita el par rojo-verde; los estados se distinguen por forma y por luminosidad. */
+:root[data-vision="daltonico"] {
+  --bg: #F2F5F9; --surface: #FFFFFF; --surface-2: #E6ECF3; --line: #BFC9D8;
+  --ink: #0E1B2A; --muted: #445366;
+  --accent: #0B5FA8; --accent-ink: #FFFFFF; --accent-soft: #DCEAF7; --accent-2: #2E86C8;
+  --brand: #0B4F8A; --brand-2: #1766B0; --brand-3: #56B4E9; --brand-soft: #DCEAF7;
+  --grad: linear-gradient(135deg, #0B4F8A 0%, #1766B0 60%, #2E86C8 100%);
+  --grad-soft: linear-gradient(135deg, #EDF4FA 0%, #DFEBF6 100%);
+  --grad-btn: linear-gradient(180deg, #1470BE 0%, #0B5FA8 100%);
+  --celeste: #56B4E9; --celeste-soft: #E4F1FA; --celeste-ink: #0B4F8A;
+  --coral: #2E86C8; --coral-soft: #E1EEF8;
+  --sun: #E69F00; --sun-soft: #FFF2D6;
+  --good: #0F6F63; --good-soft: #D8EDE9;
+  --bad: #A34A00; --bad-soft: #FBE7D6;
+  --warn: #7A5200; --warn-soft: #FBEED0;
+  --s1: #0072B2; --s2: #E69F00; --s3: #CC79A7; --s4: #009E73;
+  --s5: #56B4E9; --s6: #D55E00; --s7: #0B4F8A;
+}
+:root[data-theme="dark"][data-vision="daltonico"] {
+  --bg: #0B1420; --surface: #131F2F; --surface-2: #1C2B3E; --line: #33465C;
+  --ink: #EDF3FA; --muted: #AFC0D4;
+  --accent: #8CC3F0; --accent-ink: #06121F; --accent-soft: #17334D; --accent-2: #A5D2F5;
+  --brand: #8CC3F0; --brand-soft: #162E45;
+  --grad: linear-gradient(135deg, #10365C 0%, #17507F 60%, #1E6EA6 100%);
+  --grad-btn: linear-gradient(180deg, #9CCBF2 0%, #7FB8E8 100%);
+  --celeste: #7FD1F2; --celeste-soft: #10303F;
+  --good: #6FDCC4; --good-soft: #123A33; --bad: #FFB27A; --bad-soft: #432A18;
+  --warn: #FFD08A; --warn-soft: #3B2E12;
+  --sun: #FFC65C; --sun-soft: #3B2E12;
+}
+
+/* --- Calma (autismo, TDAH, sensibilidad visual): tonos apagados, sin brillos ni halos --- */
+:root[data-vision="calma"] {
+  --bg: #F5F2EA; --surface: #FFFDF8; --surface-2: #ECE7DC; --line: #D6CFC2;
+  --ink: #24231E; --muted: #575247;
+  --accent: #33556E; --accent-ink: #FFFFFF; --accent-soft: #E4EAF0; --accent-2: #4A7189;
+  --brand: #33556E; --brand-2: #4A7189; --brand-3: #7FA3B5; --brand-soft: #E4EAF0;
+  --grad: linear-gradient(135deg, #33556E 0%, #33556E 100%);
+  --grad-soft: linear-gradient(135deg, #F0EDE6 0%, #EAE5DB 100%);
+  --grad-btn: linear-gradient(180deg, #41698A 0%, #33556E 100%);
+  --celeste: #6E93A8; --celeste-soft: #E9EFF3; --celeste-ink: #33556E;
+  --coral: #6E93A8; --coral-soft: #E9EFF3;
+  --sun: #B08628; --sun-soft: #F5EEDC;
+  --good: #3C6A55; --good-soft: #E2ECE6;
+  --bad: #8A4A3A; --bad-soft: #F3E4DF;
+  --warn: #75581C; --warn-soft: #F5EEDA;
+  --s1: #3C5F78; --s2: #4E7268; --s3: #5C6A84; --s4: #476A76;
+  --s5: #4A6E8C; --s6: #6A6584; --s7: #33556E;
+  --shadow: 0 0 0 1px rgba(36,35,30,.06);
+  --shadow-lg: 0 0 0 1px rgba(36,35,30,.08);
+  --glow: 0 0 0 3px rgba(51,85,110,.22);
+}
+:root[data-theme="dark"][data-vision="calma"] {
+  --bg: #15140F; --surface: #1D1B15; --surface-2: #272420; --line: #3A362E;
+  --ink: #F0EBDD; --muted: #B4AC9C;
+  --accent: #A8C1D1; --accent-ink: #101010; --accent-soft: #26323A; --accent-2: #BCD2DF;
+  --brand: #A8C1D1; --brand-soft: #26323A;
+  --grad: linear-gradient(135deg, #26323A 0%, #26323A 100%);
+  --grad-btn: linear-gradient(180deg, #BCD2DF 0%, #A8C1D1 100%);
+  --celeste: #94B8C9; --celeste-soft: #1E2A30;
+  --sun: #DDBB74; --sun-soft: #2E2818;
+  --good: #8FC6AC; --good-soft: #1D2A24;
+  --bad: #E8A896; --bad-soft: #33211C;
+  --warn: #E4C48A; --warn-soft: #2E2818;
+  --shadow: none; --shadow-lg: none;
+}
+/* En calma no hay halos ni destellos de fondo, ni animaciones de entrada */
+:root[data-vision="calma"] body::before { background: none; }
+:root[data-vision="calma"] .hello::after,
+:root[data-vision="calma"] .hero::after,
+:root[data-vision="calma"] .celebrate::before { display: none; }
+:root[data-vision="calma"] .btn { box-shadow: none; }
+:root[data-vision="calma"] .card, :root[data-vision="calma"] .hub-card, :root[data-vision="calma"] .stage,
+:root[data-vision="calma"] .who, :root[data-vision="calma"] .badge { box-shadow: none; }
+:root[data-vision="calma"] .brand-mark, :root[data-vision="calma"] .ava.xl { box-shadow: none; }
+
+/* El alto contraste también puede combinarse con los perfiles visuales */
+:root[data-contrast="high"] .vision-tile[aria-checked="true"],
+:root[data-contrast="high"] .pin-pad button,
+:root[data-contrast="high"] .who { border-width: 3px; }
+
+/* =========================================================
+   ACCESO (perfiles + PIN local)
+   ========================================================= */
+.acceso { max-width: 520px; margin: 0 auto; }
+.acceso-hero { display: grid; justify-items: center; gap: 6px; text-align: center; margin: 8px 0 18px; }
+.acceso-hero .brand-mark { width: 68px; height: 68px; }
+.acceso-hero h1 { margin: 6px 0 0; font-size: 1.5em; }
+.acceso-hero p { margin: 0; }
+.who-grid.pin { grid-template-columns: repeat(auto-fit, minmax(132px, 1fr)); }
+.who .ava .ico > svg { width: 1.1em; height: 1.1em; }
+.pin-card { max-width: 380px; margin: 0 auto; text-align: center; }
+.pin-ava { display: inline-grid; place-items: center; width: 76px; height: 76px; border-radius: 50%; background: var(--sun-soft); font-size: 2.4em; margin-bottom: 8px; }
+.pin-dots { display: flex; justify-content: center; gap: 12px; margin: 16px 0 6px; }
+.pin-dots i { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--line); background: var(--surface); }
+.pin-dots i.on { background: var(--accent); border-color: var(--accent); }
+.pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 16px; }
+.pin-pad button { min-height: 58px; border-radius: 16px; border: 2px solid var(--line); background: var(--surface); font-size: 1.35em; font-weight: 700; color: var(--ink); }
+.pin-pad button:hover { border-color: var(--accent); background: var(--accent-soft); }
+.pin-pad button[data-k="borrar"], .pin-pad button[data-k="ok"] { font-size: 1em; }
+.pin-pad button[data-k="ok"] { background: var(--grad-btn); color: var(--accent-ink); border-color: transparent; }
+.pin-msg { min-height: 24px; font-weight: 700; }
+.pin-msg.bad { color: var(--bad); }
+.pin-msg.good { color: var(--good); }
+.pin-shake { animation: pinshake .3s; }
+@keyframes pinshake { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+:root[data-motion="reduce"] .pin-shake { animation: none; }
+.who.lock small { color: var(--muted); }
+
+/* =========================================================
+   SELECTOR DE PERFIL VISUAL (Ajustes)
+   ========================================================= */
+.vision-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 4px; }
+.vision-tile { display: grid; gap: 2px; text-align: left; padding: 10px; border-radius: 16px; border: 2px solid var(--line); background: var(--surface); color: var(--ink); }
+.vision-tile:hover { border-color: var(--accent); }
+.vision-tile[aria-checked="true"] { border-color: var(--accent); box-shadow: var(--glow); background: var(--accent-soft); }
+.vision-preview { display: flex; gap: 4px; height: 32px; border-radius: 10px; overflow: hidden; margin-bottom: 8px; border: 1px solid var(--line); }
+.vision-preview i { flex: 1; }
+.vision-tile strong { font-size: .95em; display: flex; align-items: center; gap: 6px; }
+.vision-tile strong > svg { width: 18px; height: 18px; }
+.vision-tile small { color: var(--muted); font-size: .78em; line-height: 1.3; }
+.vision-tile[aria-checked="true"] small { color: var(--ink); }
+
+/* Botonera del perfil: íconos parejos */
+.row .btn > .ico { margin-right: 2px; }
+.perfil-tools { display: flex; flex-wrap: wrap; gap: 10px; }
+.why-ico { width: 44px; height: 44px; border-radius: 13px; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; margin-bottom: 8px; }
+.why-ico > svg { width: 26px; height: 26px; }
+
+/* Tamaño por defecto de cualquier ícono dibujado (aunque no esté dentro de .ico) */
+svg.ico-svg { width: 1.15em; height: 1.15em; display: inline-block; vertical-align: -.16em; flex: none; }
+.btn > svg.ico-svg { width: 1.2em; height: 1.2em; }
+.icon-btn > svg.ico-svg { width: 1.3em; height: 1.3em; }
+.mainnav a > span > svg.ico-svg { width: 1.5em; height: 1.5em; }
+.hub-ico > svg.ico-svg { width: 30px; height: 30px; }
+.lvl-ico > svg.ico-svg { width: 28px; height: 28px; }
+.lvl-ico.big > svg.ico-svg { width: 40px; height: 40px; }
+.stat-ico > svg.ico-svg { width: 26px; height: 26px; }
+.tip-ico > svg.ico-svg { width: 24px; height: 24px; }
+.badge .b-ico > svg.ico-svg { width: 34px; height: 34px; }
+.why-ico > svg.ico-svg { width: 26px; height: 26px; }
+.tag > svg.ico-svg, .pill > svg.ico-svg { width: 1em; height: 1em; }
+.num > svg.ico-svg { width: 1em; height: 1em; }
+.sc-dot > svg.ico-svg { width: .95em; height: .95em; opacity: .8; }
+.self-eval button span > svg.ico-svg { width: 1em; height: 1em; }
+.celebrate .big > svg.ico-svg { width: 1em; height: 1em; }
+
+/* ---------- Acceso: logo visible y tarjetas de perfil prolijas ---------- */
+.acceso-hero .brand-mark { width: 72px; height: 72px; border-radius: 22px; background: var(--grad); box-shadow: var(--shadow-lg); }
+.acceso-hero .brand-mark img { width: 46px; height: 46px; }
+.who-grid.pin { grid-template-columns: repeat(auto-fit, minmax(140px, 190px)); justify-content: center; }
+.sin-nav .mainnav { display: none; }
+.sin-nav .layout { grid-template-columns: 1fr; }
+@media (min-width: 900px) { .sin-nav .layout { grid-template-columns: 1fr; } .sin-nav main { padding-bottom: 40px; } }
+.pin-card h1 { font-size: 1.5em; }

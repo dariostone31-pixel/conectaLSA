@@ -11,7 +11,7 @@ window.App = window.App || {};
   function avatarPicker(selected, unlockedStars) {
     return '<div class="avatar-grid" role="radiogroup" aria-label="Elegí tu avatar">' + App.AVATARS.map(function (a) {
       var locked = a.stars > unlockedStars;
-      return '<button type="button" class="ava-opt' + (locked ? " locked" : "") + '" role="radio" aria-checked="' + (a.id === selected) + '" data-ava="' + a.id + '"' + (locked ? ' disabled title="Se desbloquea con ' + a.stars + ' estrellas"' : "") + '><span class="ava">' + a.ico + '</span><small>' + (locked ? "🔒 " + a.stars + "★" : esc(a.name)) + '</small></button>';
+      return '<button type="button" class="ava-opt' + (locked ? " locked" : "") + '" role="radio" aria-checked="' + (a.id === selected) + '" data-ava="' + a.id + '"' + (locked ? ' disabled title="Se desbloquea con ' + a.stars + ' estrellas"' : "") + '><span class="ava">' + a.ico + '</span><small>' + (locked ? App.ico("candado") + " " + a.stars : esc(a.name)) + '</small></button>';
     }).join("") + '</div>';
   }
   function bindPicker(root, onPick) {
@@ -33,15 +33,15 @@ window.App = window.App || {};
     var first = !App.profiles().length;
     var f = { name: "", avatar: "fox", hand: "right", goal: 30 };
     root.innerHTML = '<section class="welcome">' +
-      (first ? '<div class="welcome-hero"><span class="brand-mark xl" aria-hidden="true"><img src="icons/logo-blanco.svg" alt="" width="58" height="58"></span><h1>Aprendé Lengua de Señas Argentina</h1><p>Lecciones cortas con videos de personas sordas, práctica con la cámara y repaso para no olvidarte. Gratis, sin publicidad y sin crear cuenta.</p></div>' : '<a class="link" href="#/perfiles">← Perfiles</a><h1>Nuevo perfil</h1>') +
+      (first ? '<div class="welcome-hero"><span class="brand-mark xl" aria-hidden="true"><img src="icons/logo-blanco.svg" alt="" width="58" height="58"></span><h1>Aprendé Lengua de Señas Argentina</h1><p>Lecciones cortas con videos de personas sordas, práctica con la cámara y repaso para no olvidarte. Gratis, sin publicidad y sin registro en internet.</p></div>' : '<a class="link" href="#/perfiles">← Perfiles</a><h1>Nuevo perfil</h1>') +
       (first ? App.betaNote() : "") +
       '<form class="card stack" data-f autocomplete="off">' +
         '<label class="field"><span>¿Cómo te llamás?</span><input type="text" data-name maxlength="20" placeholder="Tu nombre o apodo" required></label>' +
         '<div class="field"><span>Elegí tu avatar <small class="muted">(desbloqueás más juntando estrellas)</small></span>' + avatarPicker("fox", 0) + '</div>' +
-        '<div class="field"><span>¿Con qué mano escribís?</span>' + seg("hand", [["right", "✋ Derecha"], ["left", "🤚 Izquierda"]], "right") + '<small class="muted">Si sos zurdo/a, mostramos los videos en espejo para que sea más fácil copiarlos.</small></div>' +
-        '<div class="field"><span>¿Cuánto querés practicar por día?</span>' + seg("goal", [[20, "🙂 5 min"], [30, "💪 10 min"], [50, "🚀 15 min"]], 30) + '</div>' +
+        '<div class="field"><span>¿Con qué mano escribís?</span>' + seg("hand", [["right", "Derecha"], ["left", "Izquierda"]], "right") + '<small class="muted">Si sos zurdo/a, mostramos los videos en espejo para que sea más fácil copiarlos.</small></div>' +
+        '<div class="field"><span>¿Cuánto querés practicar por día?</span>' + seg("goal", [[20, "5 min"], [30, "10 min"], [50, "15 min"]], 30) + '</div>' +
         '<button class="btn big block" type="submit">Empezar</button>' +
-        '<p class="small muted center">Tu progreso queda guardado solo en este dispositivo. La cámara nunca graba.</p>' +
+        '<p class="small muted center" style="margin:0">Tu progreso queda guardado solo en este dispositivo. La cámara nunca graba.<br/><a href="#/privacidad">Política de privacidad</a></p>' +
       '</form>' + (first ? '<p class="center small"><a href="#/perfil-importar">Ya tengo una copia de seguridad</a></p>' : "") + '</section>';
     bindPicker(root, function (a) { f.avatar = a; });
     bindSeg(root, "hand", function (v) { f.hand = v; });
@@ -71,15 +71,21 @@ window.App = window.App || {};
   V.perfiles = function (root) {
     var cur = App.P();
     root.innerHTML = '<h1 class="center">¿Quién aprende hoy?</h1><p class="center muted">Cada persona tiene su propio progreso. Ideal para familias y aulas.</p><div class="who-grid" data-g></div>' +
-      '<p class="center"><a class="btn ghost" href="#/progreso">📊 Panel de progreso</a></p>';
+      '<p class="center"><a class="btn ghost" href="#/progreso"><span class="ico">' + App.ico("grafico") + '</span> Panel de progreso</a> ' +
+      '<button class="btn ghost" type="button" data-logout><span class="ico">' + App.ico("salir") + '</span> Cerrar sesión</button></p>';
     var g = App.$("[data-g]", root);
     App.profiles().forEach(function (p) {
-      var b = App.el('<button class="who' + (cur && p.id === cur.id ? " cur" : "") + '" type="button"><span class="ava big">' + App.avatar(p.avatar).ico + '</span><strong>' + esc(p.name) + '</strong><small>⭐ ' + App.totalStars(p) + ' · 🔥 ' + App.streak(p) + '</small></button>');
-      b.addEventListener("click", function () { App.switchProfile(p.id); App.toast("Hola, " + p.name); App.go("#/niveles"); });
+      var b = App.el('<button class="who' + (cur && p.id === cur.id ? " cur" : "") + '" type="button"><span class="ava big">' + App.avatar(p.avatar).ico + '</span><strong>' + esc(p.name) + '</strong><small>' +
+        (App.hasPin(p) ? '<span class="ico">' + App.ico("candado") + '</span> ' : "") + App.totalStars(p) + ' estrellas · ' + App.streak(p) + ' días</small></button>');
+      b.addEventListener("click", function () {
+        if (App.hasPin(p) && (!cur || cur.id !== p.id)) { App.go("#/entrar/" + encodeURIComponent(p.id)); return; }
+        App.switchProfile(p.id); App.toast("Hola, " + p.name); App.go("#/niveles");
+      });
       g.appendChild(b);
     });
-    var add = App.el('<a class="who add" href="#/bienvenida"><span class="ava big">＋</span><strong>Agregar</strong><small>Nuevo perfil</small></a>');
+    var add = App.el('<a class="who add" href="#/bienvenida"><span class="ava big">' + App.ico("mas") + '</span><strong>Agregar</strong><small>Nuevo perfil</small></a>');
     g.appendChild(add);
+    App.$("[data-logout]", root).addEventListener("click", function () { App.cerrarSesion(); });
   };
 
   /* =======================================================
@@ -92,22 +98,32 @@ window.App = window.App || {};
     root.innerHTML =
       '<section class="profile-head"><span class="ava xl">' + av.ico + '</span><div><h1>' + esc(p.name) + '</h1><p class="muted">' + Math.round((p.seconds || 0) / 60) + ' min de práctica · ' + p.xp + ' puntos</p></div><a class="btn ghost" href="#/perfiles">Cambiar perfil</a></section>' +
       '<div class="stats">' +
-        stat("⭐", ts, "estrellas") + stat("🔥", App.streak(p), "días seguidos") + stat("✅", mastered, "señas dominadas") + stat("✋", p.aiOk, "reconocidas por la cámara") +
+        stat("estrella-llena", ts, "estrellas") + stat("fuego", App.streak(p), "días seguidos") + stat("check", mastered, "señas dominadas") + stat("mano", p.aiOk, "reconocidas por la cámara") +
       '</div>' +
       '<div class="section-title"><h2>Medallas</h2></div><div class="badges" data-b></div>' +
       '<div class="section-title"><h2>Avatar</h2><span class="small muted">Juntá estrellas para desbloquear</span></div><div data-ava></div>' +
       '<div class="section-title"><h2>Tu progreso está seguro</h2></div>' +
       '<div class="card"><p>Se guarda en este dispositivo y le pedimos al navegador que no lo borre. Para pasarlo a otro equipo o por las dudas, descargá una copia.</p>' +
-        '<div class="row"><button class="btn" type="button" data-exp>⬇ Descargar copia de seguridad</button><label class="btn ghost">⬆ Recuperar desde archivo<input type="file" accept=".json,application/json" data-imp hidden></label></div></div>' +
-      '<div class="row" style="margin-top:16px"><a class="btn ghost" href="#/ajustes">⚙️ Ajustes</a><a class="btn ghost" href="#/progreso">📊 Panel familias y docentes</a><a class="btn ghost" href="#/referente">🎬 Modo referente</a><a class="btn ghost" href="#/acerca">ℹ️ Acerca de</a></div>';
+        '<div class="row"><button class="btn" type="button" data-exp><span class="ico">' + App.ico("descarga") + '</span> Descargar copia de seguridad</button>' +
+        '<label class="btn ghost"><span class="ico">' + App.ico("subir") + '</span> Recuperar desde archivo<input type="file" accept=".json,application/json" data-imp hidden></label></div></div>' +
+      '<div class="section-title"><h2>Acceso y opciones</h2></div>' +
+      '<div class="row perfil-tools">' +
+        '<a class="btn ghost" href="#/ajustes"><span class="ico">' + App.ico("ajustes") + '</span> Ajustes</a>' +
+        '<a class="btn ghost" href="#/privacidad"><span class="ico">' + App.ico("candado") + '</span> Privacidad</a>' +
+        '<a class="btn ghost" href="#/progreso"><span class="ico">' + App.ico("grafico") + '</span> Panel familias y docentes</a>' +
+        '<a class="btn ghost" href="#/referente"><span class="ico">' + App.ico("documento") + '</span> Modo referente</a>' +
+        '<a class="btn ghost" href="#/acerca"><span class="ico">' + App.ico("informacion") + '</span> Acerca de</a>' +
+        '<button class="btn ghost" type="button" data-logout><span class="ico">' + App.ico("salir") + '</span> Cerrar sesión</button>' +
+      '</div>';
     var b = App.$("[data-b]", root);
-    App.BADGES.forEach(function (x) { var has = !!p.badges[x.id]; b.appendChild(App.el('<div class="badge' + (has ? " on" : "") + '" title="' + esc(x.desc) + '"><span>' + (has ? x.ico : "🔒") + '</span><strong>' + esc(x.name) + '</strong><small>' + esc(x.desc) + '</small></div>')); });
+    App.BADGES.forEach(function (x) { var has = !!p.badges[x.id]; b.appendChild(App.el('<div class="badge' + (has ? " on" : "") + '" title="' + esc(x.desc) + '"><span class="b-ico">' + App.icoBadge(x.id) + '</span><strong>' + esc(x.name) + '</strong><small>' + esc(x.desc) + '</small></div>')); });
     App.$("[data-ava]", root).innerHTML = avatarPicker(p.avatar, ts);
     bindPicker(root, function (a) { p.avatar = a; App.save(); App.toast("Avatar actualizado"); V.perfil(root); });
     App.$("[data-exp]", root).addEventListener("click", function () { App.exportProfile(); App.toast("Copia descargada"); });
     App.$("[data-imp]", root).addEventListener("change", function () { importFile(this.files[0]); });
+    App.$("[data-logout]", root).addEventListener("click", function () { App.cerrarSesion(); });
   };
-  function stat(ico, n, t) { return '<div class="stat"><span class="stat-ico">' + ico + '</span><strong>' + n + '</strong><small>' + t + '</small></div>'; }
+  function stat(ico, n, t) { return '<div class="stat"><span class="stat-ico">' + App.ico(ico) + '</span><strong>' + n + '</strong><small>' + t + '</small></div>'; }
 
   /* =======================================================
      PANEL DE PROGRESO (familias y docentes)
@@ -116,8 +132,8 @@ window.App = window.App || {};
     var ps = App.profiles();
     root.innerHTML = '<a class="link no-print" href="#/perfil">← Perfil</a><span class="eyebrow">Familias y docentes</span><h1>Panel de progreso</h1>' +
       '<p class="muted">Todos los perfiles de este dispositivo. Mostramos qué señas cuestan más para saber qué reforzar.</p>' +
-      '<div class="row no-print"><button class="btn" type="button" data-csv>⬇ Descargar planilla (CSV)</button><button class="btn ghost" type="button" data-print>🖨 Imprimir</button></div>' +
-      '<div class="table-wrap"><table class="ptable"><thead><tr><th>Perfil</th>' + C.LEVELS.map(function (l) { return '<th title="' + esc(l.title) + '">' + l.ico + '<br><small>N' + l.n + '</small></th>'; }).join("") + '<th>⭐</th><th>Min</th><th>Último día</th></tr></thead><tbody data-tb></tbody></table></div>' +
+      '<div class="row no-print"><button class="btn" type="button" data-csv><span class="ico">' + App.ico("descarga") + '</span> Descargar planilla (CSV)</button><button class="btn ghost" type="button" data-print><span class="ico">' + App.ico("documento") + '</span> Imprimir</button></div>' +
+      '<div class="table-wrap"><table class="ptable"><thead><tr><th>Perfil</th>' + C.LEVELS.map(function (l) { return '<th title="' + esc(l.title) + '">' + App.icoNivel(l.id) + '<br><small>N' + l.n + '</small></th>'; }).join("") + '<th>' + App.ico("estrella-llena") + '</th><th>Min</th><th>Último día</th></tr></thead><tbody data-tb></tbody></table></div>' +
       '<div data-detail></div>';
     var tb = App.$("[data-tb]", root);
     ps.forEach(function (p) {
@@ -165,12 +181,61 @@ window.App = window.App || {};
       '<div class="card"><span class="eyebrow">Videos</span>' + sw("mirrorVideos", "Videos en espejo", "Como si te miraras en un espejo. Recomendado para zurdos/as.") +
         sg("videoSpeed", "Velocidad inicial", [[1, "Normal"], [0.5, "Lenta"], [0.3, "Muy lenta"]]) + '</div>' +
       '<div class="card"><span class="eyebrow">Cámara</span>' + sw("camera", "Practicar con la cámara", "Si la apagás, practicás con autoevaluación. Nunca se graba nada.") +
-        '<a class="btn ghost" href="#/camara">📷 Probar cómo me ve la cámara</a></div>' +
-      '<div class="card"><span class="eyebrow">Ver y leer</span>' + sg("fs", "Tamaño de letra", [["100", "A"], ["115", "A+"], ["130", "A++"]]) + sg("theme", "Tema", [["auto", "Auto"], ["light", "Claro"], ["dark", "Oscuro"]]) +
-        sw("highContrast", "Alto contraste", "Colores con máxima diferencia.") + sw("reduceMotion", "Reducir animaciones", "Menos movimiento en pantalla.") + '</div>' +
+        '<a class="btn ghost" href="#/camara"><span class="ico">' + App.ico("camara") + '</span> Probar cómo me ve la cámara</a></div>' +
+      '<div class="card"><span class="eyebrow">Perfil visual</span><p class="small muted" style="margin-top:0">Elegí los colores que te resulten más cómodos. Se aplica al instante y no cambia tu progreso.</p>' +
+        '<div class="vision-grid" role="radiogroup" aria-label="Perfil visual">' + App.VISIONES.map(function (v) {
+          return '<button class="vision-tile" type="button" role="radio" aria-checked="' + (App.visionActual() === v.id) + '" data-vision="' + v.id + '">' +
+            '<span class="vision-preview" aria-hidden="true">' + v.col.map(function (c) { return '<i style="background:' + c + '"></i>'; }).join("") + '</span>' +
+            '<strong>' + App.ico(v.ico) + ' ' + esc(v.name) + '</strong><small>' + esc(v.desc) + '</small></button>';
+        }).join("") + '</div>' +
+        '<div class="switch-row" style="margin-top:14px"><div class="t"><strong>Tamaño de letra</strong><small>Tres tamaños, sin perder nada de texto.</small></div>' + seg("fs", [[100, "A"], [115, "A+"], [130, "A++"]], st.fs) + '</div>' +
+        sw("reduceMotion", "Reducir animaciones", "Menos movimiento en pantalla.") + '</div>' +
       '<div class="card"><span class="eyebrow">Avisos</span>' + sw("sound", "Sonidos", "Opcionales: toda la información también es visual.") + sw("vibration", "Vibración", "En celulares compatibles.") + '</div>' +
-      '<div class="card"><span class="eyebrow">Datos</span><p class="small muted">Todo queda en este dispositivo. No hay cuentas, publicidad ni analíticas.</p><div class="row"><button class="btn ghost" type="button" data-exp>⬇ Copia de seguridad</button><button class="btn bad" type="button" data-reset>Reiniciar mi progreso</button><button class="btn bad" type="button" data-del>Eliminar este perfil</button></div></div>';
-    st.highContrast = st.contrast === "high"; st.reduceMotion = st.motion === "reduce";
+      '<div class="card"><span class="eyebrow">Acceso a este perfil</span>' +
+        '<div class="switch-row"><div class="t"><strong>Pedir un PIN al entrar</strong><small>' + (App.hasPin(p) ? "Activado: se piden 4 números al elegir este perfil." : "Sin PIN: cualquiera que use este equipo puede entrar a tu perfil.") + '</small></div>' +
+          '<button class="btn ghost small" type="button" data-pin>' + App.ico("llave-pin") + ' ' + (App.hasPin(p) ? "Cambiar o quitar" : "Crear PIN") + '</button></div>' +
+        '<div data-pin-box hidden style="margin-top:10px"></div>' +
+        '<p class="small muted">El PIN se guarda como un resumen matemático (hash) que no se puede leer ni recuperar. No viaja a internet: ConectaLSA no tiene cuentas ni servidores con datos.</p>' +
+        '<div class="row"><button class="btn ghost" type="button" data-logout>' + App.ico("salir") + ' Cerrar sesión</button></div></div>' +
+      '<div class="card"><span class="eyebrow">Datos</span><p class="small muted">Todo queda en este dispositivo. No hay cuentas en internet, ni publicidad, ni analíticas.</p><div class="row"><button class="btn ghost" type="button" data-exp>' + App.ico("descarga") + ' Copia de seguridad</button><button class="btn bad" type="button" data-reset>Reiniciar mi progreso</button><button class="btn bad" type="button" data-del>Eliminar este perfil</button></div></div>';
+    st.reduceMotion = st.motion === "reduce";
+
+    /* --- Perfil visual: se aplica al toque --- */
+    App.$$("[data-vision]", root).forEach(function (b) {
+      b.addEventListener("click", function () {
+        App.setVision(b.dataset.vision);
+        App.$$("[data-vision]", root).forEach(function (x) { x.setAttribute("aria-checked", String(x === b)); });
+        App.toast("Perfil visual: " + App.visionActual());
+      });
+    });
+
+    /* --- PIN local --- */
+    function panelPin() {
+      var box = App.$("[data-pin-box]", root), conPin = App.hasPin(p);
+      if (!box.hidden) { box.hidden = true; return; }
+      box.hidden = false;
+      box.innerHTML = '<div class="card" style="background:var(--surface-2);box-shadow:none">' +
+        '<p style="margin-top:0"><strong>' + (conPin ? "Cambiar el PIN" : "Crear un PIN de 4 números") + '</strong></p>' +
+        '<label class="field"><span>PIN nuevo</span><input type="password" inputmode="numeric" autocomplete="new-password" maxlength="4" data-pin1 aria-describedby="pinayuda"></label>' +
+        '<label class="field"><span>Repetilo</span><input type="password" inputmode="numeric" autocomplete="new-password" maxlength="4" data-pin2></label>' +
+        '<p class="small muted" id="pinayuda">Sirve para que otra persona del mismo equipo no entre a tu perfil. No es una cuenta y no se puede recuperar: si lo olvidás, hay que borrar el perfil.</p>' +
+        '<p class="pin-msg small" data-pinmsg role="status" aria-live="polite"></p>' +
+        '<div class="row"><button class="btn" type="button" data-pinsave>Guardar PIN</button>' +
+        (conPin ? '<button class="btn bad" type="button" data-pindel>Quitar PIN</button>' : "") +
+        '<button class="btn ghost" type="button" data-pincancel>Cancelar</button></div></div>';
+      var i1 = App.$("[data-pin1]", box), i2 = App.$("[data-pin2]", box), m = App.$("[data-pinmsg]", box);
+      i1.focus({ preventScroll: true });
+      App.$("[data-pinsave]", box).addEventListener("click", function () {
+        var a = i1.value.replace(/\D/g, ""), b = i2.value.replace(/\D/g, "");
+        if (a.length !== 4) { m.textContent = "El PIN tiene que ser de 4 números."; m.className = "pin-msg bad small"; return; }
+        if (a !== b) { m.textContent = "Los dos PIN no coinciden."; m.className = "pin-msg bad small"; return; }
+        App.setPin(a); App.toast("PIN guardado"); V.ajustes(root);
+      });
+      if (conPin) App.$("[data-pindel]", box).addEventListener("click", function () { App.clearPin(); App.toast("PIN quitado"); V.ajustes(root); });
+      App.$("[data-pincancel]", box).addEventListener("click", function () { box.hidden = true; });
+    }
+    App.$("[data-pin]", root).addEventListener("click", panelPin);
+    App.$("[data-logout]", root).addEventListener("click", function () { App.cerrarSesion(); });
     App.$$("[data-sw]", root).forEach(function (el) {
       el.checked = !!st[el.dataset.sw];
       el.addEventListener("change", function () {
@@ -214,15 +279,53 @@ window.App = window.App || {};
       '<p>Desarrollada por la Dirección de Innovación de la Municipalidad de San Salvador de Jujuy (Punto Digital Jorge Cafrune). Código y contenidos propios.</p></div>' +
       '<div class="card"><span class="eyebrow">Estado del contenido en este equipo</span><ul>' +
         '<li>' + App.allItems().length + ' señas en ' + C.LEVELS.length + ' niveles</li>' +
-        '<li>🎬 ' + n + ' videos cargados · ' + nv + ' validados por un segundo referente</li>' +
-        '<li>🤖 La cámara reconoce ' + ai + ' señas (forma de la mano)</li></ul></div>' +
+        '<li><span class="ico">' + App.ico("camara") + '</span> ' + n + ' videos cargados · ' + nv + ' validados por un segundo referente</li>' +
+        '<li><span class="ico">' + App.ico("mano") + '</span> La cámara reconoce ' + ai + ' señas (forma de la mano)</li></ul></div>' +
       '<div class="card"><span class="eyebrow">Compromisos</span><ul>' +
         '<li><strong>Las señas las enseñan personas sordas.</strong> Cada video muestra quién la seña y quién la validó (Ley 27.710).</li>' +
         '<li><strong>La cámara nunca graba.</strong> Analiza cada imagen en el equipo y la descarta. No se envía nada a internet.</li>' +
-        '<li><strong>Sin cuentas, sin publicidad y sin analíticas.</strong> El progreso es tuyo: podés descargarlo y borrarlo.</li>' +
+        '<li><strong>Sin cuentas en internet, sin publicidad y sin analíticas.</strong> Cada persona entra con su perfil en este equipo y, si quiere, con un PIN. El progreso es tuyo: podés descargarlo y borrarlo.</li>' +
         '<li><strong>Si la cámara no te reconoce, no es tu culpa.</strong> Siempre podés autoevaluarte y seguir.</li>' +
         '<li><strong>Funciona sin internet</strong> una vez abierta (instalable como app).</li>' +
         '<li>Accesible: textos grandes, alto contraste, sin depender del sonido, navegable con teclado.</li></ul></div>' +
-      '<p class="small muted">La IA reconoce la configuración de la mano; el movimiento, el lugar y la expresión facial los evalúa una persona. Versión 1.0.</p>';
+      '<div class="card"><span class="eyebrow">Privacidad</span><p>Esta app no pide correo ni contraseña: el acceso es local y sin registro. No tiene publicidad, ' +
+      'no mide el uso y la cámara nunca graba. El progreso queda en este dispositivo.</p><p style="margin:0"><a class="btn alt" href="#/privacidad"><span class="ico">' +
+      App.ico("candado") + '</span> Leer la política de privacidad completa</a></p></div>' +
+      '<p class="small muted">La IA reconoce la configuración de la mano; el movimiento, el lugar y la expresión facial los evalúa una persona. Versión ' + (App.VERSION || "1.1") + '.</p>';
+  };
+
+  /* =======================================================
+     POLÍTICA DE PRIVACIDAD
+     ======================================================= */
+  V.privacidad = function (root) {
+    var P = App.PRIVACIDAD;
+    if (!P) { root.innerHTML = '<p>No disponible.</p>'; return; }
+    var html = '<a class="link" href="#/acerca">← Acerca de</a>' +
+      '<h1 style="margin-top:10px">Política de privacidad</h1>' +
+      '<p class="muted small">Versión ' + P.version + ' · ' + P.fecha + '</p>' +
+      '<div class="card"><p><strong>En una frase:</strong> ConectaLSA no pide correo ni contraseña, no tiene publicidad, no mide el uso y la cámara ' +
+      'nunca graba. Todo lo que guarda queda en este dispositivo.</p>' +
+      '<p class="small muted" style="margin:0">Responsable: ' + P.responsable + '</p></div>';
+
+    P.secciones.forEach(function (sec, i) {
+      html += '<div class="card"><h3>' + (i + 1) + '. ' + sec.t + '</h3>';
+      if (sec.p) sec.p.forEach(function (t) { html += '<p>' + t + '</p>'; });
+      if (sec.l) html += '<ul>' + sec.l.map(function (t) { return '<li>' + t + '</li>'; }).join("") + '</ul>';
+      if (sec.lista2) html += '<ul>' + sec.lista2.map(function (t) { return '<li>' + t + '</li>'; }).join("") + '</ul>';
+      if (sec.tabla) {
+        html += '<div class="table-wrap" tabindex="0" role="region" aria-label="' + sec.t + '"><table class="matrix" style="width:100%"><thead><tr>' +
+          sec.tabla.cab.map(function (c) { return '<th>' + c + '</th>'; }).join("") + '</tr></thead><tbody>' +
+          sec.tabla.filas.map(function (f) {
+            return '<tr>' + f.map(function (c) { return '<td style="text-align:left">' + c + '</td>'; }).join("") + '</tr>';
+          }).join("") + '</tbody></table></div>';
+      }
+      html += '</div>';
+    });
+
+    html += '<div class="card"><h3>Contacto</h3><p>Para consultas, pedidos o reclamos sobre datos personales: ' +
+      '<strong>' + P.contacto + '</strong></p>' +
+      '<p class="small muted" style="margin:0">Este texto es el mismo que la app publica en internet y que se entrega impreso ' +
+      'a las personas que graban sus señas.</p></div>';
+    root.innerHTML = html;
   };
 })(window.App);

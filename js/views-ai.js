@@ -29,10 +29,10 @@ window.App = window.App || {};
         (M.ready() ? '<div class="card"><span class="eyebrow">Señas que reconoce</span><ul class="conf-list" data-pred><li class="muted">Mostrá una seña…</li></ul></div>' : '') +
       '</div></div>' +
       '<div class="section-title"><h2>Si la cámara no te reconoce</h2></div><div class="grid three">' +
-        why("💡", "Luz de frente", "Una ventana o lámpara delante tuyo, no detrás.") +
-        why("📏", "Distancia", "Que se vea tu torso y la mano completa, a unos 50 cm a 1 m.") +
-        why("🖐", "Dedos a la vista", "En formas cerradas los dedos se tapan: girá un poco la mano.") +
-        why("🙋", "No es tu culpa", "La IA aprende de ejemplos. Si te rechaza haciéndola bien, marcala como lograda: así la mejoramos.") +
+        why("bombilla", "Luz de frente", "Una ventana o lámpara delante tuyo, no detrás.") +
+        why("marco", "Distancia", "Que se vea tu torso y la mano completa, a unos 50 cm a 1 m.") +
+        why("mano", "Dedos a la vista", "En formas cerradas los dedos se tapan: girá un poco la mano.") +
+        why("persona", "No es tu culpa", "La IA aprende de ejemplos. Si te rechaza haciéndola bien, marcala como lograda: así la mejoramos.") +
       '</div><p class="footer-note">Tecnología: MediaPipe Hand Landmarker (Apache 2.0), ejecutado en este dispositivo. Ninguna imagen se guarda ni se envía.</p>';
     var fingersEl = App.$$("[data-fingers] i", root), metaEl = App.$("[data-meta]", root), predEl = App.$("[data-pred]", root), fpsEl = App.$("[data-fps]", root);
     var frames = 0, t0 = performance.now();
@@ -40,7 +40,7 @@ window.App = window.App || {};
     var cam = new VI.Camera(App.$("[data-cam]", root), { intro: "Activá la cámara y mostrá tu mano", autostart: App.camOK, onStart: function () { App.camOK = true; },
       onFrame: function (info) {
         frames++; var now = performance.now();
-        if (now - t0 > 1000) { fpsEl.textContent = "⚡ " + frames + " imágenes por segundo analizadas en este equipo"; frames = 0; t0 = now; }
+        if (now - t0 > 1000) { fpsEl.textContent = frames + " imágenes por segundo analizadas en este equipo"; frames = 0; t0 = now; }
         var h = info.hands[0], hk = info.hint && info.hint.k;
         check("hand", !!h); check("light", hk !== "dark"); check("size", h ? hk !== "far" && hk !== "near" : null); check("edge", h ? hk !== "edge" : null);
         if (!h) { metaEl.textContent = "No veo ninguna mano."; fingersEl.forEach(function (i) { i.style.height = "0%"; }); return; }
@@ -51,7 +51,7 @@ window.App = window.App || {};
       } });
     return function () { cam.stop(); };
   };
-  function why(ico, t, d) { return '<div class="card"><div style="font-size:1.8em">' + ico + '</div><h3>' + t + '</h3><p class="small muted" style="margin:0">' + d + '</p></div>'; }
+  function why(ico, t, d) { return '<div class="card"><div class="why-ico">' + App.ico(ico) + '</div><h3>' + t + '</h3><p class="small muted" style="margin:0">' + d + '</p></div>'; }
 
   /* =======================================================
      ENTRENAR LA IA (solo referentes; guarda números, nunca imágenes)
@@ -64,20 +64,20 @@ window.App = window.App || {};
     var capturing = null, cam = null;
     root.innerHTML = '<a class="link" href="#/referente">← Modo referente</a><span class="eyebrow" style="margin-top:10px">Modo referente</span><h1>Enseñarle señas a la cámara</h1>' +
       '<p class="muted" style="max-width:72ch">Para que la cámara no rechace señas bien hechas necesita ejemplos de <strong>muchas personas distintas</strong> (meta: al menos 3 por seña, idealmente 10), con distintas manos, luces y distancias.</p>' +
-      '<div class="note good"><p>🔒 Solo se guardan números (21 puntos de la mano). Nunca imágenes. Pedí consentimiento y usá un código, no el nombre.</p></div>' +
+      '<div class="note good"><p><span class="ico">' + App.ico("candado") + '</span> Solo se guardan números (21 puntos de la mano). Nunca imágenes. Pedí consentimiento y usá un código, no el nombre.</p></div>' +
       '<div class="lab-grid" style="margin-top:14px"><div><div data-cam></div></div><div class="stack"><div class="card">' +
         '<label class="field"><span>Código de la persona que hace la seña</span><input type="text" data-who value="' + esc(who) + '" placeholder="persona-1" autocomplete="off"></label>' +
         '<label class="field"><span>Seña a entrenar</span><select data-label>' + C.LEVELS.map(function (lv) {
           return '<optgroup label="' + esc(lv.title) + '">' + lv.items.map(function (id) { var it = C.ITEMS[id]; return '<option value="' + esc(it.aiLabel) + '">' + esc(App.itemTitle(it)) + '</option>'; }).join("") + '</optgroup>';
         }).join("") + '</select></label>' +
-        '<p class="small muted" data-mvnote hidden>⚠️ Esta seña tiene movimiento. La cámara aprende la forma de la mano en un instante: capturá la posición más característica. Sirve de apoyo, no de evaluación final.</p>' +
+        '<p class="small muted" data-mvnote hidden>Esta seña tiene movimiento. La cámara aprende la forma de la mano en un instante: capturá la posición más característica. Sirve de apoyo, no de evaluación final.</p>' +
         '<button class="btn big block" type="button" data-cap>⏺ Capturar 30 ejemplos</button><div class="bar" style="margin-top:10px" hidden data-capbar><i style="width:0%"></i></div>' +
         '<p class="small muted" style="margin-top:8px">Durante la captura mové un poco la mano: acercala, alejala y girala levemente.</p></div>' +
         '<div class="card"><span class="eyebrow">Prueba en vivo</span><ul class="conf-list" data-live><li class="muted">Entrená al menos 2 señas con 5 ejemplos cada una.</li></ul></div>' +
       '</div></div>' +
       '<div class="section-title"><h2>Datos de entrenamiento</h2><span class="muted small" data-summary></span></div>' +
-      '<div class="card"><div class="table-wrap" data-table></div><div class="row" style="margin-top:14px"><button class="btn alt" type="button" data-eval>📊 Medir precisión</button><button class="btn ghost" type="button" data-export>⬇ Exportar modelo</button>' +
-        '<label class="btn ghost">⬆ Importar modelo<input type="file" accept="application/json,.json" data-import hidden></label><button class="btn bad" type="button" data-clear>Borrar todo</button></div>' +
+      '<div class="card"><div class="table-wrap" data-table></div><div class="row" style="margin-top:14px"><button class="btn alt" type="button" data-eval><span class="ico">' + App.ico("grafico") + '</span> Medir precisión</button><button class="btn ghost" type="button" data-export>⬇ Exportar modelo</button>' +
+        '<label class="btn ghost"><span class="ico">' + App.ico("subir") + '</span> Importar modelo<input type="file" accept="application/json,.json" data-import hidden></label><button class="btn bad" type="button" data-clear>Borrar todo</button></div>' +
         '<p class="small muted" style="margin-top:10px">Para usar el mismo modelo en todos los equipos, exportalo y después importalo en cada uno.</p></div><div data-evalout></div>';
     var sel = App.$("[data-label]", root), whoEl = App.$("[data-who]", root);
     sel.value = label; if (!sel.value) { sel.selectedIndex = 0; }
@@ -116,7 +116,7 @@ window.App = window.App || {};
           capturing.last = info.t; capturing.n++; M.add(label, h.canon, who);
           App.$("[data-capbar] i", root).style.width = (capturing.n / capturing.target * 100) + "%";
           if (capturing.n >= capturing.target) {
-            capturing = null; M.save(); App.fx("ok"); App.toast("✅ 30 ejemplos guardados: " + nameOf(label));
+            capturing = null; M.save(); App.fx("ok"); App.toast("30 ejemplos guardados: " + nameOf(label));
             var b = App.$("[data-cap]", root); b.disabled = false; b.textContent = "⏺ Capturar 30 ejemplos más"; App.$("[data-capbar]", root).hidden = true; renderTable();
           }
         }
