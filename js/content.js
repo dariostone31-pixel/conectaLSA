@@ -55,6 +55,27 @@ window.App = window.App || {};
       body: ["Buscá luz de frente (una ventana o una lámpara delante tuyo, no detrás).", "Mostrá la mano completa dentro del recuadro, sin tapar dedos.", "La app te avisa si hay poca luz o si estás muy cerca o muy lejos.", "La cámara **nunca graba**: analiza cada imagen en el momento y la descarta.", "Si sabés que la hacés bien y no te reconoce, no es tu culpa: tocá «Marcar como lograda»."] }
   ];
 
+  /* Imágenes de los consejos («Para señar mejor»).
+     Las prepara el equipo con personas reales o dibujos simples: NO son señas
+     inventadas ni imágenes hechas con IA. Si un archivo todavía no está,
+     la app simplemente muestra el consejo sin imagen. */
+  /* Interruptor: se pone en true cuando las imágenes ya están subidas a
+     img/consejos/. Mientras esté en false, la app no las pide (así no hay
+     pedidos de archivos que todavía no existen). */
+  C.CONSEJO_IMG_ACTIVAS = false;
+  C.CONSEJO_IMG = {
+    parametros: { src: "img/consejos/parametros.jpg",
+      alt: "Dibujo de una mano en el centro y cinco recuadros alrededor: forma de la mano, orientación, lugar, movimiento y expresión de la cara." },
+    espacio: { src: "img/consejos/espacio.jpg",
+      alt: "Silueta de una persona de frente con un rectángulo punteado que va desde la cintura hasta arriba de la cabeza, y una cámara que encuadra ese rectángulo." },
+    cara: { src: "img/consejos/cara.jpg",
+      alt: "Dos caras iguales: una con las cejas levantadas y la boca en forma de o, como para preguntar, y otra sonriendo." },
+    mano: { src: "img/consejos/mano.jpg",
+      alt: "Dos manos abiertas sobre un fondo claro: la derecha marcada en azul y la izquierda en gris tenue." },
+    camara: { src: "img/consejos/camara.jpg",
+      alt: "Una persona sentada frente a una ventana, con la computadora delante y una mano dentro del recuadro de la cámara." }
+  };
+
   /* ---------- Niveles (equivalentes funcionales a los de ComuSeñas, organización propia) ---------- */
   C.LEVELS = [
     { id: "vocales", n: 1, title: "Vocales", ico: "🅰️", color: "#1A5FD0", tip: "mano", groups: [["A", "E", "I"], ["O", "U"]] },

@@ -54,7 +54,9 @@
   }
   function topstats() {
     var p = App.P(), el = document.getElementById("topstats");
-    if (!p) { el.innerHTML = ""; return; }
+    // En la pantalla de acceso no se muestra el avatar ni las estrellas:
+    // así nadie ve de quién es el perfil antes de entrar.
+    if (!p || (App.isLocked && App.isLocked())) { el.innerHTML = ""; return; }
     el.innerHTML = '<span class="pill" title="Racha de días"><span class="ico">' + App.ico("fuego") + '</span> ' + App.streak() + '</span>' +
       '<span class="pill" title="Estrellas"><span class="ico">' + App.ico("estrella-llena") + '</span> ' + App.totalStars() + '</span>' +
       '<a class="pill ava-pill" href="#/perfiles" title="Cambiar de perfil" aria-label="Perfil de ' + esc(p.name) + ', cambiar">' + App.avatar(p.avatar).ico + '</a>';
@@ -67,7 +69,11 @@
     if (!view) { name = "niveles"; view = ROUTES.niveles; parts = ["niveles"]; }
     if (!App.P() && !NOPROFILE[name]) { history.replaceState(null, "", "#/bienvenida"); name = "bienvenida"; view = ROUTES.bienvenida; parts = ["bienvenida"]; }
     // Si se cerró sesión, todo pasa por la pantalla de acceso (salvo privacidad y ayuda).
-    if (App.isLocked && App.isLocked() && !LIBRES[name]) { history.replaceState(null, "", "#/entrar"); name = "entrar"; view = ROUTES.entrar; parts = ["entrar"]; }
+    if (App.isLocked && App.isLocked() && !LIBRES[name]) {
+      // Guardamos a dónde quería ir: después de elegir el perfil la app lo lleva ahí.
+      if (hash && hash !== "#/entrar") App.destino = hash;
+      history.replaceState(null, "", "#/entrar"); name = "entrar"; view = ROUTES.entrar; parts = ["entrar"];
+    }
     if (typeof cleanup === "function") { try { cleanup(); } catch (e) {} }
     cleanup = null;
     var main = document.getElementById("main");
@@ -83,6 +89,9 @@
   }
 
   /* ---------- Arranque ---------- */
+  // Al abrir la app (o recargarla) se elige el perfil, aunque no tenga números secretos:
+  // «Hola, ¿quién sos?» es la primera pantalla. No se vuelve a pedir al navegar dentro de la app.
+  try { if (App.profiles().length) App.lock(); } catch (e) {}
   App.applySettings();
   if (window.matchMedia && matchMedia("(prefers-color-scheme: dark)").addEventListener) matchMedia("(prefers-color-scheme: dark)").addEventListener("change", App.applySettings);
   buildNav();

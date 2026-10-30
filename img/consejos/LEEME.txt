@@ -1,0 +1,20 @@
+Imágenes de los consejos · ConectaLSA
+=====================================
+
+Acá van las cinco imágenes de «Para señar mejor», con estos nombres exactos:
+
+  parametros.jpg   Las partes de una seña
+  espacio.jpg      El espacio para señar
+  cara.jpg         Cara y mirada
+  mano.jpg         Tu mano dominante
+  camara.jpg       Practicar con la cámara
+
+Cada una: 1200 x 900 píxeles (horizontal), formato JPG, entre 80 y 250 KB,
+sin texto adentro y dejando 60 px libres en cada borde.
+
+La guía completa, con el detalle de qué tiene que mostrar cada imagen, está en:
+  publicar/Guia_imagenes_consejos_ConectaLSA.pdf
+
+Mientras estos archivos no existan, la app muestra los consejos sin imagen
+(no aparece ningún ícono roto). Cuando estén subidos, se activan con un
+cambio de una línea en js/content.js:  C.CONSEJO_IMG_ACTIVAS = true;

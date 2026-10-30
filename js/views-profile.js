@@ -49,6 +49,7 @@ window.App = window.App || {};
     App.$("[data-f]", root).addEventListener("submit", function (e) {
       e.preventDefault(); f.name = App.$("[data-name]", root).value.trim();
       if (!f.name) { App.$("[data-name]", root).focus(); return; }
+      App.destino = null;                 // perfil nuevo: arranca en el inicio, no en un enlace viejo
       App.createProfile(f);
       if (f.hand === "left") { App.state().settings.mirrorVideos = true; App.save(); }
       App.toast("¡Hola, " + f.name + "!"); App.go("#/niveles");
@@ -188,14 +189,14 @@ window.App = window.App || {};
             '<span class="vision-preview" aria-hidden="true">' + v.col.map(function (c) { return '<i style="background:' + c + '"></i>'; }).join("") + '</span>' +
             '<strong>' + App.ico(v.ico) + ' ' + esc(v.name) + '</strong><small>' + esc(v.desc) + '</small></button>';
         }).join("") + '</div>' +
-        '<div class="switch-row" style="margin-top:14px"><div class="t"><strong>Tamaño de letra</strong><small>Tres tamaños, sin perder nada de texto.</small></div>' + seg("fs", [[100, "A"], [115, "A+"], [130, "A++"]], st.fs) + '</div>' +
+        '<div class="switch-row" style="margin-top:14px"><div class="t"><strong>Tamaño de letra</strong><small>Tres tamaños: crece todo el texto junto.</small></div>' + '<div class="seg" role="group" aria-label="Tamaño de letra">' + [[100, "A"], [115, "A+"], [130, "A++"]].map(function (o) { return '<button type="button" data-seg="fs" data-v="' + o[0] + '" aria-pressed="' + (String(st.fs) === String(o[0])) + '">' + o[1] + '</button>'; }).join("") + '</div>' + '</div>' +
         sw("reduceMotion", "Reducir animaciones", "Menos movimiento en pantalla.") + '</div>' +
       '<div class="card"><span class="eyebrow">Avisos</span>' + sw("sound", "Sonidos", "Opcionales: toda la información también es visual.") + sw("vibration", "Vibración", "En celulares compatibles.") + '</div>' +
       '<div class="card"><span class="eyebrow">Acceso a este perfil</span>' +
-        '<div class="switch-row"><div class="t"><strong>Pedir un PIN al entrar</strong><small>' + (App.hasPin(p) ? "Activado: se piden 4 números al elegir este perfil." : "Sin PIN: cualquiera que use este equipo puede entrar a tu perfil.") + '</small></div>' +
-          '<button class="btn ghost small" type="button" data-pin>' + App.ico("llave-pin") + ' ' + (App.hasPin(p) ? "Cambiar o quitar" : "Crear PIN") + '</button></div>' +
+        '<div class="switch-row"><div class="t"><strong>Pedir números secretos al entrar</strong><small>' + (App.hasPin(p) ? "Activado: te pide tus 4 números secretos al elegir este perfil." : "Sin números secretos: cualquiera que use este equipo puede entrar a tu perfil.") + '</small></div>' +
+          '<button class="btn ghost small" type="button" data-pin>' + App.ico("llave-pin") + ' ' + (App.hasPin(p) ? "Cambiar o quitar" : "Poner números") + '</button></div>' +
         '<div data-pin-box hidden style="margin-top:10px"></div>' +
-        '<p class="small muted">El PIN se guarda como un resumen matemático (hash) que no se puede leer ni recuperar. No viaja a internet: ConectaLSA no tiene cuentas ni servidores con datos.</p>' +
+        '<p class="small muted">Los números se guardan revueltos con una cuenta matemática (hash): ni vos ni nadie puede leerlos. No viajan a internet: ConectaLSA no tiene cuentas ni servidores con datos.</p>' +
         '<div class="row"><button class="btn ghost" type="button" data-logout>' + App.ico("salir") + ' Cerrar sesión</button></div></div>' +
       '<div class="card"><span class="eyebrow">Datos</span><p class="small muted">Todo queda en este dispositivo. No hay cuentas en internet, ni publicidad, ni analíticas.</p><div class="row"><button class="btn ghost" type="button" data-exp>' + App.ico("descarga") + ' Copia de seguridad</button><button class="btn bad" type="button" data-reset>Reiniciar mi progreso</button><button class="btn bad" type="button" data-del>Eliminar este perfil</button></div></div>';
     st.reduceMotion = st.motion === "reduce";
@@ -215,23 +216,23 @@ window.App = window.App || {};
       if (!box.hidden) { box.hidden = true; return; }
       box.hidden = false;
       box.innerHTML = '<div class="card" style="background:var(--surface-2);box-shadow:none">' +
-        '<p style="margin-top:0"><strong>' + (conPin ? "Cambiar el PIN" : "Crear un PIN de 4 números") + '</strong></p>' +
-        '<label class="field"><span>PIN nuevo</span><input type="password" inputmode="numeric" autocomplete="new-password" maxlength="4" data-pin1 aria-describedby="pinayuda"></label>' +
+        '<p style="margin-top:0"><strong>' + (conPin ? "Cambiar mis números secretos" : "Elegir 4 números secretos") + '</strong></p>' +
+        '<label class="field"><span>Los 4 números</span><input type="password" inputmode="numeric" autocomplete="new-password" maxlength="4" data-pin1 aria-describedby="pinayuda"></label>' +
         '<label class="field"><span>Repetilo</span><input type="password" inputmode="numeric" autocomplete="new-password" maxlength="4" data-pin2></label>' +
-        '<p class="small muted" id="pinayuda">Sirve para que otra persona del mismo equipo no entre a tu perfil. No es una cuenta y no se puede recuperar: si lo olvidás, hay que borrar el perfil.</p>' +
+        '<p class="small muted" id="pinayuda">Sirve para que otra persona de esta compu no entre a tu perfil. No es una cuenta y no se puede recuperar: si te olvidás, hay que empezar de nuevo con el perfil.</p>' +
         '<p class="pin-msg small" data-pinmsg role="status" aria-live="polite"></p>' +
-        '<div class="row"><button class="btn" type="button" data-pinsave>Guardar PIN</button>' +
-        (conPin ? '<button class="btn bad" type="button" data-pindel>Quitar PIN</button>' : "") +
+        '<div class="row"><button class="btn" type="button" data-pinsave>Guardar</button>' +
+        (conPin ? '<button class="btn bad" type="button" data-pindel>Sacar los números</button>' : "") +
         '<button class="btn ghost" type="button" data-pincancel>Cancelar</button></div></div>';
       var i1 = App.$("[data-pin1]", box), i2 = App.$("[data-pin2]", box), m = App.$("[data-pinmsg]", box);
       i1.focus({ preventScroll: true });
       App.$("[data-pinsave]", box).addEventListener("click", function () {
         var a = i1.value.replace(/\D/g, ""), b = i2.value.replace(/\D/g, "");
-        if (a.length !== 4) { m.textContent = "El PIN tiene que ser de 4 números."; m.className = "pin-msg bad small"; return; }
-        if (a !== b) { m.textContent = "Los dos PIN no coinciden."; m.className = "pin-msg bad small"; return; }
-        App.setPin(a); App.toast("PIN guardado"); V.ajustes(root);
+        if (a.length !== 4) { m.textContent = "Tienen que ser 4 números."; m.className = "pin-msg bad small"; return; }
+        if (a !== b) { m.textContent = "Los dos números no coinciden."; m.className = "pin-msg bad small"; return; }
+        App.setPin(a); App.toast("Números secretos guardados"); V.ajustes(root);
       });
-      if (conPin) App.$("[data-pindel]", box).addEventListener("click", function () { App.clearPin(); App.toast("PIN quitado"); V.ajustes(root); });
+      if (conPin) App.$("[data-pindel]", box).addEventListener("click", function () { App.clearPin(); App.toast("Números secretos sacados"); V.ajustes(root); });
       App.$("[data-pincancel]", box).addEventListener("click", function () { box.hidden = true; });
     }
     App.$("[data-pin]", root).addEventListener("click", panelPin);

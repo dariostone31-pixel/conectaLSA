@@ -11,7 +11,7 @@ window.App = window.App || {};
   "use strict";
 
   var KEY = "conectalsa-v1";
-  App.VERSION = "1.1";
+  App.VERSION = "1.1.1";
 
   function defaultSettings() {
     return { sound: true, vibration: true, theme: "auto", fs: "100", contrast: "normal", motion: "auto",
@@ -66,7 +66,9 @@ window.App = window.App || {};
   App.profiles = function () { return S.order.map(function (id) { return S.profiles[id]; }).filter(Boolean); };
   App.createProfile = function (o) {
     var p = newProfile(o.name, o.avatar, o.hand, o.goal);
-    S.profiles[p.id] = p; S.order.push(p.id); S.current = p.id; App.save(); return p;
+    S.profiles[p.id] = p; S.order.push(p.id);
+    App.unlock(p.id);   // quien crea el perfil entra directo
+    return p;
   };
   App.switchProfile = function (id) { if (S.profiles[id]) { S.current = id; App.save(); } };
   App.deleteProfile = function (id) {
@@ -317,6 +319,9 @@ window.App = window.App || {};
     var p = id ? S.profiles[id] : App.P(); if (!p || !p.pin) return true;
     return hashPin(String(pin), p.pin.salt) === p.pin.h;
   };
+  /* La app vuelve a preguntar quién sos cada vez que se abre (cada carga de la
+     página): con elegir el perfil alcanza para entrar, y si tiene números
+     secretos, se piden en ese momento. Nada de esto sale del equipo. */
   App.lock = function () { S.locked = true; App.save(); };
   App.unlock = function (id) {
     if (id && S.profiles[id]) S.current = id;

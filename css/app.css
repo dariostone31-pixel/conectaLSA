@@ -446,6 +446,11 @@ main:focus, main:focus-visible { outline: none; }
 .tip-ico { font-size: 1.7em; }
 .consejo h2 { display: flex; gap: 10px; align-items: center; }
 .consejo { scroll-margin-top: 80px; }
+/* Imagen de cada consejo: 1200x900 (4:3). Se recorta al centro si hace falta,
+   por eso conviene dejar libre el borde de 60 px de la imagen. */
+.consejo-media { margin: 0 0 14px; border-radius: 14px; overflow: hidden; background: var(--soft, #E7EEF9); border: 1px solid var(--line); }
+.consejo-media img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; }
+.consejo-media[hidden] { display: none; }
 .link-card { display: grid; gap: 6px; color: inherit; text-decoration: none; }
 .link-card:hover { border-color: var(--accent); }
 

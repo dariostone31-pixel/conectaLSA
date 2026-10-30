@@ -117,12 +117,21 @@ Un video grabado desde **Modo referente** queda guardado **solo en ese equipo** 
 
 ## Novedades de la versión 1.1
 
-1. **Acceso con perfiles y PIN local.** Al abrir, la app pregunta quién va a practicar. Cada perfil puede tener un PIN de 4 números (Ajustes → «Pedir un PIN al entrar»). El PIN se guarda como resumen (hash de 4.000 vueltas) en el propio dispositivo: no es una cuenta, no viaja a internet y no se puede recuperar. «Cerrar sesión» deja la app en la pantalla de acceso sin borrar nada.
+1. **Acceso con perfiles y PIN local.** Cada vez que se abre, la app pregunta «Hola, ¿quién sos?» antes de mostrar nada. Cada perfil puede tener un PIN de 4 números (Ajustes → «Pedir un PIN al entrar»). El PIN se guarda como resumen (hash de 4.000 vueltas) en el propio dispositivo: no es una cuenta, no viaja a internet y no se puede recuperar. «Cerrar sesión» deja la app en la pantalla de acceso sin borrar nada.
 2. **Cinco perfiles visuales por discapacidad** (Ajustes → Perfil visual): Estándar, Oscuro, Alto contraste, Daltonismo (paleta Okabe-Ito, sin depender del rojo/verde) y Calma (tonos suaves, sin halos ni movimiento, para autismo y TDAH). Se aplican al instante y se recuerdan en el dispositivo.
 3. **Íconos propios.** Se reemplazaron los emojis del sistema por un set dibujado a medida en `js/iconos.js` (trazo de 24×24, hereda el color del texto). Los avatares de animales se mantienen como stickers de identidad.
 4. **Política de privacidad 2.0.** 17 secciones: acceso y PIN, almacenamiento local y cookies, permisos del dispositivo, «qué no hace la app», transferencias internacionales, menores, derechos (Ley 25.326) y método. Misma fuente para la pantalla y el PDF.
 
-Archivos nuevos: `js/iconos.js` y `js/views-acceso.js`. Si actualizás, subí también `index.html` y `sw.js` (la versión del caché pasó a `conectalsa-v1.1.0`).
+Archivos nuevos: `js/iconos.js` y `js/views-acceso.js`. Si actualizás, subí también `index.html` y `sw.js` (la versión del caché pasó a `conectalsa-v1.1.1`).
+
+## Novedades de la versión 1.1.1 (29/10/2026)
+
+1. **El acceso es la primera pantalla, siempre.** Al abrir la app (o recargarla) aparece «Hola, ¿quién sos?» con los perfiles del equipo, aunque el perfil no tenga números secretos. Si alguien entraba a un enlace directo (por ejemplo, un consejo), después de elegir el perfil la app lo lleva a esa pantalla. Dentro de la app no se vuelve a preguntar.
+2. **Textos más amables para chicos y adolescentes.** «Soy yo» en vez de «Entrar», «números secretos» en vez de «PIN», «Me olvidé los números», «¡Hasta la próxima!». El PIN técnico sigue igual por dentro (hash de 4.000 vueltas, sin servidor).
+3. **Arreglado el tamaño de letra de Ajustes.** El control A / A+ / A++ no hacía nada: los botones estaban dibujados sin el controlador. Ahora A+ deja el texto al 115 % y A++ al 130 % (todo el texto, no solo una parte), se marca cuál está elegido y se recuerda al volver a abrir. La prueba automática lo controla.
+4. **Los consejos tienen lugar para una imagen.** «Para señar mejor» queda listo para recibir una imagen por consejo (1200 × 900 px, JPG, `img/consejos/<id>.jpg`). Mientras los archivos no estén, cada consejo se ve completo y prolijo, sin íconos de imagen rota. La guía para producirlas está en `publicar/Guia_imagenes_consejos_ConectaLSA.pdf`.
+
+Archivos tocados: `js/core.js`, `js/main.js`, `js/views-acceso.js`, `js/views-profile.js`, `js/views-learn.js`, `js/content.js`, `css/app.css`, `sw.js` y `README.md`.
 
 ## Trabajo en equipo (GitHub + Vercel)
 

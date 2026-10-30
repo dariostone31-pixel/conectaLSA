@@ -108,7 +108,7 @@ window.App = window.App || {};
     /* --- 1. Observá --- */
     function stepObserve(stage, s) {
       var it = s.item; App.track(it.id, "seen");
-      stage.innerHTML = '<span class="step-kicker">" + App.ico("ojo") + " Observá</span><h2>' + title(it) + '</h2><p class="muted">' + esc(it.uso) + '</p>';
+      stage.innerHTML = '<span class="step-kicker">' + App.ico("ojo") + ' Observá</span><h2>' + title(it) + '</h2><p class="muted">' + esc(it.uso) + '</p>';
       stage.appendChild(App.mediaFor(it));
       stage.appendChild(App.el('<p class="small muted" style="margin-top:10px">Fijate en la forma de la mano, hacia dónde mira la palma, dónde se hace, el movimiento y la cara. Usá «Lento» y «Espejo» si te ayuda.</p>'));
       actions(stage, { skip: false });
@@ -119,7 +119,7 @@ window.App = window.App || {};
       var it = s.item, label = it.aiLabel, M = App.Vision.Model, camOn = App.state().settings.camera !== false;
       var aiReady = camOn && M.has(label) && M.ready(), done = false, nx;
       st.scored++;
-      stage.innerHTML = '<span class="step-kicker">" + App.ico("mano") + " Practicá</span><h2>' + title(it) + '</h2>' +
+      stage.innerHTML = '<span class="step-kicker">' + App.ico("mano") + ' Practicá</span><h2>' + title(it) + '</h2>' +
         '<p class="muted">' + (aiReady ? "Hacé la seña frente a la cámara. Te vamos a decir qué tan parecida está y qué ajustar." : camOn ? "Usá la cámara como espejo y compará con el video. Después contanos cómo te salió." : "Hacé la seña mirando el video y contanos cómo te salió.") + '</p>' +
         '<div class="lab-grid">' + (camOn ? '<div data-cam></div>' : "") + '<div data-side></div></div>';
       var side = App.$("[data-side]", stage);
@@ -175,7 +175,7 @@ window.App = window.App || {};
     /* --- 3. ¿Cómo se escribe? (corrección tolerante: tildes, mayúsculas y signos no importan) --- */
     function stepWrite(stage, s) {
       var it = s.item, tries = 0, solved = false; st.scored++;
-      stage.innerHTML = '<span class="step-kicker">" + App.ico("texto") + " ¿Cómo se escribe?</span><h2>¿Qué ' + (it.kind === "letra" ? "letra" : "seña") + ' es?</h2>';
+      stage.innerHTML = '<span class="step-kicker">' + App.ico("texto") + ' ¿Cómo se escribe?</span><h2>¿Qué ' + (it.kind === "letra" ? "letra" : "seña") + ' es?</h2>';
       stage.appendChild(App.mediaFor(it, { hideLabel: true }));
       var f = App.el('<form class="write" autocomplete="off"><label class="sr" for="wr">Tu respuesta</label><input id="wr" type="text" inputmode="text" autocapitalize="' + (it.kind === "letra" ? "characters" : "sentences") + '" maxlength="' + (it.kind === "letra" ? 2 : 30) + '" placeholder="' + (it.kind === "letra" ? "Escribí la letra" : "Escribí la palabra") + '" spellcheck="false"><button class="btn" type="submit">Comprobar</button></form>');
       stage.appendChild(f);
@@ -208,7 +208,7 @@ window.App = window.App || {};
       var it = s.item, answered = false; st.scored++;
       var pool = (s.pool || []).filter(function (id) { return id !== it.id; });
       var opts = App.shuffle([it].concat(App.sample(pool, 3).map(function (id) { return C.ITEMS[id]; })));
-      stage.innerHTML = '<span class="step-kicker">" + App.ico("buscar") + " ¿Cuál es?</span><h2>Elegí la seña que ves</h2>';
+      stage.innerHTML = '<span class="step-kicker">' + App.ico("buscar") + ' ¿Cuál es?</span><h2>Elegí la seña que ves</h2>';
       stage.appendChild(App.mediaFor(it, { hideLabel: true }));
       var box = App.el('<div class="options"></div>'); stage.appendChild(box);
       var fb = App.el('<div aria-live="polite"></div>'); stage.appendChild(fb);
@@ -230,8 +230,8 @@ window.App = window.App || {};
     /* --- 4b. Tarjeta de memoria (funciona aunque no haya video) --- */
     function stepCard(stage, s) {
       var it = s.item; st.scored++;
-      stage.innerHTML = '<span class="step-kicker">" + App.ico("repaso") + " ¿Te acordás?</span><h2>¿Cómo se hace «' + esc(it.label) + '»?</h2><p class="muted">Hacé la seña de memoria y después mirá si te salió igual.</p>';
-      var reveal = App.el('<button class="btn big alt" type="button" data-focus>" + App.ico("ojo") + " Ver la seña</button>'); stage.appendChild(reveal);
+      stage.innerHTML = '<span class="step-kicker">' + App.ico("repaso") + ' ¿Te acordás?</span><h2>¿Cómo se hace «' + esc(it.label) + '»?</h2><p class="muted">Hacé la seña de memoria y después mirá si te salió igual.</p>';
+      var reveal = App.el('<button class="btn big alt" type="button" data-focus>' + App.ico("ojo") + ' Ver la seña</button>'); stage.appendChild(reveal);
       var holder = App.el('<div></div>'); stage.appendChild(holder);
       reveal.addEventListener("click", function () {
         reveal.remove(); holder.appendChild(App.mediaFor(it));
@@ -246,7 +246,7 @@ window.App = window.App || {};
     /* --- 5. Deletreá (niveles de letras) --- */
     function stepSpell(stage, s) {
       st.scored++;
-      stage.innerHTML = '<span class="step-kicker">" + App.ico("dado") + " Deletreá</span><h2>Hacé las letras en orden</h2><p class="muted">' + (App.state().settings.camera === false ? "Hacé cada letra y tocá «Siguiente letra»." : "Si la cámara conoce la letra, avanza sola cuando te reconoce. Si no, tocá «Siguiente letra».") + '</p>';
+      stage.innerHTML = '<span class="step-kicker">' + App.ico("dado") + ' Deletreá</span><h2>Hacé las letras en orden</h2><p class="muted">' + (App.state().settings.camera === false ? "Hacé cada letra y tocá «Siguiente letra»." : "Si la cámara conoce la letra, avanza sola cuando te reconoce. Si no, tocá «Siguiente letra».") + '</p>';
       var nx;
       st.cam = App.spellWidget(stage, s.word, function () { st.ok++; App.P().spelled++; App.addXp(8); nx.disabled = false; nx.focus(); });
       nx = actions(stage, { nextDisabled: true });
@@ -367,7 +367,7 @@ window.App = window.App || {};
       '<div class="sena-grid"><div><span class="eyebrow">' + esc(lv.title) + '</span><h1>' + esc(App.itemTitle(it)) + '</h1><p class="muted">' + esc(it.uso) + '</p><div data-media></div></div>' +
       '<div class="stack"><div class="card"><span class="eyebrow">Tu progreso con esta seña</span>' +
         (r ? '<p>Vista ' + r.seen + ' ' + (r.seen === 1 ? "vez" : "veces") + ' · escrita bien ' + r.wOk + ' · reconocida por la cámara ' + r.ai + '</p><p class="small muted">' + (App.mastered(it.id) ? "Dominada" : "Seguí practicando: aparece en tu repaso.") + '</p>' : '<p class="muted">Todavía no la practicaste.</p>') +
-        '<a class="btn block" href="#/practicar/' + encodeURIComponent(it.id) + '">" + App.ico("mano") + " Practicar esta seña</a></div>' +
+        '<a class="btn block" href="#/practicar/' + encodeURIComponent(it.id) + '">' + App.ico("mano") + ' Practicar esta seña</a></div>' +
         '<div class="card"><span class="eyebrow">Cámara</span><p class="small" style="margin:0">' + (ai ? "La cámara puede reconocer esta seña (forma de la mano)." : "La cámara todavía no aprendió esta seña.") + '</p></div></div></div>';
     App.$("[data-media]", root).appendChild(App.mediaFor(it));
   };
@@ -379,7 +379,19 @@ window.App = window.App || {};
     root.innerHTML = '<a class="link" href="#/niveles">← Niveles</a><span class="eyebrow" style="margin-top:10px">Consejos</span><h1>Para señar mejor</h1><div data-list></div>';
     var list = App.$("[data-list]", root);
     C.CONSEJOS.forEach(function (t) {
-      list.appendChild(App.el('<article class="card consejo" id="' + t.id + '"><h2><span class="ico" aria-hidden="true">' + App.icoTip(t.id) + '</span> ' + esc(t.title) + '</h2>' + t.body.map(function (b) { return '<p>' + esc(b).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>") + '</p>'; }).join("") + '</article>'));
+      var art = App.el('<article class="card consejo" id="' + t.id + '"><h2><span class="ico" aria-hidden="true">' + App.icoTip(t.id) + '</span> ' + esc(t.title) + '</h2>' + t.body.map(function (b) { return '<p>' + esc(b).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>") + '</p>'; }).join("") + '</article>');
+      var med = C.CONSEJO_IMG_ACTIVAS && C.CONSEJO_IMG && C.CONSEJO_IMG[t.id];
+      if (med) {
+        // La imagen se muestra solo cuando el archivo existe: si todavía no está,
+        // el consejo queda completo y prolijo, sin íconos de imagen rota.
+        var fig = App.el('<figure class="consejo-media"><img src="' + med.src + '" alt="' + esc(med.alt) + '" width="1200" height="900" decoding="async"></figure>');
+        var im = App.$("img", fig);
+        fig.hidden = true;
+        im.addEventListener("load", function () { fig.hidden = false; });
+        im.addEventListener("error", function () { fig.remove(); });
+        art.insertBefore(fig, art.querySelector("h2").nextSibling);
+      }
+      list.appendChild(art);
     });
     var h = location.hash.split("#")[2]; if (h) { var el = document.getElementById(h); if (el) setTimeout(function () { el.scrollIntoView({ block: "start" }); }, 50); }
   };

@@ -1,7 +1,7 @@
 /* ConectaLSA · Service worker
    Guarda la app completa (incluida la IA) para que funcione sin internet.
    Al publicar una nueva versión, cambiá VERSION para que se actualice en todos los dispositivos. */
-var VERSION = "conectalsa-v1.1.0";
+var VERSION = "conectalsa-v1.1.1";
 var CORE = [
   "./", "index.html", "manifest.webmanifest",
   "css/app.css",
@@ -24,7 +24,7 @@ self.addEventListener("activate", function (e) {
 //  - Archivos pesados que casi nunca cambian (IA, tipografías, íconos, videos): primero caché.
 //  - Código y contenidos de la app: primero red (si hay conexión, siempre la última versión);
 //    sin conexión, la copia guardada. Así una corrección llega a todas las PC del evento con solo recargar.
-var HEAVY = /\/(vendor|fonts|icons|media)\//;
+var HEAVY = /\/(vendor|fonts|icons|media|img)\//;
 self.addEventListener("fetch", function (e) {
   var req = e.request;
   if (req.method !== "GET" || new URL(req.url).origin !== location.origin) return;
