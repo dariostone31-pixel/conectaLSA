@@ -1,7 +1,7 @@
 /* ConectaLSA · Service worker
    Guarda la app completa (incluida la IA) para que funcione sin internet.
    Al publicar una nueva versión, cambiá VERSION para que se actualice en todos los dispositivos. */
-var VERSION = "conectalsa-v1.1.1";
+var VERSION = "conectalsa-v1.1.2";
 var CORE = [
   "./", "index.html", "manifest.webmanifest",
   "css/app.css",
@@ -10,7 +10,9 @@ var CORE = [
   "icons/icon.svg", "icons/icon-192.png", "icons/icon-512.png", "icons/icon-maskable-512.png", "icons/icon-180.png", "icons/logo.svg", "icons/logo-blanco.svg",
   "vendor/mediapipe/vision_bundle.mjs", "vendor/mediapipe/vision_wasm_internal.js", "vendor/mediapipe/vision_wasm_internal.wasm",
   "vendor/mediapipe/vision_wasm_nosimd_internal.js", "vendor/mediapipe/vision_wasm_nosimd_internal.wasm",
-  "vendor/mediapipe/hand_landmarker.task"
+  "vendor/mediapipe/hand_landmarker.task",
+  "img/consejos/parametros.jpg", "img/consejos/espacio.jpg", "img/consejos/cara.jpg",
+  "img/consejos/mano.jpg", "img/consejos/camara.jpg"
 ];
 self.addEventListener("install", function (e) {
   e.waitUntil(caches.open(VERSION).then(function (c) { return c.addAll(CORE); }).then(function () { return self.skipWaiting(); }));

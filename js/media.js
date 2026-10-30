@@ -23,6 +23,46 @@ window.App = window.App || {};
   function tx(mode) { return open().then(function (d) { return d.transaction(STORE, mode).objectStore(STORE); }); }
   function req(r) { return new Promise(function (res, rej) { r.onsuccess = function () { res(r.result); }; r.onerror = function () { rej(r.error); }; }); }
 
+  /* ---------- ZIP mínimo (método «guardar», sin comprimir) ----------
+     Sirve para bajar todos los videos de una vez y guardarlos en la compu.
+     No usa librerías externas: la app tiene que funcionar sin internet. */
+  function crc32(u8) {
+    var t = crc32.t;
+    if (!t) {
+      t = crc32.t = new Int32Array(256);
+      for (var n = 0; n < 256; n++) { var c = n; for (var k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1); t[n] = c; }
+    }
+    var crc = -1;
+    for (var i = 0; i < u8.length; i++) crc = (crc >>> 8) ^ t[(crc ^ u8[i]) & 0xFF];
+    return (crc ^ -1) >>> 0;
+  }
+  function hacerZip(archivos) {
+    var d = new Date(), partes = [], central = [], offset = 0;
+    var hora = ((d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1)) & 0xFFFF;
+    var fecha = (((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate()) & 0xFFFF;
+    archivos.forEach(function (f) {
+      var nombre = new TextEncoder().encode(f.name), crc = crc32(f.u8);
+      var lh = new DataView(new ArrayBuffer(30));
+      lh.setUint32(0, 0x04034b50, true); lh.setUint16(4, 20, true); lh.setUint16(6, 0x0800, true);
+      lh.setUint16(10, hora, true); lh.setUint16(12, fecha, true); lh.setUint32(14, crc, true);
+      lh.setUint32(18, f.u8.length, true); lh.setUint32(22, f.u8.length, true);
+      lh.setUint16(26, nombre.length, true); lh.setUint16(28, 0, true);
+      partes.push(new Uint8Array(lh.buffer), nombre, f.u8);
+      var cd = new DataView(new ArrayBuffer(46));
+      cd.setUint32(0, 0x02014b50, true); cd.setUint16(4, 20, true); cd.setUint16(6, 20, true); cd.setUint16(8, 0x0800, true);
+      cd.setUint16(12, hora, true); cd.setUint16(14, fecha, true); cd.setUint32(16, crc, true);
+      cd.setUint32(20, f.u8.length, true); cd.setUint32(24, f.u8.length, true); cd.setUint16(28, nombre.length, true);
+      cd.setUint32(42, offset, true);
+      central.push(new Uint8Array(cd.buffer), nombre);
+      offset += 30 + nombre.length + f.u8.length;
+    });
+    var tamCentral = central.reduce(function (a, b) { return a + b.length; }, 0);
+    var fin = new DataView(new ArrayBuffer(22));
+    fin.setUint32(0, 0x06054b50, true); fin.setUint16(8, archivos.length, true); fin.setUint16(10, archivos.length, true);
+    fin.setUint32(12, tamCentral, true); fin.setUint32(16, offset, true);
+    return new Blob(partes.concat(central, [new Uint8Array(fin.buffer)]), { type: "application/zip" });
+  }
+
   var M = App.Media = {
     /** Carga el índice (sin los videos) al iniciar. */
     init: function () {
@@ -57,6 +97,25 @@ window.App = window.App || {};
     validate: function (id, by) {
       return tx("readwrite").then(function (s) { return req(s.get(id)).then(function (r) { if (!r) throw new Error("No existe"); r.validatedBy = by; return req(s.put(r)); }); })
         .then(function () { meta[id].validatedBy = by; });
+    },
+    /** Todos los videos grabados en un solo ZIP, con sus créditos. Para guardar en la compu. */
+    zipAll: function () {
+      return tx("readonly").then(function (st) { return req(st.getAll()); }).then(function (lista) {
+        if (!lista.length) return Promise.reject(new Error("Todavía no hay videos grabados"));
+        var txt = "ConectaLSA · videos de las señas\r\nGenerado: " + new Date().toLocaleString("es-AR") + "\r\n\r\n" +
+          "En esta carpeta está un archivo de video por seña (el nombre es el mismo id que aparece\r\n" +
+          "en la dirección de la seña dentro de la app, por ejemplo #/sena/buen-dia → buen-dia.webm).\r\n\r\n" +
+          "Seña | Quién la señó | Quién la validó\r\n";
+        lista.sort(function (a, b) { return a.id < b.id ? -1 : 1; });
+        lista.forEach(function (r) { txt += r.id + " | " + (r.signer || "—") + " | " + (r.validatedBy || "sin validar") + "\r\n"; });
+        return Promise.all(lista.map(function (r) {
+          var ext = /mp4/.test((r.blob && r.blob.type) || "") ? ".mp4" : ".webm";
+          return r.blob.arrayBuffer().then(function (b) { return { name: "videos-senas/" + r.id + ext, u8: new Uint8Array(b) }; });
+        })).then(function (archivos) {
+          archivos.unshift({ name: "CREDITOS.txt", u8: new TextEncoder().encode(txt) });
+          return hacerZip(archivos);
+        });
+      });
     },
     remove: function (id) {
       return tx("readwrite").then(function (s) { return req(s.delete(id)); }).then(function () { if (urls[id]) URL.revokeObjectURL(urls[id]); delete urls[id]; delete meta[id]; });

@@ -35,7 +35,9 @@ window.App = window.App || {};
       '<div class="stats"><div class="stat"><span class="stat-ico">' + App.ico("camara") + '</span><strong>' + Md.count() + '/' + total + '</strong><small>con video</small></div><div class="stat"><span class="stat-ico">' + App.ico("check") + '</span><strong>' + Md.validatedCount() + '</strong><small>validados</small></div><div class="stat"><span class="stat-ico">' + App.ico("mano") + '</span><strong>' + Object.keys(App.Vision.Model.labels()).length + '</strong><small>señas en la cámara</small></div></div>' +
       '<div class="grid two" style="margin-top:14px">' +
         '<div class="card"><span class="eyebrow">Quién sos</span><label class="field"><span>Tu nombre o código (aparece en los créditos del video)</span><input type="text" data-me maxlength="40" value="' + esc(me) + '" placeholder="Ej.: María G. — Asociación de Sordos"></label></div>' +
-        '<div class="card"><span class="eyebrow">Compartir entre equipos</span><p class="small muted" style="margin-top:0">Descargá un paquete con todos los videos y créditos, y cargalo en los otros equipos.</p><div class="row"><button class="btn" type="button" data-exp><span class="ico">' + App.ico("descarga") + '</span> Exportar paquete</button><label class="btn ghost"><span class="ico">' + App.ico("subir") + '</span> Importar paquete<input type="file" accept=".json,application/json" data-imp hidden></label></div></div>' +
+        '<div class="card"><span class="eyebrow">Compartir entre equipos</span><p class="small muted" style="margin-top:0">Descargá un paquete con todos los videos y créditos, y cargalo en los otros equipos.</p><div class="row"><button class="btn" type="button" data-exp><span class="ico">' + App.ico("descarga") + '</span> Exportar paquete</button><label class="btn ghost"><span class="ico">' + App.ico("subir") + '</span> Importar paquete<input type="file" accept=".json,application/json" data-imp hidden></label></div>' +
+          '<p class="small muted" style="margin:10px 0 0">Para guardar todo en la compu (sin depender del navegador), bajá los videos en un ZIP:</p>' +
+          '<button class="btn ghost" type="button" data-zip><span class="ico">' + App.ico("descarga") + '</span> Descargar todos los videos (ZIP)</button></div>' +
       '</div>' +
       '<details class="card" style="margin-top:14px"><summary><strong><span class="ico">' + App.ico("documento") + '</span> Cómo grabar un buen video</strong></summary><ul>' +
         '<li>Fondo liso y ropa lisa que contraste con la piel. Luz de frente.</li><li>Encuadre de la cabeza a la cintura, con espacio a los costados para el movimiento.</li>' +
@@ -45,6 +47,15 @@ window.App = window.App || {};
       '<div class="grid two" style="margin-top:18px"><a class="card link-card" href="#/entrenar"><span class="tip-ico">' + App.ico("mano") + '</span><strong>Enseñarle señas a la cámara</strong><span class="small muted">Capturá ejemplos de varias personas y medí el falso rechazo.</span></a>' +
         '<div class="card"><span class="eyebrow">PIN del modo referente</span><p class="small muted" style="margin-top:0">' + (R.pin ? "Hay un PIN configurado." : "Sin PIN: cualquiera puede entrar.") + '</p><form class="row" data-pinf><input type="password" inputmode="numeric" maxlength="8" placeholder="Nuevo PIN (vacío = sin PIN)" data-pin style="flex:1;min-width:140px"><button class="btn ghost" type="submit">Guardar PIN</button></form></div></div>';
     App.$("[data-me]", root).addEventListener("change", function () { App.data.set("ref-name", this.value.trim()); App.toast("Guardado"); });
+    var zipBtn = App.$("[data-zip]", root);
+    if (zipBtn) zipBtn.addEventListener("click", function () {
+      zipBtn.disabled = true; App.toast("Preparando el ZIP…");
+      Md.zipAll().then(function (b) {
+        App.download("conectalsa-videos-" + App.today() + ".zip", b);
+        App.toast("ZIP descargado: guardalo en la compu");
+      }).catch(function (e) { App.toast(e.message || "No se pudo armar el ZIP"); })
+        .then(function () { zipBtn.disabled = false; });
+    });
     var fEl = App.$("[data-f]", root);
     [["todos", "Todas"], ["sin", "Sin video"], ["pend", "Por validar"], ["ok", "Validadas"]].forEach(function (f) {
       var b = App.el('<button class="chip" type="button" aria-pressed="' + (f[0] === filter) + '">' + f[1] + '</button>');
@@ -128,7 +139,8 @@ window.App = window.App || {};
     function recorder() {
       if (!me) { App.toast("Primero escribí tu nombre en el panel del referente"); App.go("#/referente"); return; }
       root.innerHTML = '<button class="link" type="button" data-back>← Cancelar</button><h1 style="margin-top:10px">Grabar: ' + esc(it.label) + '</h1>' +
-        '<div class="recorder"><div class="rec-box"><video playsinline muted autoplay></video><div class="rec-frame" aria-hidden="true"><span>cabeza</span><span>cintura</span></div><div class="rec-count" hidden></div><span class="rec-dot" hidden>● REC</span></div>' +
+        '<div class="recorder"><div class="rec-cams" data-cams role="group" aria-label="Elegir cámara"></div>' +
+        '<div class="rec-box"><video playsinline muted autoplay></video><div class="rec-frame" aria-hidden="true"><span>cabeza</span><span>cintura</span></div><div class="rec-count" hidden></div><span class="rec-dot" hidden>● REC</span></div>' +
         '<label class="check"><input type="checkbox" data-ok> La persona que aparece dio su consentimiento para usar este video en ConectaLSA.</label>' +
         '<div class="row"><button class="btn big" type="button" data-go disabled>⏺ Empezar (cuenta 3, graba hasta 6 s)</button><button class="btn ghost" type="button" data-stop hidden>⏹ Terminar</button></div>' +
         '<div class="bar" hidden data-pb><i style="width:0%"></i></div></div>';
@@ -136,9 +148,62 @@ window.App = window.App || {};
       var v = App.$("video", root), go = App.$("[data-go]", root), stopB = App.$("[data-stop]", root), cnt = App.$(".rec-count", root);
       App.$("[data-ok]", root).addEventListener("change", function () { go.disabled = !this.checked || !stream; });
       if (!navigator.mediaDevices || !window.MediaRecorder) { App.toast("Este navegador no permite grabar. Subí un archivo."); return; }
-      navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: "user" }, audio: false }).then(function (s) {
-        stream = s; v.srcObject = s; go.disabled = !App.$("[data-ok]", root).checked;
-      }).catch(function () { App.toast("No se pudo abrir la cámara. Podés subir un archivo."); });
+      /* ---------- Cámara: se puede elegir cuál usar ----------
+         Sirve para filmar a la persona sorda con la cámara trasera del celular o
+         con una webcam conectada, sin tener que mover la compu. */
+      var cams = App.$("[data-cams]", root), grabando = false;
+
+      function nombreCam(d, i) {
+        var l = (d.label || "").trim();
+        if (/back|rear|environment|trasera|posterior/i.test(l)) return "Trasera";
+        if (/front|frontal|user|delantera/i.test(l)) return "Frontal";
+        if (!l) return "Cámara " + (i + 1);
+        return l.length > 26 ? l.slice(0, 24) + "…" : l;
+      }
+      function pintarCams(actualId, lista) {
+        if (!cams) return;
+        cams.innerHTML = "";
+        var vs = (lista || []).filter(function (d) { return d.kind === "videoinput"; });
+        if (vs.length <= 1) {
+          cams.innerHTML = '<p class="small muted" style="margin:0"><span class="ico">' + App.ico("camara") + '</span> ' +
+            esc(vs.length ? nombreCam(vs[0], 0) : "Cámara del equipo") + '</p>';
+          return;
+        }
+        var t = App.el('<p class="small muted" style="margin:0 0 6px">¿Desde qué cámara filmás? Si no sabés, tocá cada una y mirá la imagen.</p>');
+        cams.appendChild(t);
+        var fila = App.el('<div class="cam-pills"></div>');
+        vs.forEach(function (d, i) {
+          var b = App.el('<button class="chip" type="button" aria-pressed="' + (d.deviceId === actualId) + '">' + esc(nombreCam(d, i)) + '</button>');
+          b.addEventListener("click", function () {
+            if (grabando) { App.toast("Terminá la grabación para cambiar de cámara"); return; }
+            abrir({ deviceId: d.deviceId });
+          });
+          fila.appendChild(b);
+        });
+        cams.appendChild(fila);
+      }
+      function listarCams(actualId) {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return Promise.resolve([]);
+        return navigator.mediaDevices.enumerateDevices().then(function (ds) { pintarCams(actualId, ds); return ds; })
+          .catch(function () { return []; });
+      }
+      function abrir(opts) {
+        opts = opts || {};
+        if (stream) { stream.getTracks().forEach(function (t) { t.stop(); }); stream = null; }
+        var pedido = { width: { ideal: 1280 }, height: { ideal: 720 } };
+        if (opts.deviceId) pedido.deviceId = { exact: opts.deviceId }; else pedido.facingMode = "user";
+        return navigator.mediaDevices.getUserMedia({ video: pedido, audio: false }).then(function (s) {
+          stream = s; v.srcObject = s;
+          var tr = s.getVideoTracks()[0], conf = (tr && tr.getSettings) ? tr.getSettings() : {};
+          var caja = App.$(".rec-box", root);
+          if (caja) caja.classList.toggle("espejo", conf.facingMode === "user");
+          go.disabled = !App.$("[data-ok]", root).checked;
+          return listarCams(conf.deviceId || opts.deviceId || "");
+        }).catch(function () {
+          App.toast("No se pudo abrir esa cámara. Probá con otra o subí un archivo.");
+        });
+      }
+      abrir();
       go.addEventListener("click", function () {
         go.disabled = true; var n = 3; cnt.hidden = false; cnt.textContent = n;
         var t = setInterval(function () {
@@ -152,8 +217,8 @@ window.App = window.App || {};
         var mime = ["video/webm;codecs=vp9", "video/webm;codecs=vp8", "video/webm", "video/mp4"].filter(function (x) { return MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(x); })[0];
         rec = new MediaRecorder(stream, mime ? { mimeType: mime, videoBitsPerSecond: 2500000 } : undefined);
         rec.ondataavailable = function (e) { if (e.data && e.data.size) chunks.push(e.data); };
-        rec.onstop = function () { blob = new Blob(chunks, { type: rec.mimeType || "video/webm" }); review(); };
-        rec.start(200);
+        rec.onstop = function () { grabando = false; blob = new Blob(chunks, { type: rec.mimeType || "video/webm" }); review(); };
+        rec.start(200); grabando = true;
         App.$(".rec-dot", root).hidden = false; stopB.hidden = false; App.$("[data-pb]", root).hidden = false;
         var t0 = Date.now();
         timer = setInterval(function () {
@@ -166,12 +231,25 @@ window.App = window.App || {};
     function review() {
       if (stream) { stream.getTracks().forEach(function (t) { t.stop(); }); stream = null; }
       var url = URL.createObjectURL(blob);
+      var ext = /mp4/.test(blob.type || "") ? ".mp4" : ".webm";
+      var nombre = "conectalsa-" + it.id + "-" + (me || "referente").replace(/[^\wñÑáéíóúÁÉÍÓÚ-]+/g, "_") + ext;
       root.innerHTML = '<h1>¿Quedó bien?</h1><p class="muted">Revisá que se vea la seña completa, con buena luz, y la expresión facial.</p><div class="media"><div class="media-box"><video src="' + url + '" playsinline muted loop autoplay controls></video></div></div>' +
-        '<div class="row" style="margin-top:14px"><button class="btn ghost" type="button" data-re><span class="ico">' + App.ico("recargar") + '</span> Repetir</button><button class="btn big" type="button" data-save><span class="ico">' + App.ico("check-simple") + '</span> Guardar video</button></div>';
+        '<div class="note" style="margin-top:14px"><p style="margin:0 0 6px"><strong>Para no perderlo, guardá primero el archivo.</strong> Se baja a la carpeta <strong>Descargas</strong> de esta compu y queda ahí para siempre, pase lo que pase con el navegador.</p>' +
+        '<p class="small muted" style="margin:0">Después, si querés verlo dentro de la app, tocale «Cargar en la app». Eso lo guarda solo en este navegador.</p></div>' +
+        '<div class="row" style="margin-top:14px"><button class="btn ghost" type="button" data-re><span class="ico">' + App.ico("recargar") + '</span> Repetir</button>' +
+        '<button class="btn big" type="button" data-dl><span class="ico">' + App.ico("descarga") + '</span> 1. Guardar el archivo</button>' +
+        '<button class="btn alt" type="button" data-save><span class="ico">' + App.ico("check-simple") + '</span> 2. Cargar en la app</button></div>' +
+        '<p class="small muted" data-dlmsg style="margin-top:10px"></p>';
       App.$("[data-re]", root).addEventListener("click", function () { URL.revokeObjectURL(url); view(); });
+      App.$("[data-dl]", root).addEventListener("click", function () {
+        App.download(nombre, blob);
+        var m = App.$("[data-dlmsg]", root);
+        if (m) m.innerHTML = '<span class="ico">' + App.ico("check-simple") + '</span> Se guardó <strong>' + esc(nombre) + '</strong> en la carpeta <strong>Descargas</strong>.';
+        App.fx("ok");
+      });
       App.$("[data-save]", root).addEventListener("click", function () {
-        Md.put(it.id, blob, me || "Sin nombre").then(function () { URL.revokeObjectURL(url); App.fx("ok"); App.toast("Video guardado. Falta que lo valide otra persona."); view(); })
-          .catch(function (e) { App.toast("No se pudo guardar: " + e.message); });
+        Md.put(it.id, blob, me || "Sin nombre").then(function () { URL.revokeObjectURL(url); App.fx("ok"); App.toast("Cargado en la app. Falta que lo valide otra persona."); view(); })
+          .catch(function (e) { App.toast("No se pudo cargar: " + e.message); });
       });
     }
     view();

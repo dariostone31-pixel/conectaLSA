@@ -133,6 +133,14 @@ Archivos nuevos: `js/iconos.js` y `js/views-acceso.js`. Si actualizás, subí ta
 
 Archivos tocados: `js/core.js`, `js/main.js`, `js/views-acceso.js`, `js/views-profile.js`, `js/views-learn.js`, `js/content.js`, `css/app.css`, `sw.js` y `README.md`.
 
+## Novedades de la versión 1.1.2 (30/10/2026)
+
+1. **Las cinco imágenes de los consejos, adentro de la app.** «Para señar mejor» ya muestra una ilustración por consejo. Se guardan en `img/consejos/` a 1200 × 900 px y también quedan en la copia sin conexión.
+2. **Grabar los videos: primero el archivo, después la app.** En el modo referente, al terminar una toma aparecen dos botones en orden: **1. Guardar el archivo** (lo baja a la carpeta Descargas de la compu, con el nombre de la seña y de quien señó) y **2. Cargar en la app** (lo guarda en este navegador para poder validarlo y verlo). Si el navegador se limpia, el archivo sigue en Descargas.
+3. **Elegir cámara al grabar.** El grabador lista las cámaras del equipo (frontal, trasera del celular, webcam externa) con botones para cambiar sin mover la compu. La imagen se muestra en espejo solo con la cámara frontal; con la trasera o una webcam se ve igual que va a quedar grabada.
+4. **Todos los videos en un ZIP.** En el panel del referente, «Descargar todos los videos (ZIP)» baja un solo archivo con cada video (`<id>.webm` o `.mp4`) y un `CREDITOS.txt` con quién señaló y quién validó cada uno.
+5. **Deletreo automático más firme.** La cámara avanza sola cuando la letra se sostiene 600 ms, con un aviso en pantalla («¡Es la S, sostenela…»). Si la cámara todavía no conoce esa letra, lo dice y ofrece un enlace directo para enseñársela.
+
 ## Trabajo en equipo (GitHub + Vercel)
 
 Ver **[TRABAJO_EN_EQUIPO.md](TRABAJO_EN_EQUIPO.md)**: configuración inicial, trabajo diario con ramas y pull requests, vistas previas para compartir por WhatsApp y pruebas automáticas.

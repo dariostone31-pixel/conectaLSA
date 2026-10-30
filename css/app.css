@@ -446,6 +446,10 @@ main:focus, main:focus-visible { outline: none; }
 .tip-ico { font-size: 1.7em; }
 .consejo h2 { display: flex; gap: 10px; align-items: center; }
 .consejo { scroll-margin-top: 80px; }
+/* Deletreo: aviso de «sostené la letra» antes de avanzar sola */
+.hold-msg { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-weight: 700; color: var(--good, #0E7A4B); margin: 6px 0 0; }
+.hold-msg .bar { flex: 1 1 90px; min-width: 70px; }
+.hold-msg .bar i { background: var(--good, #0E7A4B); }
 /* Imagen de cada consejo: 1200x900 (4:3). Se recorta al centro si hace falta,
    por eso conviene dejar libre el borde de 60 px de la imagen. */
 .consejo-media { margin: 0 0 14px; border-radius: 14px; overflow: hidden; background: var(--soft, #E7EEF9); border: 1px solid var(--line); }
@@ -539,7 +543,14 @@ body.focus-mode main { padding-bottom: 40px; }
 details.card summary { cursor: pointer; }
 .recorder { display: grid; gap: 12px; max-width: 760px; }
 .rec-box { position: relative; aspect-ratio: 16 / 9; background: #0B1A1F; border-radius: 16px; overflow: hidden; }
-.rec-box video { width: 100%; height: 100%; object-fit: contain; transform: scaleX(-1); }
+.rec-box video { width: 100%; height: 100%; object-fit: contain; }
+/* La imagen se muestra en espejo solo con la cámara frontal (para reconocerse).
+   Con la trasera o una webcam externa se ve tal cual, como va a quedar grabado. */
+.rec-box.espejo video { transform: scaleX(-1); }
+/* Elegir cámara al grabar */
+.rec-cams { margin: 0 0 12px; }
+.rec-cams .cam-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+.rec-cams .chip { font-size: .92em; }
 .rec-frame { position: absolute; inset: 6% 28% 0; border: 3px dashed rgba(255,255,255,.4); border-bottom: 0; border-radius: 40% 40% 0 0; display: flex; flex-direction: column; justify-content: space-between; align-items: center; color: rgba(255,255,255,.6); font-size: .75em; padding: 6px; pointer-events: none; }
 .rec-count { position: absolute; inset: 0; display: grid; place-items: center; font-size: 6em; font-weight: 700; color: #fff; background: rgba(0,0,0,.35); }
 .rec-dot { position: absolute; top: 10px; left: 10px; background: #C62828; color: #fff; padding: 4px 10px; border-radius: 999px; font-weight: 700; font-size: .85em; }

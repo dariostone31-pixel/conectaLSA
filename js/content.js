@@ -62,7 +62,7 @@ window.App = window.App || {};
   /* Interruptor: se pone en true cuando las imágenes ya están subidas a
      img/consejos/. Mientras esté en false, la app no las pide (así no hay
      pedidos de archivos que todavía no existen). */
-  C.CONSEJO_IMG_ACTIVAS = false;
+  C.CONSEJO_IMG_ACTIVAS = true;
   C.CONSEJO_IMG = {
     parametros: { src: "img/consejos/parametros.jpg",
       alt: "Dibujo de una mano en el centro y cinco recuadros alrededor: forma de la mano, orientación, lugar, movimiento y expresión de la cara." },

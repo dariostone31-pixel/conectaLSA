@@ -399,15 +399,32 @@ window.App = window.App || {};
   /* =======================================================
      Widget de deletreo
      ======================================================= */
+  /* Regla del deletreo automático.
+     La cámara no avanza con ver la letra una vez: pide sostenerla 600 ms.
+     Así no salta de letra por un cuadro suelto ni por una mano que pasa. */
+  App.spellGate = function (msSostener) {
+    var falta = msSostener || 600, t0 = 0;
+    return {
+      reset: function () { t0 = 0; },
+      check: function (reconoce, ahora) {
+        ahora = ahora || Date.now();
+        if (!reconoce) { t0 = 0; return { avanza: false, sostenido: 0, falta: 0 }; }
+        if (!t0) t0 = ahora;
+        var d = ahora - t0;
+        return { avanza: d >= falta, sostenido: d, falta: Math.max(0, falta - d) };
+      }
+    };
+  };
+
   App.spellWidget = function (container, word, onDone) {
     var letters = word.toUpperCase().split("").filter(function (c) { return /[A-ZÑ]/.test(c); });
     var i = 0, M = App.Vision.Model, aiCount = 0, finished = false, camOn = App.state().settings.camera !== false;
     var wrap = App.el('<div><div class="word-display"></div><div class="lab-grid">' + (camOn ? '<div data-cam></div>' : "") + '<div data-side></div></div></div>');
     container.appendChild(wrap);
     var disp = App.$(".word-display", wrap), side = App.$("[data-side]", wrap);
-    var info = App.el('<div class="card"><span class="eyebrow">Letra actual</span><div class="cur-letter" data-cur></div><p class="small muted" data-mode></p><ul class="conf-list" data-conf></ul><ul class="hint-list" data-hints></ul><button class="btn alt block" type="button" data-nextl>Siguiente letra →</button></div>');
+    var info = App.el('<div class="card"><span class="eyebrow">Letra actual</span><div class="cur-letter" data-cur></div><p class="small muted" data-mode></p><ul class="conf-list" data-conf></ul><ul class="hint-list" data-hints></ul><p class="hold-msg" data-hold role="status" aria-live="polite" hidden></p><button class="btn alt block" type="button" data-nextl>Siguiente letra →</button></div>');
     side.appendChild(info);
-    var sm = new App.Vision.Smoother(10);
+    var sm = new App.Vision.Smoother(10), gate = App.spellGate(600);
     function draw() {
       disp.innerHTML = letters.map(function (c, j) { return '<span class="' + (j < i ? "ok" : j === i ? "cur" : "") + '">' + c + '</span>'; }).join("");
       if (i >= letters.length) {
@@ -416,9 +433,15 @@ window.App = window.App || {};
       }
       var L = letters[i], has = camOn && M.has(L) && M.ready();
       App.$("[data-cur]", info).textContent = L;
-      App.$("[data-mode]", info).textContent = has ? "La cámara conoce esta letra: avanza sola cuando te reconoce." : "Hacé la letra y tocá «Siguiente letra».";
+      var modo = App.$("[data-mode]", info);
+      modo.textContent = has ? "La cámara conoce esta letra: avanza sola cuando la sostenés un momento."
+        : (camOn && M.ready() ? "La cámara todavía no conoce esta letra: hacela y tocá «Siguiente letra»." : "Hacé la letra y tocá «Siguiente letra».");
+      if (!has && camOn) {
+        modo.insertAdjacentHTML("afterend", '<p class="small" style="margin:6px 0 0"><a class="link" href="#/entrenar">' +
+          App.ico("mano") + ' Enseñarle esta letra a la cámara</a> (una persona la muestra varias veces y queda aprendida).</p>');
+      }
       App.$("[data-conf]", info).innerHTML = ""; App.$("[data-hints]", info).innerHTML = "";
-      sm.reset();
+      sm.reset(); gate.reset();
     }
     function advance(byAI) { if (byAI) { aiCount++; App.track("letra-" + letters[i].toLowerCase(), "ai"); } App.fx("ok"); i++; draw(); }
     App.$("[data-nextl]", info).addEventListener("click", function () { advance(false); });
@@ -433,7 +456,18 @@ window.App = window.App || {};
         var conf = App.$("[data-conf]", info); if (!conf) return;
         conf.innerHTML = r.unknown ? '<li class="muted">No reconozco esta forma…</li>' : r.top.slice(0, 3).map(function (x) { return '<li><span>' + esc(x.label) + '</span><span class="bar ' + (x.label === L ? "good" : "") + '"><i style="width:' + Math.round(x.p * 100) + '%"></i></span><span>' + Math.round(x.p * 100) + '%</span></li>'; }).join("");
         App.$("[data-hints]", info).innerHTML = App.Vision.hints(h.canon, L).map(function (x) { return '<li><span class="ico">' + App.ico("bombilla") + '</span> ' + esc(x.text) + "</li>"; }).join("");
-        if (res.full && res.label === L && res.ratio >= 0.6 && res.p >= 0.5) advance(true);
+        var reconoce = res.full && res.label === L && res.ratio >= 0.6 && res.p >= 0.5;
+        var paso = gate.check(reconoce);
+        // Aviso visual: el chico ve que la cámara lo está reconociendo antes de avanzar.
+        var aviso = App.$("[data-hold]", info);
+        if (aviso) {
+          if (reconoce) {
+            aviso.hidden = false;
+            aviso.innerHTML = '<span class="ico">' + App.ico("check-simple") + '</span> ¡Es la ' + esc(L) + '! Sostenela… ' +
+              '<span class="bar hold"><i style="width:' + Math.min(100, Math.round(100 * paso.sostenido / 600)) + '%"></i></span>';
+          } else { aviso.hidden = true; }
+        }
+        if (paso.avanza) advance(true);
       } });
     draw();
     return cam;
