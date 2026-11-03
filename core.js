@@ -11,7 +11,7 @@ window.App = window.App || {};
   "use strict";
 
   var KEY = "conectalsa-v1";
-  App.VERSION = "1.1.3";
+  App.VERSION = "1.1.4";
 
   function defaultSettings() {
     return { sound: true, vibration: true, theme: "auto", fs: "100", contrast: "normal", motion: "auto",
