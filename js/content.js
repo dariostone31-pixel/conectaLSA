@@ -160,6 +160,13 @@ window.App = window.App || {};
     "violeta": { src: "media/senas/violeta.mp4", signer: "", validatedBy: "" },
     "rosa": { src: "media/senas/rosa.mp4", signer: "", validatedBy: "" },
     "celeste": { src: "media/senas/celeste.mp4", signer: "", validatedBy: "" },
+    "lunes": { src: "media/senas/lunes.mp4", signer: "", validatedBy: "" },
+    "martes": { src: "media/senas/martes.mp4", signer: "", validatedBy: "" },
+    "miercoles": { src: "media/senas/miercoles.mp4", signer: "", validatedBy: "" },
+    "jueves": { src: "media/senas/jueves.mp4", signer: "", validatedBy: "" },
+    "viernes": { src: "media/senas/viernes.mp4", signer: "", validatedBy: "" },
+    "sabado": { src: "media/senas/sabado.mp4", signer: "", validatedBy: "" },
+    "domingo": { src: "media/senas/domingo.mp4", signer: "", validatedBy: "" },
   };
 
   /* ---------- Ayudantes ---------- */
