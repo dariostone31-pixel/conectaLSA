@@ -141,6 +141,10 @@ Archivos tocados: `js/core.js`, `js/main.js`, `js/views-acceso.js`, `js/views-pr
 4. **Todos los videos en un ZIP.** En el panel del referente, «Descargar todos los videos (ZIP)» baja un solo archivo con cada video (`<id>.webm` o `.mp4`) y un `CREDITOS.txt` con quién señaló y quién validó cada uno.
 5. **Deletreo automático más firme.** La cámara avanza sola cuando la letra se sostiene 600 ms, con un aviso en pantalla («¡Es la S, sostenela…»). Si la cámara todavía no conoce esa letra, lo dice y ofrece un enlace directo para enseñársela.
 
+## Novedades de la versión 1.1.7 (3/11/2026)
+
+- **Los siete días de la semana ya tienen video.** Con las vocales y los colores son **24 de las 73 señas** con video.
+
 ## Novedades de la versión 1.1.6 (3/11/2026)
 
 - **Los doce colores ya tienen video.** Se suman a las cinco vocales: son **17 de las 73 señas** con video (mientras no los revise otro referente sordo, figuran como «Pendiente de validación»).
