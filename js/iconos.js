@@ -122,6 +122,30 @@ window.App = window.App || {};
     racha3: "fuego", estrellas: "estrella-llena"
   };
 
+  /* ---------------------------------------------------------
+     Caras: expresión facial
+     Se dibujan aparte de los íconos porque necesitan más detalle
+     (cejas, ojos y boca) para que se entienda la expresión.
+     --------------------------------------------------------- */
+  var CARA = {
+    // cabeza y ojos comunes
+    base: '<circle cx="24" cy="24" r="17"/>',
+    // Cada expresión cambia cejas, ojos y boca.
+    tranquila: '<path d="M16 20h5M27 20h5"/><circle cx="18.5" cy="24" r="1.6" fill="currentColor" stroke="none"/><circle cx="29.5" cy="24" r="1.6" fill="currentColor" stroke="none"/><path d="M19 30c1.6 1.6 3.4 2.2 5 2.2s3.4-.6 5-2.2"/>',
+    pregunta: '<path d="M15.5 17.5c1.6-1.4 3.4-1.4 5 0M27.5 17.5c1.6-1.4 3.4-1.4 5 0"/><circle cx="18.5" cy="24" r="2.1"/><circle cx="29.5" cy="24" r="2.1"/><ellipse cx="24" cy="32" rx="3" ry="3.4"/>',
+    afirmar: '<path d="M15.5 19.5h6M26.5 19.5h6"/><circle cx="18.5" cy="24" r="1.6" fill="currentColor" stroke="none"/><circle cx="29.5" cy="24" r="1.6" fill="currentColor" stroke="none"/><path d="M19.5 30.5c1.4 1.2 3 1.8 4.5 1.8s3.1-.6 4.5-1.8"/>',
+    saludo: '<path d="M15.5 19.5c1.6-1.6 3.4-1.6 5 0M27.5 19.5c1.6-1.6 3.4-1.6 5 0"/><path d="M16.2 23.6c.9.9 2.2.9 3.1 0M28.7 23.6c.9.9 2.2.9 3.1 0"/><path d="M18 29.4c1.7 2 3.9 3 6 3s4.3-1 6-3"/>',
+    enfasis: '<path d="M15.5 17.8l5.4 2M32.5 17.8l-5.4 2"/><circle cx="18.5" cy="24" r="1.6" fill="currentColor" stroke="none"/><circle cx="29.5" cy="24" r="1.6" fill="currentColor" stroke="none"/><ellipse cx="24" cy="31.5" rx="5" ry="3.6"/>'
+  };
+
+  /** Cara con la expresión pedida (tranquila, pregunta, afirmar, saludo, enfasis). */
+  App.caraSVG = function (id, clase) {
+    var d = CARA[id] ? id : "tranquila";
+    return '<svg class="cara-svg' + (clase ? " " + clase : "") + '" viewBox="0 0 48 48" fill="none" stroke="currentColor" ' +
+      'stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' +
+      CARA.base + CARA[d] + '</svg>';
+  };
+
   /** Pinta un ícono de nivel a partir del id (con respaldo seguro). */
   App.icoNivel = function (id, clase) { return App.ico(App.LEVEL_ICONS[id] || "libro", clase); };
   App.icoTip = function (id, clase) { return App.ico(App.TIP_ICONS[id] || "capas", clase); };

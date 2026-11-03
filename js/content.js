@@ -15,7 +15,8 @@ window.App = window.App || {};
   function add(level, kind, label, o) {
     o = o || {};
     var id = o.id || (kind === "letra" ? "letra-" + label.toLowerCase() : App_slug(label));
-    ITEMS[id] = { id: id, level: level, kind: kind, label: label, write: o.write || label, alt: o.alt || [], uso: o.uso || "", aiLabel: kind === "letra" ? label : id };
+    ITEMS[id] = { id: id, level: level, kind: kind, label: label, write: o.write || label, alt: o.alt || [], uso: o.uso || "",
+      cara: o.cara || "", aiLabel: kind === "letra" ? label : id };
   }
   function App_slug(s) { return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[¿?¡!]/g, "").trim().replace(/\s+/g, "-"); }
 
@@ -34,12 +35,12 @@ window.App = window.App || {};
   [["Enero", "Pleno verano y vacaciones."], ["Febrero", "Mes de carnaval."], ["Marzo", "Empiezan las clases."], ["Abril", "Otoño."], ["Mayo", "El 25 es feriado patrio."], ["Junio", "Empieza el invierno."],
    ["Julio", "Vacaciones de invierno."], ["Agosto", "Mes de la Pachamama."], ["Septiembre", "Llega la primavera.", ["setiembre"]], ["Octubre", "Primavera en flor."], ["Noviembre", "Se acerca fin de año."], ["Diciembre", "Fiestas y fin de las clases."]
   ].forEach(function (c) { add("meses", "palabra", c[0], { uso: c[1], alt: c[2] }); });
-  [["Hola", "Para saludar a cualquier persona."], ["Chau", "Para despedirte.", ["adios", "adiós"]], ["Buen día", "Saludo de la mañana.", ["buenos dias", "buenos días"]],
-   ["Buenas tardes", "Saludo después del mediodía."], ["Buenas noches", "Saludo al anochecer o para despedirte de noche."], ["¿Cómo estás?", "Para preguntar cómo está la otra persona.", ["como estas", "como andas", "cómo andás"]], ["Bien", "Para responder que estás bien."]
-  ].forEach(function (c) { add("saludos1", "frase", c[0], { uso: c[1], alt: c[2] }); });
-  [["Gracias", "Para agradecer."], ["Por favor", "Para pedir algo con amabilidad."], ["Perdón", "Para disculparte.", ["disculpa", "disculpá", "perdon"]], ["De nada", "Para responder a un «gracias»."],
-   ["Mucho gusto", "Cuando conocés a alguien.", ["encantado", "encantada"]], ["Me llamo", "Para decir tu nombre (después lo deletreás)."], ["¿Cómo te llamás?", "Para preguntar el nombre.", ["como te llamas", "cual es tu nombre"]], ["Nos vemos", "Para despedirte hasta la próxima.", ["hasta luego"]]
-  ].forEach(function (c) { add("saludos2", "frase", c[0], { uso: c[1], alt: c[2] }); });
+  [["Hola", "Para saludar a cualquier persona.", null, "saludo"], ["Chau", "Para despedirte.", ["adios", "adiós"], "saludo"], ["Buen día", "Saludo de la mañana.", ["buenos dias", "buenos días"], "saludo"],
+   ["Buenas tardes", "Saludo después del mediodía.", null, "saludo"], ["Buenas noches", "Saludo al anochecer o para despedirte de noche.", null, "saludo"], ["¿Cómo estás?", "Para preguntar cómo está la otra persona.", ["como estas", "como andas", "cómo andás"], "pregunta"], ["Bien", "Para responder que estás bien.", null, "afirmar"]
+  ].forEach(function (c) { add("saludos1", "frase", c[0], { uso: c[1], alt: c[2], cara: c[3] }); });
+  [["Gracias", "Para agradecer.", null, "saludo"], ["Por favor", "Para pedir algo con amabilidad.", null, "tranquila"], ["Perdón", "Para disculparte.", ["disculpa", "disculpá", "perdon"], "tranquila"], ["De nada", "Para responder a un «gracias».", null, "saludo"],
+   ["Mucho gusto", "Cuando conocés a alguien.", ["encantado", "encantada"], "saludo"], ["Me llamo", "Para decir tu nombre (después lo deletreás).", null, "tranquila"], ["¿Cómo te llamás?", "Para preguntar el nombre.", ["como te llamas", "cual es tu nombre"], "pregunta"], ["Nos vemos", "Para despedirte hasta la próxima.", ["hasta luego"], "saludo"]
+  ].forEach(function (c) { add("saludos2", "frase", c[0], { uso: c[1], alt: c[2], cara: c[3] }); });
 
   /* ---------- Consejos (propios). Equivalen a los «advices» de ComuSeñas, ampliados. ---------- */
   C.CONSEJOS = [
@@ -104,8 +105,55 @@ window.App = window.App || {};
   /* Palabras para deletrear (juego) */
   C.DELETREO = ["SOL", "LUNA", "MATE", "CASA", "AMIGO", "ESCUELA", "FAMILIA", "GRACIAS", "NUBE", "SEÑA"];
 
-  /* Videos cargados como archivos (opcional). Ej.: C.MEDIA["hola"] = { src: "media/senas/hola.mp4", signer: "…", validatedBy: "…" } */
-  C.MEDIA = {};
+  /* ---------- La cara también habla ----------
+     Lo pidió la comunidad sorda: como la app no analiza el rostro, cada
+     práctica tiene que recordar cómo acompañar con la cara. Son expresiones
+     generales de la lengua de señas (no una seña inventada). */
+  C.CARAS = [
+    { id: "tranquila", name: "Cara tranquila",
+      como: "Cejas y boca en reposo, mirada al frente. La cara acompaña sin llamar la atención.",
+      cuando: "Para nombrar cosas: colores, días, meses, letras y la mayoría de las palabras.",
+      ejemplo: "Azul · Lunes · la letra M" },
+    { id: "pregunta", name: "Cara de pregunta",
+      como: "Cejas levantadas y un poco hacia adentro, ojos más abiertos, boca en «o». La cabeza puede inclinarse apenas.",
+      cuando: "En toda la seña que pregunta. La cara hace la pregunta tanto como las manos.",
+      ejemplo: "¿Cómo estás? · ¿Cómo te llamás?" },
+    { id: "afirmar", name: "Cara de afirmar",
+      como: "Cejas relajadas y un movimiento corto de cabeza para arriba y abajo, al mismo tiempo que la seña.",
+      cuando: "Para responder que sí, que estás bien o que entendiste.",
+      ejemplo: "Bien · Sí · De acuerdo" },
+    { id: "saludo", name: "Cara de saludo",
+      como: "Sonrisa suave y mirada a los ojos de la otra persona, con las cejas apenas levantadas al empezar.",
+      cuando: "Al saludar, agradecer o despedirte.",
+      ejemplo: "Hola · Gracias · Nos vemos" },
+    { id: "enfasis", name: "Cara de intensidad",
+      como: "Ojos entrecerrados, mejillas marcadas y un movimiento más rápido o más amplio de la mano.",
+      cuando: "Cuando algo es mucho, muy grande o muy fuerte. La cara marca la intensidad.",
+      ejemplo: "Mucho · Muy lejos · ¡Qué lindo!" }
+  ];
+
+  /** Qué expresión le toca a cada seña. Si no tiene una indicada, va la tranquila. */
+  App.caraDe = function (it) {
+    if (!it) return C.CARAS[0];
+    var id = it.cara || (it.label && it.label.indexOf("?") >= 0 ? "pregunta" : "tranquila");
+    for (var i = 0; i < C.CARAS.length; i++) if (C.CARAS[i].id === id) return C.CARAS[i];
+    return C.CARAS[0];
+  };
+  /** Cara sugerida al deletrear: va tranquila, salvo que la palabra sea una pregunta. */
+  App.caraDePalabra = function (palabra) {
+    var t = String(palabra || "");
+    return t.indexOf("?") >= 0 ? App.caraDe({ cara: "pregunta" }) : C.CARAS[0];
+  };
+
+  /* Videos cargados como archivos. Ej.: C.MEDIA["hola"] = { src: "media/senas/hola.mp4", signer: "…", validatedBy: "…" }
+     Van en media/senas/<id>.mp4. Mientras "validatedBy" esté vacío, la app muestra «Pendiente de validación». */
+  C.MEDIA = {
+    "letra-a": { src: "media/senas/letra-a.mp4", signer: "", validatedBy: "" },
+    "letra-e": { src: "media/senas/letra-e.mp4", signer: "", validatedBy: "" },
+    "letra-i": { src: "media/senas/letra-i.mp4", signer: "", validatedBy: "" },
+    "letra-o": { src: "media/senas/letra-o.mp4", signer: "", validatedBy: "" },
+    "letra-u": { src: "media/senas/letra-u.mp4", signer: "", validatedBy: "" }
+  };
 
   /* ---------- Ayudantes ---------- */
   App.level = function (id) { for (var i = 0; i < C.LEVELS.length; i++) if (C.LEVELS[i].id === id) return C.LEVELS[i]; return null; };

@@ -27,12 +27,12 @@
   var ROUTES = {
     niveles: V.niveles, nivel: V.nivel, leccion: V.leccion, repaso: V.repaso, practicar: V.practicar, practica: V.practica,
     diccionario: V.diccionario, sena: V.sena, consejos: V.consejos,
-    camara: V.camara, entrenar: V.entrenar, deletreo: V.deletreo,
+    camara: V.camara, entrenar: V.entrenar, deletreo: V.deletreo, cara: V.cara,
     entrar: V.entrar, bienvenida: V.bienvenida, "perfil-importar": V["perfil-importar"], perfiles: V.perfiles, perfil: V.perfil, progreso: V.progreso, ajustes: V.ajustes, acerca: V.acerca, privacidad: V.privacidad,
     referente: V.referente, grabar: V.grabar
   };
   var TITLES = { niveles: "Niveles", nivel: "Nivel", leccion: "Lección", repaso: "Repaso", practicar: "Practicar", practica: "Practicar", diccionario: "Diccionario", sena: "Seña", consejos: "Consejos",
-    camara: "Prueba de cámara", entrenar: "Entrenar la cámara", deletreo: "Deletreá", entrar: "Entrar", bienvenida: "Bienvenida", "perfil-importar": "Recuperar progreso", perfiles: "Perfiles", perfil: "Mi perfil",
+    camara: "Prueba de cámara", entrenar: "Entrenar la cámara", deletreo: "Deletreá", cara: "La cara también habla", entrar: "Entrar", bienvenida: "Bienvenida", "perfil-importar": "Recuperar progreso", perfiles: "Perfiles", perfil: "Mi perfil",
     progreso: "Panel de progreso", ajustes: "Ajustes", acerca: "Acerca de", privacidad: "Política de privacidad", referente: "Modo referente", grabar: "Grabar seña" };
   var FOCUS = { leccion: 1, repaso: 1, practicar: 1, bienvenida: 1, "perfil-importar": 1 };
   var NOPROFILE = { entrar: 1, bienvenida: 1, "perfil-importar": 1, acerca: 1, privacidad: 1 };

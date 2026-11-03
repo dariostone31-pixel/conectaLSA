@@ -11,11 +11,11 @@ window.App = window.App || {};
   "use strict";
 
   var KEY = "conectalsa-v1";
-  App.VERSION = "1.1.2";
+  App.VERSION = "1.1.4";
 
   function defaultSettings() {
     return { sound: true, vibration: true, theme: "auto", fs: "100", contrast: "normal", motion: "auto",
-             vision: "estandar", mirrorVideos: false, videoSpeed: 1, camera: true };
+             vision: "estandar", mirrorVideos: false, videoSpeed: 1, camera: true, zoomCam: 1 };
   }
   /* Perfiles visuales pensados para distintas discapacidades.
      "oscuro" y "contraste" también se reflejan en data-theme / data-contrast. */

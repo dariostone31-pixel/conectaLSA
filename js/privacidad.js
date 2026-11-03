@@ -115,6 +115,9 @@ window.App = window.App || {};
           "Las imágenes de la cámara <strong>no se graban, no se guardan y no se envían</strong>. En la práctica y en el entrenamiento, "
           + "cada cuadro se analiza en la memoria del dispositivo para detectar la posición de la mano y se descarta al instante. "
           + "No hay video de la persona usuaria en ningún lado.",
+          "<strong>La app no analiza el rostro ni la cara.</strong> La detección es solo de las manos: no hay reconocimiento facial, "
+          + "ni estimación de edad, género o emociones. Por eso la expresión de la cara se explica con palabras en la sección "
+          + "«La cara también habla», y la evalúa una persona (docente o referente sordo), no la app.",
           "En el <strong>Modo referente</strong>, la persona que graba una seña sí genera un archivo de video, pero queda "
           + "en ese dispositivo hasta que el equipo decida publicarlo, y solo si firmó la autorización de uso de imagen."
         ]

@@ -73,13 +73,19 @@ window.App = window.App || {};
       '<div class="cam">' +
         '<video playsinline muted autoplay aria-hidden="true"></video>' +
         '<canvas aria-hidden="true"></canvas>' +
-        '<div class="guide" hidden></div>' +
+        '<div class="guide" hidden><svg class="guide-hand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' +
+          '<path d="M8.5 12.5V6.8a1.4 1.4 0 0 1 2.8 0V11m0-.6V5.4a1.4 1.4 0 0 1 2.8 0V11m0-.4V6.6a1.4 1.4 0 0 1 2.8 0v7.6c0 3.9-2.4 6.6-6.2 6.6S4.4 18 4.4 14.1v-2.4a1.4 1.4 0 0 1 2.8 0v1.6"/></svg>' +
+          '<span>poné la mano acá</span></div>' +
+        '<div class="cam-zoom" hidden><button type="button" data-zout aria-label="Alejar la imagen">−</button>' +
+          '<span data-zlbl aria-live="polite">1×</span><button type="button" data-zin aria-label="Acercar la imagen">+</button></div>' +
         '<span class="badge-live" hidden>Cámara local · no se graba</span>' +
         '<div class="hud" hidden><span class="bubble" data-hint></span><span></span></div>' +
         '<div class="cam-msg"><div>' +
           '<div style="font-size:2.6em">📷</div>' +
           '<p><strong>' + App.esc(this.opts.intro || "Practicá frente a la cámara") + '</strong></p>' +
           '<p class="small" style="opacity:.85;max-width:38ch;margin:0 auto">La imagen se procesa solo en este dispositivo. No se graba ni se envía a ningún lado.</p>' +
+          '<p class="small" style="opacity:.85;max-width:40ch;margin:10px auto 0">Si tu mano se ve chica, tocá <strong>+</strong> para acercar la imagen: ' +
+          'no hace falta alejar el celular ni la compu.</p>' +
           '<button class="btn" type="button" data-start>Activar cámara</button>' +
         '</div></div>' +
       '</div>');
@@ -90,6 +96,14 @@ window.App = window.App || {};
     this.msg = this.root.querySelector(".cam-msg");
     this.hintEl = this.root.querySelector("[data-hint]");
     this.running = false; this.raf = 0; this.lastT = 0; this.lastLight = 0; this.light = 1;
+    this.work = null; this.wctx = null;
+    this.zoom = Math.min(3, Math.max(1, +(App.state().settings.zoomCam || 1)));
+    this.zoomBox = this.root.querySelector(".cam-zoom");
+    this.zoomLbl = this.root.querySelector("[data-zlbl]");
+    this.zoomLbl.textContent = this.zoom.toFixed(2).replace(/\.?0+$/, "") + "×";
+    this.root.style.setProperty("--camzoom", this.zoom);
+    this.root.querySelector("[data-zin]").addEventListener("click", function (self) { return function () { self.setZoom(self.zoom + 0.25); }; }(this));
+    this.root.querySelector("[data-zout]").addEventListener("click", function (self) { return function () { self.setZoom(self.zoom - 0.25); }; }(this));
     this.lightCanvas = document.createElement("canvas"); this.lightCanvas.width = 32; this.lightCanvas.height = 24;
     var self = this;
     this.root.querySelector("[data-start]").addEventListener("click", function () { self.start(); });
@@ -105,7 +119,8 @@ window.App = window.App || {};
     var self = this, p = V.problem();
     if (p) { this.showMsg('<div style="font-size:2.2em">⚠️</div><p>' + MSG[p] + '</p>'); return Promise.resolve(false); }
     this.showMsg('<div style="font-size:2.2em">⏳</div><p><strong>Preparando la IA…</strong></p><p class="small" style="opacity:.8">La primera vez puede tardar unos segundos.</p>');
-    var camP = navigator.mediaDevices.getUserMedia({ video: { facingMode: "user", width: { ideal: 640 }, height: { ideal: 480 } }, audio: false });
+    // 4:3 y más resolución: la mano se ve con más detalle sin cambiar el encuadre.
+    var camP = navigator.mediaDevices.getUserMedia({ video: { facingMode: "user", width: { ideal: 960 }, height: { ideal: 720 } }, audio: false });
     return Promise.all([camP, V.load()]).then(function (r) {
       if (self.destroyed) { r[0].getTracks().forEach(function (t) { t.stop(); }); return false; }
       self.stream = r[0]; self.landmarker = r[1];
@@ -115,6 +130,7 @@ window.App = window.App || {};
         self.msg.hidden = true;
         self.root.querySelector(".badge-live").hidden = false;
         self.root.querySelector(".hud").hidden = false;
+        if (self.zoomBox) self.zoomBox.hidden = false;
         self.root.querySelector(".guide").hidden = !!self.opts.noGuide;
         self.running = true;
         App.state().labUsed = App.state().labUsed || !!self.opts.isLab;
@@ -130,6 +146,18 @@ window.App = window.App || {};
       if (window.console) console.warn("Cámara/IA:", e);
       return false;
     });
+  };
+
+  /* Zoom digital: recorta el centro de la imagen antes de analizarla.
+     Sirve para no tener que alejar el celular o la compu cuando la mano se ve chica. */
+  V.Camera.prototype.setZoom = function (z) {
+    this.zoom = Math.min(3, Math.max(1, Math.round((+z || 1) * 100) / 100));
+    // Se agranda también la imagen que se ve: si no, el botón parece no hacer nada.
+    this.root.style.setProperty("--camzoom", this.zoom);
+    if (this.zoomLbl) this.zoomLbl.textContent = this.zoom.toFixed(2).replace(/\.?0+$/, "") + "×";
+    App.state().settings.zoomCam = this.zoom; App.save();
+    if (this.opts.onZoom) this.opts.onZoom(this.zoom);
+    return this.zoom;
   };
 
   V.Camera.prototype.stop = function () {
@@ -159,8 +187,25 @@ window.App = window.App || {};
     this.lastT = now;
     if (this.video.readyState < 2) return;
     if (now - this.lastLight > 1000) { this.measureLight(); this.lastLight = now; }
-    var res;
-    try { res = this.landmarker.detectForVideo(this.video, now); } catch (e) { return; }
+    var res, src = this.video, crop = null;
+    if (this.zoom > 1.001) {
+      var vw = this.video.videoWidth || 640, vh = this.video.videoHeight || 480;
+      var cw = vw / this.zoom, ch = vh / this.zoom, ox = (vw - cw) / 2, oy = (vh - ch) / 2;
+      if (!this.work) { this.work = document.createElement("canvas"); this.wctx = this.work.getContext("2d"); }
+      var ancho = Math.min(960, Math.round(cw));
+      this.work.width = ancho; this.work.height = Math.max(1, Math.round(ancho * ch / cw));
+      try { this.wctx.drawImage(this.video, ox, oy, cw, ch, 0, 0, this.work.width, this.work.height); src = this.work; }
+      catch (e) { src = this.video; }
+      if (src === this.work) crop = { w: vw, h: vh, cw: cw, ch: ch, ox: ox, oy: oy };
+    }
+    try { res = this.landmarker.detectForVideo(src, now); } catch (e) { return; }
+    if (crop && res && res.landmarks) {
+      res.landmarks.forEach(function (pts) {
+        pts.forEach(function (p) {
+          if (typeof p.x === "number") { p.x = (crop.ox + p.x * crop.cw) / crop.w; p.y = (crop.oy + p.y * crop.ch) / crop.h; }
+        });
+      });
+    }
     var W = this.canvas.width, H = this.canvas.height, aspect = W / H;
     var hands = (res.landmarks || []).map(function (pts, i) {
       var h = res.handedness && res.handedness[i] && res.handedness[i][0];
@@ -268,13 +313,13 @@ window.App = window.App || {};
 
   /** Consejos de encuadre y luz (lo que ComuSeñas no explica). */
   V.framingHint = function (h, light) {
-    if (light < 0.22) return { k: "dark", text: "💡 Hay poca luz: acercate a una ventana o prendé una luz" };
-    if (!h) return { k: "nohand", text: "✋ Mostrá tu mano dentro del recuadro" };
+    if (light < 0.22) return { k: "dark", text: "Hay poca luz: acercate a una ventana o prendé una luz" };
+    if (!h) return { k: "nohand", text: "Mostrá tu mano dentro del recuadro" };
     var b = h.canon.bbox;
-    if (b.x0 < 0.02 || b.x1 > 0.98 || b.y0 < 0.02 || b.y1 > 0.98) return { k: "edge", text: "↔️ La mano se sale del cuadro: centrala" };
+    if (b.x0 < 0.02 || b.x1 > 0.98 || b.y0 < 0.02 || b.y1 > 0.98) return { k: "edge", text: "La mano se sale del cuadro: centrala" };
     var s = Math.max(b.x1 - b.x0, b.y1 - b.y0);
-    if (s < 0.22) return { k: "far", text: "🔍 Acercá un poco la mano a la cámara" };
-    if (s > 0.85) return { k: "near", text: "↩️ Alejá un poco la mano" };
+    if (s < 0.22) return { k: "far", text: "La mano se ve chica: tocá + para acercar la imagen" };
+    if (s > 0.85) return { k: "near", text: "La mano no entra en el recuadro: alejala un poco" };
     return null;
   };
 

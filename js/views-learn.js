@@ -124,6 +124,13 @@ window.App = window.App || {};
         '<div class="lab-grid">' + (camOn ? '<div data-cam></div>' : "") + '<div data-side></div></div>';
       var side = App.$("[data-side]", stage);
       var ref = App.mediaFor(it, { compact: true }); side.appendChild(ref);
+      // La cámara mira la mano; la cara se explica con palabras (lo pidió la comunidad sorda).
+      var cara = App.caraDe(it);
+      side.appendChild(App.el('<div class="card cara-card"><span class="eyebrow">¿Y la cara?</span>' +
+        '<div class="cara-tip">' + App.caraSVG(cara.id) + '<div><strong>' + esc(cara.name) + '</strong>' +
+        '<p class="small" style="margin:4px 0 0">' + esc(cara.como) + '</p></div></div>' +
+        '<p class="small muted" style="margin:8px 0 0">La cámara no analiza el rostro: la expresión la mirás vos ' +
+        '(o te la corrige una persona sorda). <a class="link" href="#/cara">Ver las 5 expresiones</a></p></div>'));
       if (aiReady) {
         side.appendChild(App.el('<div class="card" style="margin-top:12px"><span class="eyebrow">Lo que ve la cámara</span><ul class="conf-list" data-conf><li class="muted">Esperando tu mano…</li></ul><ul class="hint-list" data-hints></ul></div>'));
         side.appendChild(App.el('<p class="small muted">¿Sabés que la hacés bien y no te reconoce? No es tu culpa: la IA puede necesitar más ejemplos. <button class="link" type="button" data-self>Marcar como lograda</button></p>'));
@@ -391,9 +398,40 @@ window.App = window.App || {};
         im.addEventListener("error", function () { fig.remove(); });
         art.insertBefore(fig, art.querySelector("h2").nextSibling);
       }
+      if (t.id === "cara") art.appendChild(App.el('<p style="margin:10px 0 0"><a class="btn ghost small" href="#/cara">' +
+        App.ico("cara") + ' Ver las 5 expresiones de la cara</a></p>'));
       list.appendChild(art);
     });
     var h = location.hash.split("#")[2]; if (h) { var el = document.getElementById(h); if (el) setTimeout(function () { el.scrollIntoView({ block: "start" }); }, 50); }
+  };
+
+  /* =======================================================
+     LA CARA TAMBIÉN HABLA
+     Lo pidió la comunidad sorda: la app mira la mano, así que
+     la expresión hay que enseñarla con palabras. Acá está el
+     resumen de las cinco expresiones que usa la app.
+     ======================================================= */
+  V.cara = function (root) {
+    root.innerHTML = '<a class="link" href="#/consejos">← Consejos</a>' +
+      '<span class="eyebrow" style="margin-top:10px">Para señar mejor</span><h1>La cara también habla</h1>' +
+      '<div class="note"><p><strong>La cámara solo mira la mano.</strong> Tu cara no se analiza, no se guarda y no se envía a ningún lado. ' +
+      'Pero la cara es parte de la seña: marca si preguntás, si afirmás o cuánto te importa lo que decís. ' +
+      'Por eso, mientras practicás, la app te dice qué expresión acompañar.</p></div>' +
+      '<div class="cara-grid" data-grid></div>' +
+      '<div class="card" style="margin-top:16px"><span class="eyebrow">Tres cosas para tener en cuenta</span><ul>' +
+        '<li><strong>No hace falta exagerar.</strong> La cara acompaña la seña; si exagerás, se pierde el mensaje.</li>' +
+        '<li><strong>Mirá a la otra persona</strong> (o a la cámara, cuando practicás). La mirada también comunica.</li>' +
+        '<li><strong>La expresión va con el movimiento.</strong> Empieza y termina junto con la seña, no después.</li>' +
+      '</ul><p class="small muted" style="margin-bottom:0">Quién te puede dar una devolución de verdad: una persona sorda o tu docente de LSA. ' +
+      'La app es una ayuda para practicar, no reemplaza esa mirada.</p></div>';
+    var g = App.$("[data-grid]", root);
+    C.CARAS.forEach(function (c) {
+      g.appendChild(App.el('<article class="card cara-card"><div class="cara-dibujo">' + App.caraSVG(c.id) + '</div>' +
+        '<h2>' + esc(c.name) + '</h2>' +
+        '<p class="small"><strong>Cómo se ve:</strong> ' + esc(c.como) + '</p>' +
+        '<p class="small"><strong>Cuándo:</strong> ' + esc(c.cuando) + '</p>' +
+        '<p class="small muted" style="margin-bottom:0"><strong>Ejemplo:</strong> ' + esc(c.ejemplo) + '</p></article>'));
+    });
   };
 
   /* =======================================================
@@ -422,7 +460,9 @@ window.App = window.App || {};
     var wrap = App.el('<div><div class="word-display"></div><div class="lab-grid">' + (camOn ? '<div data-cam></div>' : "") + '<div data-side></div></div></div>');
     container.appendChild(wrap);
     var disp = App.$(".word-display", wrap), side = App.$("[data-side]", wrap);
-    var info = App.el('<div class="card"><span class="eyebrow">Letra actual</span><div class="cur-letter" data-cur></div><p class="small muted" data-mode></p><ul class="conf-list" data-conf></ul><ul class="hint-list" data-hints></ul><p class="hold-msg" data-hold role="status" aria-live="polite" hidden></p><button class="btn alt block" type="button" data-nextl>Siguiente letra →</button></div>');
+    var info = App.el('<div class="card"><span class="eyebrow">Letra actual</span><div class="cur-letter" data-cur></div><p class="small muted" data-mode></p><ul class="conf-list" data-conf></ul><ul class="hint-list" data-hints></ul><p class="hold-msg" data-hold role="status" aria-live="polite" hidden></p>' +
+        '<div class="cara-tip" data-cara-tip></div>' +
+        '<button class="btn alt block" type="button" data-nextl>Siguiente letra →</button></div>');
     side.appendChild(info);
     var sm = new App.Vision.Smoother(10), gate = App.spellGate(600);
     function draw() {
@@ -432,6 +472,9 @@ window.App = window.App || {};
         return;
       }
       var L = letters[i], has = camOn && M.has(L) && M.ready();
+      var caraP = App.caraDePalabra(word), tip = App.$("[data-cara-tip]", info);
+      if (tip) tip.innerHTML = App.caraSVG(caraP.id, "sm") + '<div><strong>Tu cara: ' + esc(caraP.name.toLowerCase()) + '</strong>' +
+        '<p class="small" style="margin:2px 0 0">' + esc(caraP.como) + '</p></div>';
       App.$("[data-cur]", info).textContent = L;
       var modo = App.$("[data-mode]", info);
       modo.textContent = has ? "La cámara conoce esta letra: avanza sola cuando la sostenés un momento."
