@@ -19,7 +19,7 @@ Si abrís `index.html` con doble clic, la app funciona pero **la cámara no**: l
 | Función | En ConectaLSA |
 |---|---|
 | Perfil con avatar | Varios perfiles por equipo («¿Quién aprende hoy?»). Hay 12 avatares que se desbloquean con estrellas. Se elige la mano dominante (zurdos/as: videos en espejo) y una meta diaria. |
-| Mapa de niveles | 10 niveles: Vocales, Colores, Días, Saludos 1, Consonantes (4 bloques), Meses y Saludos 2. Son 73 señas. **Todos abiertos**, con un orden sugerido. |
+| Mapa de niveles | 10 niveles: Vocales, Colores, Días, Saludos 1, Consonantes (4 bloques), Meses y Saludos 2. Son 74 señas (73 del plan + la LL, que se sumó como seña aparte). **Todos abiertos**, con un orden sugerido. |
 | Lecciones | 2–3 lecciones por nivel y un **desafío** que mezcla todo. Se ganan de 1 a 3 estrellas y se puede repetir para mejorar. |
 | Observar la seña | Video sin deformar, en velocidad normal, lenta o muy lenta, con repetir, pausa y espejo. **Créditos**: quién hace la seña y quién la validó. |
 | «¿Cómo se escribe?» | La corrección es **tolerante**: no importan mayúsculas, tildes, signos ni un error de tipeo en palabras largas. Siempre se muestra la forma correcta. Hay pista. |
@@ -63,7 +63,7 @@ Para fijar videos en la app, poné los archivos en `media/senas/` y declaralos e
 index.html · sw.js (offline) · manifest.webmanifest
 css/app.css
 js/core.js         estado, perfiles, puntos, repaso espaciado, ajustes, utilidades
-js/content.js      niveles, lecciones, 73 señas, consejos
+js/content.js      niveles, lecciones, 74 señas, consejos
 js/media.js        videos (IndexedDB + archivos), reproductor, paquetes
 js/vision.js       cámara + MediaPipe Hand Landmarker + clasificador k-NN
 js/views-learn.js  niveles, lección, repaso, diccionario, consejos, deletreo
@@ -98,12 +98,12 @@ Al publicar cambios, subí `VERSION` en `sw.js`.
 
 ## Versión de prueba (aviso automático)
 
-Mientras falten videos validados, la app muestra el aviso **«🚧 Versión de prueba»** con la cuenta real («Por ahora hay 0 de 73 señas con video»):
+Mientras falten videos validados, la app muestra el aviso **«🚧 Versión de prueba»** con la cuenta real («Por ahora hay 0 de 74 señas con video»):
 
 - en la bienvenida y en el inicio;
 - al empezar cada desafío, con la cuenta de ese nivel.
 
-No hay que acordarse de quitarlo: el aviso de cada desafío desaparece cuando su nivel tiene todos los videos validados, y el general cuando están las 73 señas.
+No hay que acordarse de quitarlo: el aviso de cada desafío desaparece cuando su nivel tiene todos los videos validados, y el general cuando están las 74 señas.
 
 ## Publicar los videos para todo el público
 
@@ -140,6 +140,22 @@ Archivos tocados: `js/core.js`, `js/main.js`, `js/views-acceso.js`, `js/views-pr
 3. **Elegir cámara al grabar.** El grabador lista las cámaras del equipo (frontal, trasera del celular, webcam externa) con botones para cambiar sin mover la compu. La imagen se muestra en espejo solo con la cámara frontal; con la trasera o una webcam se ve igual que va a quedar grabada.
 4. **Todos los videos en un ZIP.** En el panel del referente, «Descargar todos los videos (ZIP)» baja un solo archivo con cada video (`<id>.webm` o `.mp4`) y un `CREDITOS.txt` con quién señaló y quién validó cada uno.
 5. **Deletreo automático más firme.** La cámara avanza sola cuando la letra se sostiene 600 ms, con un aviso en pantalla («¡Es la S, sostenela…»). Si la cámara todavía no conoce esa letra, lo dice y ofrece un enlace directo para enseñársela.
+
+## Novedades de la versión 1.2 (3/11/2026)
+
+- **Cortesía 2 completa: 8 de 8.** «Me llamo» se carga desde el archivo `yo-me-llamo.mp4` (el usuario lo había filmado con ese nombre; se cambió el nombre en la app, no el del archivo).
+- **La LL se suma como seña aparte** (nivel 7, «Consonantes N a S»), con su video `ll.mp4`. No es parte del deletreo: la RAE la sacó como letra en 2010, pero muchas escuelas la siguen enseñando. **Pendiente de validación por el referente sordo.**
+- Con esto son **45 videos de 74 señas**: vocales (5), colores (12), días (7), cortesía 1 (7), consonantes H a M (5), cortesía 2 (8) y la LL.
+- El nivel 7 pasa a tener cuatro lecciones parejas: N, Ñ · P, Q · R, S · LL.
+
+## Novedades de la versión 1.1.9 (3/11/2026)
+
+- **Saludos y cortesía 2: 7 de los 8 videos** (falta «Me llamo»). Con todo lo anterior son **43 de las 73 señas** con video.
+- Se agrega la hoja **Abecedario en orden** para saber qué archivo corresponde a cada letra.
+
+## Novedades de la versión 1.1.8 (3/11/2026)
+
+- **Saludos y cortesía 1 (7 videos)** y **consonantes H, J, K, L, M (5 videos)**. Con las vocales, los colores y los días, suman **36 de las 73 señas** con video.
 
 ## Novedades de la versión 1.1.7 (3/11/2026)
 
