@@ -1,7 +1,7 @@
 /* ConectaLSA · Service worker
    Guarda la app completa (incluida la IA) para que funcione sin internet.
    Al publicar una nueva versión, cambiá VERSION para que se actualice en todos los dispositivos. */
-var VERSION = "conectalsa-v1.1.4";
+var VERSION = "conectalsa-v1.1.5";
 var CORE = [
   "./", "index.html", "manifest.webmanifest",
   "css/app.css",

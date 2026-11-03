@@ -141,6 +141,11 @@ Archivos tocados: `js/core.js`, `js/main.js`, `js/views-acceso.js`, `js/views-pr
 4. **Todos los videos en un ZIP.** En el panel del referente, «Descargar todos los videos (ZIP)» baja un solo archivo con cada video (`<id>.webm` o `.mp4`) y un `CREDITOS.txt` con quién señaló y quién validó cada uno.
 5. **Deletreo automático más firme.** La cámara avanza sola cuando la letra se sostiene 600 ms, con un aviso en pantalla («¡Es la S, sostenela…»). Si la cámara todavía no conoce esa letra, lo dice y ofrece un enlace directo para enseñársela.
 
+## Novedades de la versión 1.1.5 (3/11/2026)
+
+- **Zoom más amplio.** El zoom de la cámara ahora va de **0,5× a 3×** y arranca en 0,5×. A 0,5× se ve **todo el cuadro de la cámara**, sin recortar los costados: la mano y los puntos entran completos aunque la persona esté lejos. Con **+** se acerca (1× a 3×).
+- **Botón «Activar cámara» siempre visible en el celular.** Antes quedaba abajo del recuadro y había que girar el teléfono. Ahora el botón va primero, el texto se achica en pantallas chicas y el recuadro se puede desplazar si no entra.
+
 ## Novedades de la versión 1.1.4 (2/11/2026)
 
 - **Las primeras cinco señas con video.** Los videos de las vocales (A, E, I, O, U) ya están en `media/senas/` y la app los muestra en las lecciones. Mientras no los revise otro referente sordo, figuran como «Pendiente de validación».
