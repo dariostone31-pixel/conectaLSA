@@ -141,6 +141,22 @@ Archivos tocados: `js/core.js`, `js/main.js`, `js/views-acceso.js`, `js/views-pr
 4. **Todos los videos en un ZIP.** En el panel del referente, «Descargar todos los videos (ZIP)» baja un solo archivo con cada video (`<id>.webm` o `.mp4`) y un `CREDITOS.txt` con quién señaló y quién validó cada uno.
 5. **Deletreo automático más firme.** La cámara avanza sola cuando la letra se sostiene 600 ms, con un aviso en pantalla («¡Es la S, sostenela…»). Si la cámara todavía no conoce esa letra, lo dice y ofrece un enlace directo para enseñársela.
 
+## Novedades de la versión 1.1.4 (2/11/2026)
+
+- **Las primeras cinco señas con video.** Los videos de las vocales (A, E, I, O, U) ya están en `media/senas/` y la app los muestra en las lecciones. Mientras no los revise otro referente sordo, figuran como «Pendiente de validación».
+- Los videos se achicaron antes de subirlos: 960 px de ancho, MP4 H.264, 5 segundos. Pesan entre 300 y 700 KB cada uno (antes, 15 a 20 MB).
+
+## Novedades de la versión 1.1.3 (30/10/2026)
+
+1. **Zoom en la cámara, para no tener que alejarse.** Las pantallas de práctica tienen ahora un control **− 1× +** que acerca la imagen (hasta 3×) recortando el centro y analizando ese recorte. Así la mano se ve bien de tamaño sin mover el celular, la tablet ni la compu. El zoom elegido se recuerda.
+2. **Guía de encuadre.** Adentro del recuadro punteado aparece la silueta de una mano: si tu mano entra en esa silueta, la cámara la lee bien.
+3. **Mejor resolución.** La cámara se pide en 960 × 720 (antes 640 × 480), lo que da más detalle a la detección de la mano sin cambiar el encuadre.
+4. **«La cara también habla» (`#/cara`).** Lo pidió la comunidad sorda: como la app no analiza el rostro, la expresión se enseña con palabras. Hay cinco expresiones (tranquila, pregunta, afirmar, saludo e intensidad), cada una con cómo se ve, cuándo se usa y un ejemplo.
+5. **Cada práctica recuerda la cara.** Al practicar una seña y al deletrear aparece una tarjeta con la expresión que corresponde (por ejemplo, «¿Cómo estás?» lleva cara de pregunta). En el deletreo la tarjeta cambia según la palabra.
+6. **La política de privacidad lo dice explícitamente:** la app no analiza el rostro, no hace reconocimiento facial ni estima emociones.
+
+Archivos tocados: `js/vision.js`, `js/views-learn.js`, `js/content.js`, `js/iconos.js`, `js/core.js`, `js/main.js`, `js/privacidad.js`, `css/app.css`, `sw.js` y `README.md`.
+
 ## Trabajo en equipo (GitHub + Vercel)
 
 Ver **[TRABAJO_EN_EQUIPO.md](TRABAJO_EN_EQUIPO.md)**: configuración inicial, trabajo diario con ramas y pull requests, vistas previas para compartir por WhatsApp y pruebas automáticas.
