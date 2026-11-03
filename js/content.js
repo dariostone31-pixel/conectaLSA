@@ -25,6 +25,10 @@ window.App = window.App || {};
   [["cons1", "B C D F G"], ["cons2", "H J K L M"], ["cons3", "N Ñ P Q R S"], ["cons4", "T V W X Y Z"]].forEach(function (g) {
     g[1].split(" ").forEach(function (l) { add(g[0], "letra", l, { uso: "Consonante. Ejemplo para deletrear: " + EJ[l] + "." }); });
   });
+  /* La LL salió del abecedario español en 2010 (la RAE la sacó como letra), pero muchas escuelas
+     la siguen enseñando. Se suma como seña aparte, con su propio id «ll» y su video ll.mp4.
+     No es parte del deletreo: aparece en el nivel 7 como una seña más. Pendiente de validación. */
+  add("cons3", "palabra", "LL", { uso: "Dígrafo. Muchas escuelas todavía lo enseñan como letra aparte." });
   [["Rojo", "Como el semáforo cuando hay que frenar."], ["Azul", "Como el cielo de una tarde despejada."], ["Amarillo", "Como el sol o un limón."], ["Verde", "Como el pasto o una hoja."],
    ["Blanco", "Como la nieve o una hoja de papel."], ["Negro", "Como el cielo de noche."], ["Gris", "Como una nube de lluvia."], ["Marrón", "Como la tierra o el chocolate.", ["cafe", "café"]],
    ["Naranja", "Como la fruta del mismo nombre."], ["Violeta", "Como una berenjena.", ["morado", "lila"]], ["Rosa", "Como un chicle de frutilla.", ["rosado"]], ["Celeste", "Como la bandera argentina."]
@@ -85,7 +89,7 @@ window.App = window.App || {};
     { id: "saludos1", n: 4, title: "Saludos y cortesía 1", ico: "👋", color: "#0369A1", tip: "cara", groups: [["hola", "chau", "buen-dia"], ["buenas-tardes", "buenas-noches", "como-estas", "bien"]] },
     { id: "cons1", n: 5, title: "Consonantes B a G", ico: "🔡", color: "#2C6BE8", tip: "camara", groups: [["B", "C", "D"], ["F", "G"]] },
     { id: "cons2", n: 6, title: "Consonantes H a M", ico: "🔡", color: "#5B4BDB", tip: "mano", groups: [["H", "J", "K"], ["L", "M"]] },
-    { id: "cons3", n: 7, title: "Consonantes N a S", ico: "🔡", color: "#0A3F94", tip: "espacio", groups: [["N", "Ñ", "P"], ["Q", "R", "S"]] },
+    { id: "cons3", n: 7, title: "Consonantes N a S", ico: "🔡", color: "#0A3F94", tip: "espacio", groups: [["N", "Ñ"], ["P", "Q"], ["R", "S"], ["ll"]] },
     { id: "cons4", n: 8, title: "Consonantes T a Z", ico: "🔡", color: "#1673D1", tip: "camara", groups: [["T", "V", "W"], ["X", "Y", "Z"]] },
     { id: "meses", n: 9, title: "Meses del año", ico: "🗓️", color: "#045D8C", tip: "parametros", groups: [["enero", "febrero", "marzo", "abril"], ["mayo", "junio", "julio", "agosto"], ["septiembre", "octubre", "noviembre", "diciembre"]] },
     { id: "saludos2", n: 10, title: "Saludos y cortesía 2", ico: "🤝", color: "#4F46D6", tip: "cara", groups: [["gracias", "por-favor", "perdon", "de-nada"], ["mucho-gusto", "me-llamo", "como-te-llamas", "nos-vemos"]] }
@@ -148,6 +152,11 @@ window.App = window.App || {};
   /* Videos cargados como archivos. Ej.: C.MEDIA["hola"] = { src: "media/senas/hola.mp4", signer: "…", validatedBy: "…" }
      Van en media/senas/<id>.mp4. Mientras "validatedBy" esté vacío, la app muestra «Pendiente de validación». */
   C.MEDIA = {
+    "letra-a": { src: "media/senas/letra-a.mp4", signer: "", validatedBy: "" },
+    "letra-e": { src: "media/senas/letra-e.mp4", signer: "", validatedBy: "" },
+    "letra-i": { src: "media/senas/letra-i.mp4", signer: "", validatedBy: "" },
+    "letra-o": { src: "media/senas/letra-o.mp4", signer: "", validatedBy: "" },
+    "letra-u": { src: "media/senas/letra-u.mp4", signer: "", validatedBy: "" },
     "rojo": { src: "media/senas/rojo.mp4", signer: "", validatedBy: "" },
     "azul": { src: "media/senas/azul.mp4", signer: "", validatedBy: "" },
     "amarillo": { src: "media/senas/amarillo.mp4", signer: "", validatedBy: "" },
@@ -167,6 +176,27 @@ window.App = window.App || {};
     "viernes": { src: "media/senas/viernes.mp4", signer: "", validatedBy: "" },
     "sabado": { src: "media/senas/sabado.mp4", signer: "", validatedBy: "" },
     "domingo": { src: "media/senas/domingo.mp4", signer: "", validatedBy: "" },
+    "hola": { src: "media/senas/hola.mp4", signer: "", validatedBy: "" },
+    "chau": { src: "media/senas/chau.mp4", signer: "", validatedBy: "" },
+    "buen-dia": { src: "media/senas/buen-dia.mp4", signer: "", validatedBy: "" },
+    "buenas-tardes": { src: "media/senas/buenas-tardes.mp4", signer: "", validatedBy: "" },
+    "buenas-noches": { src: "media/senas/buenas-noches.mp4", signer: "", validatedBy: "" },
+    "como-estas": { src: "media/senas/como-estas.mp4", signer: "", validatedBy: "" },
+    "bien": { src: "media/senas/bien.mp4", signer: "", validatedBy: "" },
+    "letra-h": { src: "media/senas/letra-h.mp4", signer: "", validatedBy: "" },
+    "letra-j": { src: "media/senas/letra-j.mp4", signer: "", validatedBy: "" },
+    "letra-k": { src: "media/senas/letra-k.mp4", signer: "", validatedBy: "" },
+    "letra-l": { src: "media/senas/letra-l.mp4", signer: "", validatedBy: "" },
+    "letra-m": { src: "media/senas/letra-m.mp4", signer: "", validatedBy: "" },
+    "gracias": { src: "media/senas/gracias.mp4", signer: "", validatedBy: "" },
+    "por-favor": { src: "media/senas/por-favor.mp4", signer: "", validatedBy: "" },
+    "perdon": { src: "media/senas/perdon.mp4", signer: "", validatedBy: "" },
+    "de-nada": { src: "media/senas/de-nada.mp4", signer: "", validatedBy: "" },
+    "mucho-gusto": { src: "media/senas/mucho-gusto.mp4", signer: "", validatedBy: "" },
+    "me-llamo": { src: "media/senas/yo-me-llamo.mp4", signer: "", validatedBy: "" },
+    "ll": { src: "media/senas/ll.mp4", signer: "", validatedBy: "" },
+    "como-te-llamas": { src: "media/senas/como-te-llamas.mp4", signer: "", validatedBy: "" },
+    "nos-vemos": { src: "media/senas/nos-vemos.mp4", signer: "", validatedBy: "" },
   };
 
   /* ---------- Ayudantes ---------- */
