@@ -148,11 +148,18 @@ window.App = window.App || {};
   /* Videos cargados como archivos. Ej.: C.MEDIA["hola"] = { src: "media/senas/hola.mp4", signer: "…", validatedBy: "…" }
      Van en media/senas/<id>.mp4. Mientras "validatedBy" esté vacío, la app muestra «Pendiente de validación». */
   C.MEDIA = {
-    "letra-a": { src: "media/senas/letra-a.mp4", signer: "", validatedBy: "" },
-    "letra-e": { src: "media/senas/letra-e.mp4", signer: "", validatedBy: "" },
-    "letra-i": { src: "media/senas/letra-i.mp4", signer: "", validatedBy: "" },
-    "letra-o": { src: "media/senas/letra-o.mp4", signer: "", validatedBy: "" },
-    "letra-u": { src: "media/senas/letra-u.mp4", signer: "", validatedBy: "" }
+    "rojo": { src: "media/senas/rojo.mp4", signer: "", validatedBy: "" },
+    "azul": { src: "media/senas/azul.mp4", signer: "", validatedBy: "" },
+    "amarillo": { src: "media/senas/amarillo.mp4", signer: "", validatedBy: "" },
+    "verde": { src: "media/senas/verde.mp4", signer: "", validatedBy: "" },
+    "blanco": { src: "media/senas/blanco.mp4", signer: "", validatedBy: "" },
+    "negro": { src: "media/senas/negro.mp4", signer: "", validatedBy: "" },
+    "gris": { src: "media/senas/gris.mp4", signer: "", validatedBy: "" },
+    "marron": { src: "media/senas/marron.mp4", signer: "", validatedBy: "" },
+    "naranja": { src: "media/senas/naranja.mp4", signer: "", validatedBy: "" },
+    "violeta": { src: "media/senas/violeta.mp4", signer: "", validatedBy: "" },
+    "rosa": { src: "media/senas/rosa.mp4", signer: "", validatedBy: "" },
+    "celeste": { src: "media/senas/celeste.mp4", signer: "", validatedBy: "" },
   };
 
   /* ---------- Ayudantes ---------- */
