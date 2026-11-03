@@ -67,6 +67,24 @@ window.App = window.App || {};
    * new V.Camera(container, { onFrame(info), draw: true, intro: "texto" })
    * info = { hands: [ {pts, world, label, score, canon} ], hint, light, t }
    */
+  /* Zoom de la cámara: de 0,5× a 3×, en pasos de 0,25.
+     0,5× muestra TODO el cuadro de la cámara (letra chica: no recorta nada),
+     así la mano y los puntos entran completos aunque la persona esté lejos.
+     De 1× a 3× recorta el centro y agranda la imagen. */
+  function clampZoom(z) {
+    z = Math.round((+z || 1) * 100) / 100;
+    if (z < 0.75) z = 0.5;
+    if (z > 3) z = 3;
+    return z;
+  }
+  function applyZoom(root, z) {
+    if (!root) return;
+    var wide = z < 1;
+    root.classList.toggle("wide", wide);
+    root.style.setProperty("--camzoom", wide ? "1" : String(z));
+  }
+  V.clampZoom = clampZoom;
+
   V.Camera = function (container, opts) {
     this.opts = opts || {};
     this.root = App.el(
@@ -80,13 +98,13 @@ window.App = window.App || {};
           '<span data-zlbl aria-live="polite">1×</span><button type="button" data-zin aria-label="Acercar la imagen">+</button></div>' +
         '<span class="badge-live" hidden>Cámara local · no se graba</span>' +
         '<div class="hud" hidden><span class="bubble" data-hint></span><span></span></div>' +
-        '<div class="cam-msg"><div>' +
-          '<div style="font-size:2.6em">📷</div>' +
-          '<p><strong>' + App.esc(this.opts.intro || "Practicá frente a la cámara") + '</strong></p>' +
-          '<p class="small" style="opacity:.85;max-width:38ch;margin:0 auto">La imagen se procesa solo en este dispositivo. No se graba ni se envía a ningún lado.</p>' +
-          '<p class="small" style="opacity:.85;max-width:40ch;margin:10px auto 0">Si tu mano se ve chica, tocá <strong>+</strong> para acercar la imagen: ' +
-          'no hace falta alejar el celular ni la compu.</p>' +
+        '<div class="cam-msg"><div class="cam-msg-in">' +
+          '<span class="cam-ico" aria-hidden="true">📷</span>' +
+          '<p class="cam-title"><strong>' + App.esc(this.opts.intro || "Practicá frente a la cámara") + '</strong></p>' +
           '<button class="btn" type="button" data-start>Activar cámara</button>' +
+          '<p class="small cam-priv">La imagen se procesa solo en este dispositivo. No se graba ni se envía a ningún lado.</p>' +
+          '<p class="small cam-tip">Si la mano no entra en el recuadro, tocá <strong>−</strong> para alejar la imagen. ' +
+          'Si se ve chica, tocá <strong>+</strong>.</p>' +
         '</div></div>' +
       '</div>');
     container.appendChild(this.root);
@@ -97,13 +115,16 @@ window.App = window.App || {};
     this.hintEl = this.root.querySelector("[data-hint]");
     this.running = false; this.raf = 0; this.lastT = 0; this.lastLight = 0; this.light = 1;
     this.work = null; this.wctx = null;
-    this.zoom = Math.min(3, Math.max(1, +(App.state().settings.zoomCam || 1)));
+    this.zoom = clampZoom(App.state().settings.zoomCam);
     this.zoomBox = this.root.querySelector(".cam-zoom");
     this.zoomLbl = this.root.querySelector("[data-zlbl]");
     this.zoomLbl.textContent = this.zoom.toFixed(2).replace(/\.?0+$/, "") + "×";
-    this.root.style.setProperty("--camzoom", this.zoom);
-    this.root.querySelector("[data-zin]").addEventListener("click", function (self) { return function () { self.setZoom(self.zoom + 0.25); }; }(this));
-    this.root.querySelector("[data-zout]").addEventListener("click", function (self) { return function () { self.setZoom(self.zoom - 0.25); }; }(this));
+    applyZoom(this.root, this.zoom);
+    this.zIn = this.root.querySelector("[data-zin]");
+    this.zOut = this.root.querySelector("[data-zout]");
+    this.zIn.addEventListener("click", function (self) { return function () { self.setZoom(self.zoom + 0.25); }; }(this));
+    this.zOut.addEventListener("click", function (self) { return function () { self.setZoom(self.zoom - 0.25); }; }(this));
+    this.syncZoomButtons();
     this.lightCanvas = document.createElement("canvas"); this.lightCanvas.width = 32; this.lightCanvas.height = 24;
     var self = this;
     this.root.querySelector("[data-start]").addEventListener("click", function () { self.start(); });
@@ -148,13 +169,21 @@ window.App = window.App || {};
     });
   };
 
+  V.Camera.prototype.syncZoomButtons = function () {
+    if (this.zIn) this.zIn.disabled = this.zoom >= 3;
+    if (this.zOut) this.zOut.disabled = this.zoom <= 0.5;
+    if (this.zOut) this.zOut.setAttribute("aria-label", "Alejar la imagen (ver más)");
+    if (this.zIn) this.zIn.setAttribute("aria-label", "Acercar la imagen");
+  };
+
   /* Zoom digital: recorta el centro de la imagen antes de analizarla.
      Sirve para no tener que alejar el celular o la compu cuando la mano se ve chica. */
   V.Camera.prototype.setZoom = function (z) {
-    this.zoom = Math.min(3, Math.max(1, Math.round((+z || 1) * 100) / 100));
+    this.zoom = clampZoom(z);
     // Se agranda también la imagen que se ve: si no, el botón parece no hacer nada.
-    this.root.style.setProperty("--camzoom", this.zoom);
+    applyZoom(this.root, this.zoom);
     if (this.zoomLbl) this.zoomLbl.textContent = this.zoom.toFixed(2).replace(/\.?0+$/, "") + "×";
+    this.syncZoomButtons();
     App.state().settings.zoomCam = this.zoom; App.save();
     if (this.opts.onZoom) this.opts.onZoom(this.zoom);
     return this.zoom;
