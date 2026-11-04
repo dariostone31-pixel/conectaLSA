@@ -141,6 +141,18 @@ Archivos tocados: `js/core.js`, `js/main.js`, `js/views-acceso.js`, `js/views-pr
 4. **Todos los videos en un ZIP.** En el panel del referente, «Descargar todos los videos (ZIP)» baja un solo archivo con cada video (`<id>.webm` o `.mp4`) y un `CREDITOS.txt` con quién señaló y quién validó cada uno.
 5. **Deletreo automático más firme.** La cámara avanza sola cuando la letra se sostiene 600 ms, con un aviso en pantalla («¡Es la S, sostenela…»). Si la cámara todavía no conoce esa letra, lo dice y ofrece un enlace directo para enseñársela.
 
+## Novedades de la versión 1.4.0 (4/11/2026)
+
+- **Nueva pantalla de presentación: `#/presentacion`.** Una página para mostrar la app a las escuelas, al municipio o a quien pregunte qué es. Se abre **sin necesidad de crear un perfil**, tiene su propia barra con el botón «Abrir la app», cuenta sola las señas y los niveles, y las imágenes son **capturas reales de la app** (no hay ilustraciones ni señas inventadas).
+- Se llega desde **Acerca de → Presentación**, o escribiendo `#/presentacion` al final de la dirección.
+- Se suma al peso de la app: **≈ 1 MB** para empezar (antes 900 KB). Las capturas van guardadas para que la presentación también se vea sin internet.
+
+## Novedades de la versión 1.3.1 (3/11/2026)
+
+- **La app ahora pesa mucho menos al instalarse: menos de 1 MB.** Antes, al abrirla por primera vez, se descargaban **27 MB** de una sola vez (casi todo era la IA de la mano). Ahora eso **no** se descarga al instalar: la IA se baja **la primera vez que alguien abre la cámara** y desde ahí queda guardada. Quien solo mira las lecciones no la descarga nunca.
+- Los videos tampoco se descargan todos juntos: cada uno se baja cuando se mira (≈ 450 KB).
+- Peso real: **la app, 900 KB (≈ 1 MB con la presentación de la 1.4.0)** · **la IA, 26 MB (solo si se usa la cámara)** · **los 75 videos, 35 MB (de a uno)**.
+
 ## Novedades de la versión 1.3 (3/11/2026)
 
 - **Ya están los 73 videos del plan, más la LL y la RR: 75 señas, las 75 con video.**
