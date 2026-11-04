@@ -141,6 +141,15 @@ Archivos tocados: `js/core.js`, `js/main.js`, `js/views-acceso.js`, `js/views-pr
 4. **Todos los videos en un ZIP.** En el panel del referente, «Descargar todos los videos (ZIP)» baja un solo archivo con cada video (`<id>.webm` o `.mp4`) y un `CREDITOS.txt` con quién señaló y quién validó cada uno.
 5. **Deletreo automático más firme.** La cámara avanza sola cuando la letra se sostiene 600 ms, con un aviso en pantalla («¡Es la S, sostenela…»). Si la cámara todavía no conoce esa letra, lo dice y ofrece un enlace directo para enseñársela.
 
+## Novedades de la versión 1.3 (3/11/2026)
+
+- **Ya están los 73 videos del plan, más la LL y la RR: 75 señas, las 75 con video.**
+  - Se suman las **17 consonantes** que faltaban (B, C, D, F, G, N, Ñ, P, Q, R, S, T, V, W, X, Y, Z).
+  - Se suman los **12 meses**.
+  - **La RR** entra como seña aparte, igual que la LL (nivel 7, «R, S, LL, RR»). Las dos están **pendientes de validación por el referente sordo**.
+- **Todos los videos están filmados, pero ninguno está validado todavía.** Por eso la app sigue mostrando el aviso «Versión de prueba» y cada video dice «Pendiente de validación».
+- Falta cargar el **crédito** (quién señó cada video) para que deje de decir «Seña: —».
+
 ## Novedades de la versión 1.2 (3/11/2026)
 
 - **Cortesía 2 completa: 8 de 8.** «Me llamo» se carga desde el archivo `yo-me-llamo.mp4` (el usuario lo había filmado con ese nombre; se cambió el nombre en la app, no el del archivo).
