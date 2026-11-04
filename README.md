@@ -141,6 +141,12 @@ Archivos tocados: `js/core.js`, `js/main.js`, `js/views-acceso.js`, `js/views-pr
 4. **Todos los videos en un ZIP.** En el panel del referente, «Descargar todos los videos (ZIP)» baja un solo archivo con cada video (`<id>.webm` o `.mp4`) y un `CREDITOS.txt` con quién señaló y quién validó cada uno.
 5. **Deletreo automático más firme.** La cámara avanza sola cuando la letra se sostiene 600 ms, con un aviso en pantalla («¡Es la S, sostenela…»). Si la cámara todavía no conoce esa letra, lo dice y ofrece un enlace directo para enseñársela.
 
+## Novedades de la versión 1.4.1 (5/11/2026)
+
+- **La dirección del proyecto, sola, abre la presentación.** Quien entra a la app sin escribir nada después de la barra ve la **página de presentación** con el botón **«Entrar»** bien grande. Recién al tocar «Entrar» se elige el perfil. Es la misma puerta de entrada que se comparte con las escuelas y el municipio.
+- La barra de arriba también dice **«Entrar»** en lugar de «Abrir la app», para que se entienda de una.
+- Al abrir la app **instalada** desde el ícono se sigue yendo directo a elegir el perfil (no pasa por la presentación).
+
 ## Novedades de la versión 1.4.0 (4/11/2026)
 
 - **Nueva pantalla de presentación: `#/presentacion`.** Una página para mostrar la app a las escuelas, al municipio o a quien pregunte qué es. Se abre **sin necesidad de crear un perfil**, tiene su propia barra con el botón «Abrir la app», cuenta sola las señas y los niveles, y las imágenes son **capturas reales de la app** (no hay ilustraciones ni señas inventadas).
