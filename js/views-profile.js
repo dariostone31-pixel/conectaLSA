@@ -292,6 +292,9 @@ window.App = window.App || {};
       '<div class="card"><span class="eyebrow">Privacidad</span><p>Esta app no pide correo ni contraseña: el acceso es local y sin registro. No tiene publicidad, ' +
       'no mide el uso y la cámara nunca graba. El progreso queda en este dispositivo.</p><p style="margin:0"><a class="btn alt" href="#/privacidad"><span class="ico">' +
       App.ico("candado") + '</span> Leer la política de privacidad completa</a></p></div>' +
+      '<div class="card"><span class="eyebrow">Para mostrar</span><p>¿Tenés que presentar la app en una escuela, en una jornada o en el municipio? ' +
+      'Hay una página de presentación con las capturas de la app, los números y las respuestas a las preguntas más comunes. Se abre sin crear perfil.</p>' +
+      '<p style="margin:0"><a class="btn alt" href="#/presentacion"><span class="ico">' + App.ico("libro") + '</span> Ver la presentación</a></p></div>' +
       '<p class="small muted">La IA reconoce la configuración de la mano; el movimiento, el lugar y la expresión facial los evalúa una persona. Versión ' + (App.VERSION || "1.1") + '.</p>';
   };
 
