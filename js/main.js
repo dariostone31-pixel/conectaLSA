@@ -32,7 +32,7 @@
     referente: V.referente, grabar: V.grabar
   };
   var TITLES = { niveles: "Niveles", nivel: "Nivel", leccion: "Lección", repaso: "Repaso", practicar: "Practicar", practica: "Practicar", diccionario: "Diccionario", sena: "Seña", consejos: "Consejos",
-    camara: "Prueba de cámara", entrenar: "Entrenar la cámara", deletreo: "Deletreá", cara: "La cara también habla", presentacion: "ConectaLSA · Lengua de Señas Argentina", entrar: "Entrar", bienvenida: "Bienvenida", "perfil-importar": "Recuperar progreso", perfiles: "Perfiles", perfil: "Mi perfil",
+    camara: "Prueba de cámara", entrenar: "Entrenar la cámara", deletreo: "Deletreá", cara: "La cara también habla", presentacion: "Conocé la app", entrar: "Entrar", bienvenida: "Bienvenida", "perfil-importar": "Recuperar progreso", perfiles: "Perfiles", perfil: "Mi perfil",
     progreso: "Panel de progreso", ajustes: "Ajustes", acerca: "Acerca de", privacidad: "Política de privacidad", referente: "Modo referente", grabar: "Grabar seña" };
   var FOCUS = { leccion: 1, repaso: 1, practicar: 1, bienvenida: 1, "perfil-importar": 1 };
   var NOPROFILE = { entrar: 1, bienvenida: 1, "perfil-importar": 1, acerca: 1, privacidad: 1, presentacion: 1 };
@@ -63,9 +63,13 @@
   }
 
   function render() {
-    var hash = location.hash || "#/niveles";
+    var hash = location.hash || "";
     var parts = hash.replace(/^#\/?/, "").split("#")[0].split("/");
-    var name = parts[0] || "niveles", view = ROUTES[name];
+    var name = parts[0] || "";
+    // La dirección del proyecto, sin nada después de la barra, muestra la presentación:
+    // es la puerta de entrada que se comparte con las escuelas y con el municipio.
+    if (!name) { history.replaceState(null, "", "#/presentacion"); name = "presentacion"; parts = ["presentacion"]; }
+    var view = ROUTES[name];
     if (!view) { name = "niveles"; view = ROUTES.niveles; parts = ["niveles"]; }
     if (!App.P() && !NOPROFILE[name]) { history.replaceState(null, "", "#/bienvenida"); name = "bienvenida"; view = ROUTES.bienvenida; parts = ["bienvenida"]; }
     // Si se cerró sesión, todo pasa por la pantalla de acceso (salvo privacidad y ayuda).

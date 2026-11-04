@@ -46,7 +46,7 @@ window.App = window.App || {};
           '<img src="icons/logo-blanco.svg" alt="" width="28" height="28">' +
           '<span><b>ConectaLSA</b><small>Lengua de Señas Argentina</small></span>' +
         '</a>' +
-        '<button class="lp-btn lp-btn-mini" type="button" data-empezar>' + (hayPerfil ? 'Entrar' : 'Abrir la app') + '</button>' +
+        '<button class="lp-btn lp-btn-mini" type="button" data-empezar>Entrar</button>' +
       '</div></header>' +
 
       /* ---------------- PORTADA ---------------- */
@@ -58,7 +58,7 @@ window.App = window.App || {};
             '<p class="lp-bajada">ConectaLSA es una app gratuita para que chicos y adolescentes aprendan LSA con ' +
               '<b>' + n.videos + ' videos de personas sordas</b>, práctica con la cámara y juegos. Sin cuentas, sin publicidad y sin internet.</p>' +
             '<div class="lp-acciones">' +
-              '<button class="lp-btn lp-btn-solido" type="button" data-empezar>' + (hayPerfil ? 'Entrar' : 'Empezar gratis') + ' →</button>' +
+              '<button class="lp-btn lp-btn-solido lp-btn-grande" type="button" data-empezar>Entrar <span class="lp-flecha" aria-hidden="true">→</span></button>' +
               '<button class="lp-btn lp-btn-vidrio" type="button" data-ir="lp-como">Cómo funciona</button>' +
             '</div>' +
             '<div class="lp-micro">' +
