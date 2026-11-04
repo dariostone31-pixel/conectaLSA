@@ -29,6 +29,9 @@ window.App = window.App || {};
      la siguen enseñando. Se suma como seña aparte, con su propio id «ll» y su video ll.mp4.
      No es parte del deletreo: aparece en el nivel 7 como una seña más. Pendiente de validación. */
   add("cons3", "palabra", "LL", { uso: "Dígrafo. Muchas escuelas todavía lo enseñan como letra aparte." });
+  /* La RR, igual que la LL: salió del abecedario español en 2010 y muchas escuelas la siguen enseñando.
+     Va como seña aparte, con su propio id «rr» y su video rr.mp4. Pendiente de validación. */
+  add("cons3", "palabra", "RR", { uso: "Dígrafo. Muchas escuelas todavía lo enseñan como letra aparte." });
   [["Rojo", "Como el semáforo cuando hay que frenar."], ["Azul", "Como el cielo de una tarde despejada."], ["Amarillo", "Como el sol o un limón."], ["Verde", "Como el pasto o una hoja."],
    ["Blanco", "Como la nieve o una hoja de papel."], ["Negro", "Como el cielo de noche."], ["Gris", "Como una nube de lluvia."], ["Marrón", "Como la tierra o el chocolate.", ["cafe", "café"]],
    ["Naranja", "Como la fruta del mismo nombre."], ["Violeta", "Como una berenjena.", ["morado", "lila"]], ["Rosa", "Como un chicle de frutilla.", ["rosado"]], ["Celeste", "Como la bandera argentina."]
@@ -89,7 +92,7 @@ window.App = window.App || {};
     { id: "saludos1", n: 4, title: "Saludos y cortesía 1", ico: "👋", color: "#0369A1", tip: "cara", groups: [["hola", "chau", "buen-dia"], ["buenas-tardes", "buenas-noches", "como-estas", "bien"]] },
     { id: "cons1", n: 5, title: "Consonantes B a G", ico: "🔡", color: "#2C6BE8", tip: "camara", groups: [["B", "C", "D"], ["F", "G"]] },
     { id: "cons2", n: 6, title: "Consonantes H a M", ico: "🔡", color: "#5B4BDB", tip: "mano", groups: [["H", "J", "K"], ["L", "M"]] },
-    { id: "cons3", n: 7, title: "Consonantes N a S", ico: "🔡", color: "#0A3F94", tip: "espacio", groups: [["N", "Ñ"], ["P", "Q"], ["R", "S"], ["ll"]] },
+    { id: "cons3", n: 7, title: "Consonantes N a S", ico: "🔡", color: "#0A3F94", tip: "espacio", groups: [["N", "Ñ", "P", "Q"], ["R", "S", "ll", "rr"]] },
     { id: "cons4", n: 8, title: "Consonantes T a Z", ico: "🔡", color: "#1673D1", tip: "camara", groups: [["T", "V", "W"], ["X", "Y", "Z"]] },
     { id: "meses", n: 9, title: "Meses del año", ico: "🗓️", color: "#045D8C", tip: "parametros", groups: [["enero", "febrero", "marzo", "abril"], ["mayo", "junio", "julio", "agosto"], ["septiembre", "octubre", "noviembre", "diciembre"]] },
     { id: "saludos2", n: 10, title: "Saludos y cortesía 2", ico: "🤝", color: "#4F46D6", tip: "cara", groups: [["gracias", "por-favor", "perdon", "de-nada"], ["mucho-gusto", "me-llamo", "como-te-llamas", "nos-vemos"]] }
@@ -197,6 +200,36 @@ window.App = window.App || {};
     "ll": { src: "media/senas/ll.mp4", signer: "", validatedBy: "" },
     "como-te-llamas": { src: "media/senas/como-te-llamas.mp4", signer: "", validatedBy: "" },
     "nos-vemos": { src: "media/senas/nos-vemos.mp4", signer: "", validatedBy: "" },
+    "letra-b": { src: "media/senas/letra-b.mp4", signer: "", validatedBy: "" },
+    "letra-c": { src: "media/senas/letra-c.mp4", signer: "", validatedBy: "" },
+    "letra-d": { src: "media/senas/letra-d.mp4", signer: "", validatedBy: "" },
+    "letra-f": { src: "media/senas/letra-f.mp4", signer: "", validatedBy: "" },
+    "letra-g": { src: "media/senas/letra-g.mp4", signer: "", validatedBy: "" },
+    "letra-n": { src: "media/senas/letra-n.mp4", signer: "", validatedBy: "" },
+    "letra-ñ": { src: "media/senas/letra-ñ.mp4", signer: "", validatedBy: "" },
+    "letra-p": { src: "media/senas/letra-p.mp4", signer: "", validatedBy: "" },
+    "letra-q": { src: "media/senas/letra-q.mp4", signer: "", validatedBy: "" },
+    "letra-r": { src: "media/senas/letra-r.mp4", signer: "", validatedBy: "" },
+    "letra-s": { src: "media/senas/letra-s.mp4", signer: "", validatedBy: "" },
+    "letra-t": { src: "media/senas/letra-t.mp4", signer: "", validatedBy: "" },
+    "letra-v": { src: "media/senas/letra-v.mp4", signer: "", validatedBy: "" },
+    "letra-w": { src: "media/senas/letra-w.mp4", signer: "", validatedBy: "" },
+    "letra-x": { src: "media/senas/letra-x.mp4", signer: "", validatedBy: "" },
+    "letra-y": { src: "media/senas/letra-y.mp4", signer: "", validatedBy: "" },
+    "letra-z": { src: "media/senas/letra-z.mp4", signer: "", validatedBy: "" },
+    "enero": { src: "media/senas/enero.mp4", signer: "", validatedBy: "" },
+    "febrero": { src: "media/senas/febrero.mp4", signer: "", validatedBy: "" },
+    "marzo": { src: "media/senas/marzo.mp4", signer: "", validatedBy: "" },
+    "abril": { src: "media/senas/abril.mp4", signer: "", validatedBy: "" },
+    "mayo": { src: "media/senas/mayo.mp4", signer: "", validatedBy: "" },
+    "junio": { src: "media/senas/junio.mp4", signer: "", validatedBy: "" },
+    "julio": { src: "media/senas/julio.mp4", signer: "", validatedBy: "" },
+    "agosto": { src: "media/senas/agosto.mp4", signer: "", validatedBy: "" },
+    "septiembre": { src: "media/senas/septiembre.mp4", signer: "", validatedBy: "" },
+    "octubre": { src: "media/senas/octubre.mp4", signer: "", validatedBy: "" },
+    "noviembre": { src: "media/senas/noviembre.mp4", signer: "", validatedBy: "" },
+    "diciembre": { src: "media/senas/diciembre.mp4", signer: "", validatedBy: "" },
+    "rr": { src: "media/senas/rr.mp4", signer: "", validatedBy: "" },
   };
 
   /* ---------- Ayudantes ---------- */
