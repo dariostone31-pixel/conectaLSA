@@ -3,7 +3,7 @@
    Lo que se guarda al instalar es la app (código, estilos, fuentes, íconos, imágenes): menos de 1 MB.
    La IA de la mano (26 MB) y los videos se guardan la primera vez que se usan.
    Al publicar una nueva versión, cambiá VERSION para que se actualice en todos los dispositivos. */
-var VERSION = "conectalsa-v1.4.1";
+var VERSION = "conectalsa-v1.4.2";
 var CORE = [
   "./", "index.html", "manifest.webmanifest",
   "css/app.css", "css/landing.css",

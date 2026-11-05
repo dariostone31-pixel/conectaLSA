@@ -141,6 +141,13 @@ Archivos tocados: `js/core.js`, `js/main.js`, `js/views-acceso.js`, `js/views-pr
 4. **Todos los videos en un ZIP.** En el panel del referente, «Descargar todos los videos (ZIP)» baja un solo archivo con cada video (`<id>.webm` o `.mp4`) y un `CREDITOS.txt` con quién señaló y quién validó cada uno.
 5. **Deletreo automático más firme.** La cámara avanza sola cuando la letra se sostiene 600 ms, con un aviso en pantalla («¡Es la S, sostenela…»). Si la cámara todavía no conoce esa letra, lo dice y ofrece un enlace directo para enseñársela.
 
+## Novedades de la versión 1.4.2 (5/11/2026)
+
+- **Cualquier video se puede validar desde la app, sin grabar nada.** Antes el botón «Validar este video» aparecía solo con los videos cargados en ese equipo; los 75 que vienen con la app no se podían validar. Ahora se abre la seña, se mira el video y se toca el botón verde: la validación queda guardada en ese navegador y la seña pasa a mostrar «Validado por …».
+- **Se pueden bajar las validaciones** desde el panel del referente («Descargar validaciones»): un archivo chiquito que se manda al equipo del Punto Digital para cargar todo al proyecto de una vez. En el panel hay un contador «Validaciones de este equipo: X de 75».
+- **Cuenta regresiva al grabar: 3 · 2 · 1.** Después muestra «¡Ahora!» y empieza. Sirve para alcanzar a ponerse en el cuadro cuando el celular está apoyado lejos.
+- En la presentación, el sello amarillo de la portada se cambió por una **tarjeta flotante** limpia con el tilde, «75 videos» y «grabados por personas sordas».
+
 ## Novedades de la versión 1.4.1 (5/11/2026)
 
 - **La dirección del proyecto, sola, abre la presentación.** Quien entra a la app sin escribir nada después de la barra ve la **página de presentación** con el botón **«Entrar»** bien grande. Recién al tocar «Entrar» se elige el perfil. Es la misma puerta de entrada que se comparte con las escuelas y el municipio.
