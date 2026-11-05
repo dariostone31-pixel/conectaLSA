@@ -594,6 +594,23 @@ body.focus-mode main { padding-bottom: 40px; }
 details.card summary { cursor: pointer; }
 .recorder { display: grid; gap: 12px; max-width: 760px; }
 .cam-wrap { position: relative; }
+/* Recuadro con el video de muestra, al lado/bajo de la cámara del entrenamiento */
+.trainer-ref { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-start; margin-top: 12px; padding: 12px; border-radius: 16px; background: var(--surface-2); border: 1px solid var(--line); }
+.trainer-ref:empty { display: none; }
+.trainer-ref-video { width: 220px; max-width: 100%; flex: 0 0 auto; }
+.trainer-ref-video .media { margin: 0; }
+.trainer-ref-video .media-box { border-radius: 12px; }
+.trainer-ref-txt { flex: 1 1 200px; min-width: 160px; }
+.trainer-ref-txt strong { display: block; font-size: 1.05rem; margin-top: 2px; }
+.lab-grid > div:first-child { display: flex; flex-direction: column; }
+@media (max-width: 700px) {
+  /* En el celular el video de muestra va ARRIBA de la cámara: primero se mira, después se hace. */
+  .trainer-ref { order: -1; margin: 0 0 10px; padding: 10px; flex-wrap: nowrap; gap: 10px; align-items: center; }
+  .trainer-ref-video { width: 132px; }
+  .trainer-ref-txt { flex: 1 1 auto; min-width: 0; }
+  .trainer-ref-txt strong { font-size: 1rem; }
+  .trainer-ref-txt .small { font-size: .86rem; }
+}
 .cam-wrap .rec-count { border-radius: 16px; }
 
 .rec-box { position: relative; aspect-ratio: 16 / 9; background: #0B1A1F; border-radius: 16px; overflow: hidden; }
