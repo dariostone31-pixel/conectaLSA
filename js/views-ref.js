@@ -35,6 +35,9 @@ window.App = window.App || {};
       '<div class="stats"><div class="stat"><span class="stat-ico">' + App.ico("camara") + '</span><strong>' + Md.count() + '/' + total + '</strong><small>con video</small></div><div class="stat"><span class="stat-ico">' + App.ico("check") + '</span><strong>' + Md.validatedCount() + '</strong><small>validados</small></div><div class="stat"><span class="stat-ico">' + App.ico("mano") + '</span><strong>' + Object.keys(App.Vision.Model.labels()).length + '</strong><small>señas en la cámara</small></div></div>' +
       '<div class="grid two" style="margin-top:14px">' +
         '<div class="card"><span class="eyebrow">Quién sos</span><label class="field"><span>Tu nombre o código (aparece en los créditos del video)</span><input type="text" data-me maxlength="40" value="' + esc(me) + '" placeholder="Ej.: María G. — Asociación de Sordos"></label></div>' +
+        '<div class="card"><span class="eyebrow">Validaciones de este equipo</span><p style="margin:0 0 6px"><strong>' + Md.validacionesHechas().length + ' de ' + total + '</strong> señas validadas en este navegador.</p>' +
+          '<p class="small muted" style="margin:0 0 10px">Validar no es grabar: se mira el video que ya está y se confirma si la seña está bien. Quedan guardadas acá; descargá el archivo para que se carguen al proyecto y las vean todos los equipos.</p>' +
+          '<button class="btn ghost" type="button" data-valexp><span class="ico">' + App.ico("descarga") + '</span> Descargar validaciones</button></div>' +
         '<div class="card"><span class="eyebrow">Compartir entre equipos</span><p class="small muted" style="margin-top:0">Descargá un paquete con todos los videos y créditos, y cargalo en los otros equipos.</p><div class="row"><button class="btn" type="button" data-exp><span class="ico">' + App.ico("descarga") + '</span> Exportar paquete</button><label class="btn ghost"><span class="ico">' + App.ico("subir") + '</span> Importar paquete<input type="file" accept=".json,application/json" data-imp hidden></label></div>' +
           '<p class="small muted" style="margin:10px 0 0">Para guardar todo en la compu (sin depender del navegador), bajá los videos en un ZIP:</p>' +
           '<button class="btn ghost" type="button" data-zip><span class="ico">' + App.ico("descarga") + '</span> Descargar todos los videos (ZIP)</button></div>' +
@@ -47,6 +50,12 @@ window.App = window.App || {};
       '<div class="grid two" style="margin-top:18px"><a class="card link-card" href="#/entrenar"><span class="tip-ico">' + App.ico("mano") + '</span><strong>Enseñarle señas a la cámara</strong><span class="small muted">Capturá ejemplos de varias personas y medí el falso rechazo.</span></a>' +
         '<div class="card"><span class="eyebrow">PIN del modo referente</span><p class="small muted" style="margin-top:0">' + (R.pin ? "Hay un PIN configurado." : "Sin PIN: cualquiera puede entrar.") + '</p><form class="row" data-pinf><input type="password" inputmode="numeric" maxlength="8" placeholder="Nuevo PIN (vacío = sin PIN)" data-pin style="flex:1;min-width:140px"><button class="btn ghost" type="submit">Guardar PIN</button></form></div></div>';
     App.$("[data-me]", root).addEventListener("change", function () { App.data.set("ref-name", this.value.trim()); App.toast("Guardado"); });
+    App.$("[data-valexp]", root).addEventListener("click", function () {
+      var lista = Md.validacionesHechas();
+      if (!lista.length) { App.toast("Todavía no validaste ninguna seña en este equipo"); return; }
+      App.download("conectalsa-validaciones-" + App.today() + ".json", JSON.stringify(lista, null, 2), "application/json");
+      App.toast("Descargado: mandalo al equipo del Punto Digital");
+    });
     var zipBtn = App.$("[data-zip]", root);
     if (zipBtn) zipBtn.addEventListener("click", function () {
       zipBtn.disabled = true; App.toast("Preparando el ZIP…");
@@ -112,16 +121,25 @@ window.App = window.App || {};
       if (m) {
         cur.appendChild(App.mediaFor(it));
         act.appendChild(App.el('<div class="card"><span class="eyebrow">Video actual</span><p>Seña: <strong>' + esc(m.signer || "—") + '</strong><br>' + (m.validatedBy ? "Validó: <strong>" + esc(m.validatedBy) + "</strong>" : "Todavía no lo validó otra persona.") + '</p></div>'));
+        /* Validar = mirar el video que ya está y decir «está bien». No hay que grabar nada. */
+        if (!m.validatedBy) {
+          act.appendChild(App.el('<p class="small muted" style="margin:0 0 8px">Mirá el video de arriba. Si la seña está bien hecha y se ve completa, tocá el botón verde. ' +
+            'La validación la hace otra persona sorda, distinta de la que señó.</p>'));
+          var vb = App.el('<button class="btn block good" type="button"><span class="ico">' + App.ico("check-simple") + '</span> Validar este video</button>');
+          vb.addEventListener("click", function () {
+            if (!me) { App.toast("Primero escribí tu nombre en el panel del referente"); return; }
+            if (me === m.signer) { App.toast("La validación tiene que hacerla otra persona referente"); return; }
+            Md.validate(it.id, me).then(function () { App.fx("ok"); App.toast("Validado: " + me); view(); });
+          });
+          act.appendChild(vb);
+        } else {
+          var qb = App.el('<button class="btn ghost small" type="button">Quitar la validación</button>');
+          qb.addEventListener("click", function () {
+            Md.unvalidate(it.id).then(function () { App.toast("Validación quitada"); view(); });
+          });
+          act.appendChild(qb);
+        }
         if (m.source === "local") {
-          if (!m.validatedBy) {
-            var vb = App.el('<button class="btn block good" type="button"><span class="ico">' + App.ico("check-simple") + '</span> Validar este video</button>');
-            vb.addEventListener("click", function () {
-              if (!me) { App.toast("Escribí tu nombre en el panel del referente"); return; }
-              if (me === m.signer) { App.toast("La validación tiene que hacerla otra persona referente"); return; }
-              Md.validate(it.id, me).then(function () { App.fx("ok"); App.toast("Validado"); view(); });
-            });
-            act.appendChild(vb);
-          }
           var dl = App.el('<button class="btn ghost block" type="button"><span class="ico">' + App.ico("descarga") + '</span> Descargar video</button>');
           dl.addEventListener("click", function () { Md.blob(it.id).then(function (b) { App.download("conectalsa-" + it.id + (/mp4/.test(b.type) ? ".mp4" : ".webm"), b); }); });
           act.appendChild(dl);
@@ -204,13 +222,21 @@ window.App = window.App || {};
         });
       }
       abrir();
+      /* Cuenta regresiva 3 · 2 · 1 antes de grabar: da tiempo a ponerse en el cuadro
+         cuando se graba con el celular apoyado o con la compu de lejos. */
       go.addEventListener("click", function () {
-        go.disabled = true; var n = 3; cnt.hidden = false; cnt.textContent = n;
+        go.disabled = true; var n = 3;
+        function pintar(txt, chico) {
+          cnt.hidden = false;
+          cnt.innerHTML = '<span>' + txt + '</span>' + (chico ? '<small>' + chico + '</small>' : '');
+        }
+        pintar(n, "Preparate");
         var t = setInterval(function () {
           n--; App.fx("tick");
-          if (n > 0) { cnt.textContent = n; return; }
-          clearInterval(t); cnt.hidden = true; start();
-        }, 800);
+          if (n > 0) { pintar(n, "Preparate"); return; }
+          clearInterval(t); pintar("¡Ahora!", "");
+          setTimeout(function () { cnt.hidden = true; start(); }, 320);
+        }, 900);
       });
       function start() {
         chunks = [];

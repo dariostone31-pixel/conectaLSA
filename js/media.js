@@ -63,10 +63,24 @@ window.App = window.App || {};
     return new Blob(partes.concat(central, [new Uint8Array(fin.buffer)]), { type: "application/zip" });
   }
 
+  /* ---------- Validaciones hechas en ESTE equipo ----------
+     Los 75 videos que vienen con la app son archivos del proyecto: no se pueden
+     cambiar desde el navegador. Para que una persona referente pueda revisarlos
+     igual, la validación se guarda aparte (en el almacenamiento del equipo) y se
+     suma al crédito de cada video. Desde el panel se pueden descargar todas juntas
+     para cargarlas en la próxima versión, así las ven todos. */
+  function validaciones() { return App.data.get("validaciones", {}) || {}; }
+  function guardarValidaciones(v) { App.data.set("validaciones", v); }
+  function aplicarValidaciones() {
+    var v = validaciones();
+    Object.keys(v).forEach(function (id) { if (meta[id] && v[id] && v[id].by) meta[id].validatedBy = v[id].by; });
+  }
+
   var M = App.Media = {
     /** Carga el índice (sin los videos) al iniciar. */
     init: function () {
       Object.keys(App.CONTENT.MEDIA).forEach(function (id) { var m = App.CONTENT.MEDIA[id]; meta[id] = { id: id, src: m.src, signer: m.signer || "", validatedBy: m.validatedBy || "", source: "file" }; });
+      aplicarValidaciones();
       return tx("readonly").then(function (s) { return req(s.getAll()); }).then(function (list) {
         list.forEach(function (r) { meta[r.id] = { id: r.id, signer: r.signer, validatedBy: r.validatedBy || "", created: r.created, size: r.blob ? r.blob.size : 0, type: r.type, source: "local" }; });
       }).catch(function () {});
@@ -95,8 +109,37 @@ window.App = window.App || {};
       });
     },
     validate: function (id, by) {
+      var m = meta[id];
+      if (m && m.source === "file") {
+        var v = validaciones();
+        v[id] = { by: by, date: Date.now() };
+        guardarValidaciones(v);
+        m.validatedBy = by;
+        return Promise.resolve();
+      }
       return tx("readwrite").then(function (s) { return req(s.get(id)).then(function (r) { if (!r) throw new Error("No existe"); r.validatedBy = by; return req(s.put(r)); }); })
         .then(function () { meta[id].validatedBy = by; });
+    },
+    /** Quita la validación (para corregir un nombre o rehacer la revisión). */
+    unvalidate: function (id) {
+      var m = meta[id];
+      if (!m) return Promise.resolve();
+      if (m.source === "file") {
+        var v = validaciones(); delete v[id]; guardarValidaciones(v);
+        m.validatedBy = "";
+        return Promise.resolve();
+      }
+      return tx("readwrite").then(function (s) { return req(s.get(id)).then(function (r) { if (!r) return; r.validatedBy = ""; return req(s.put(r)); }); })
+        .then(function () { m.validatedBy = ""; });
+    },
+    /** Lista de validaciones hechas en este equipo, para descargar y compartir. */
+    validacionesHechas: function () {
+      var v = validaciones(), out = [];
+      Object.keys(v).forEach(function (id) {
+        if (!v[id] || !v[id].by) return;
+        out.push({ id: id, senia: (App.CONTENT.ITEMS[id] && App.CONTENT.ITEMS[id].label) || id, valido: v[id].by, fecha: v[id].date || null });
+      });
+      return out;
     },
     /** Todos los videos grabados en un solo ZIP, con sus créditos. Para guardar en la compu. */
     zipAll: function () {

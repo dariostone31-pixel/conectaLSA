@@ -71,7 +71,8 @@ window.App = window.App || {};
             '<div class="lp-phone lp-phone-1"><img src="img/landing-app-niveles.jpg" alt="Pantalla de niveles de ConectaLSA" width="352" height="632" loading="lazy" decoding="async"></div>' +
             '<div class="lp-phone lp-phone-2"><img src="img/landing-app-leccion.jpg" alt="Lección con el video de una seña y los botones Lento, Repetir y Espejo" width="352" height="632" decoding="async"></div>' +
             '<div class="lp-phone lp-phone-3"><img src="img/landing-app-deletreo.jpg" alt="Juego para deletrear el nombre con el alfabeto manual" width="352" height="632" loading="lazy" decoding="async"></div>' +
-            '<div class="lp-sello"><span><b>' + n.videos + '</b> videos<br>grabados por<br>personas sordas</span></div>' +
+            '<div class="lp-flota"><span class="lp-flota-ico" aria-hidden="true">' + App.ico("check-simple") + '</span>' +
+              '<span><b>' + n.videos + ' videos</b><small>grabados por personas sordas</small></span></div>' +
           '</div>' +
         '</div>' +
       '</section>' +
