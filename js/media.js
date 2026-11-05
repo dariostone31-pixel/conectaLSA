@@ -69,11 +69,26 @@ window.App = window.App || {};
      igual, la validación se guarda aparte (en el almacenamiento del equipo) y se
      suma al crédito de cada video. Desde el panel se pueden descargar todas juntas
      para cargarlas en la próxima versión, así las ven todos. */
+  function normalizarNombre(t) {
+    return String(t || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z\u00f1\s]/g, " ").split(/\s+/).filter(Boolean);
+  }
+  /** ¿Son la misma persona? Tolera acentos, mayúsculas y un segundo nombre de más. */
+  function mismoNombre(a, b) {
+    var x = normalizarNombre(a), y = normalizarNombre(b);
+    if (!x.length || !y.length) return false;
+    var chico = x.length <= y.length ? x : y, grande = x.length <= y.length ? y : x;
+    return chico.every(function (t) { return grande.indexOf(t) >= 0; });
+  }
   function validaciones() { return App.data.get("validaciones", {}) || {}; }
   function guardarValidaciones(v) { App.data.set("validaciones", v); }
   function aplicarValidaciones() {
     var v = validaciones();
-    Object.keys(v).forEach(function (id) { if (meta[id] && v[id] && v[id].by) meta[id].validatedBy = v[id].by; });
+    Object.keys(v).forEach(function (id) {
+      if (!meta[id] || !v[id] || !v[id].by) return;
+      meta[id].validatedBy = v[id].by;
+      meta[id].selfValidated = !!v[id].self;
+    });
   }
 
   var M = App.Media = {
@@ -108,36 +123,40 @@ window.App = window.App || {};
         meta[id] = { id: id, signer: signer, validatedBy: "", created: rec.created, size: blob.size, type: rec.type, source: "local" };
       });
     },
-    validate: function (id, by) {
+    /** Marca la seña como revisada. `self` = la revisó la misma persona que la señaló. */
+    validate: function (id, by, self) {
       var m = meta[id];
       if (m && m.source === "file") {
         var v = validaciones();
-        v[id] = { by: by, date: Date.now() };
+        v[id] = { by: by, date: Date.now(), self: !!self };
         guardarValidaciones(v);
-        m.validatedBy = by;
+        m.validatedBy = by; m.selfValidated = !!self;
         return Promise.resolve();
       }
       return tx("readwrite").then(function (s) { return req(s.get(id)).then(function (r) { if (!r) throw new Error("No existe"); r.validatedBy = by; return req(s.put(r)); }); })
-        .then(function () { meta[id].validatedBy = by; });
+        .then(function () { m.validatedBy = by; m.selfValidated = !!self; });
     },
+    /** ¿El nombre coincide con quien señaló ese video? */
+    mismoNombre: mismoNombre,
     /** Quita la validación (para corregir un nombre o rehacer la revisión). */
     unvalidate: function (id) {
       var m = meta[id];
       if (!m) return Promise.resolve();
       if (m.source === "file") {
         var v = validaciones(); delete v[id]; guardarValidaciones(v);
-        m.validatedBy = "";
+        m.validatedBy = ""; m.selfValidated = false;
         return Promise.resolve();
       }
       return tx("readwrite").then(function (s) { return req(s.get(id)).then(function (r) { if (!r) return; r.validatedBy = ""; return req(s.put(r)); }); })
-        .then(function () { m.validatedBy = ""; });
+        .then(function () { m.validatedBy = ""; m.selfValidated = false; });
     },
     /** Lista de validaciones hechas en este equipo, para descargar y compartir. */
     validacionesHechas: function () {
       var v = validaciones(), out = [];
       Object.keys(v).forEach(function (id) {
         if (!v[id] || !v[id].by) return;
-        out.push({ id: id, senia: (App.CONTENT.ITEMS[id] && App.CONTENT.ITEMS[id].label) || id, valido: v[id].by, fecha: v[id].date || null });
+        out.push({ id: id, senia: (App.CONTENT.ITEMS[id] && App.CONTENT.ITEMS[id].label) || id, valido: v[id].by,
+                   revisionPropia: !!v[id].self, fecha: v[id].date || null });
       });
       return out;
     },
@@ -226,7 +245,7 @@ window.App = window.App || {};
       ctr.appendChild(mir);
     } else ctr.remove();
     cr.innerHTML = info.validatedBy
-      ? '<span class="tag good">' + App.ico("check-simple") + ' Validado</span> Seña: ' + esc(info.signer || "—") + ' · Validó: ' + esc(info.validatedBy)
+      ? '<span class="tag good">' + App.ico("check-simple") + ' Validado</span> Seña: ' + esc(info.signer || "—") + ' · Validó: ' + esc(info.validatedBy) + (info.selfValidated ? ' <span class="muted">(revisión propia)</span>' : "")
       : '<span class="tag warn">Pendiente de validación</span> Seña: ' + esc(info.signer || "—") + '. Falta la revisión de otro referente.';
     if (opts.compact) cr.remove();
     return box;

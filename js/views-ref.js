@@ -33,8 +33,19 @@ window.App = window.App || {};
     root.innerHTML = '<a class="link" href="#/perfil">← Perfil</a><span class="eyebrow" style="margin-top:10px">Modo referente</span><h1>Videos de las señas</h1>' +
       '<p class="muted" style="max-width:72ch">Las señas de ConectaLSA las enseñan <strong>personas sordas</strong>. Desde acá grabás o subís el video de cada seña, otra persona referente lo valida y después lo compartís con todos los equipos.</p>' +
       '<div class="stats"><div class="stat"><span class="stat-ico">' + App.ico("camara") + '</span><strong>' + Md.count() + '/' + total + '</strong><small>con video</small></div><div class="stat"><span class="stat-ico">' + App.ico("check") + '</span><strong>' + Md.validatedCount() + '</strong><small>validados</small></div><div class="stat"><span class="stat-ico">' + App.ico("mano") + '</span><strong>' + Object.keys(App.Vision.Model.labels()).length + '</strong><small>señas en la cámara</small></div></div>' +
+      '<div class="card ref-yo" style="margin-top:14px">' +
+        '<span class="eyebrow">Paso 1 · Tu nombre</span>' +
+        '<h2 style="margin:2px 0 6px;font-size:1.2rem">¿Quién valida los videos?</h2>' +
+        '<p class="small" style="margin:0 0 10px;max-width:70ch">Escribí <b>tu</b> nombre acá y tocá <b>Guardar</b>. Es el nombre de la persona que revisa y aprueba cada video: va a aparecer como <b>«Validó: …»</b>. ' +
+          'No es el nombre de quien señaló: ese ya está cargado en los 75 videos y se ve abajo, en cada seña.</p>' +
+        '<form class="row" data-meform style="gap:8px">' +
+          '<label class="sr" for="ref-me">Tu nombre</label>' +
+          '<input id="ref-me" type="text" data-me maxlength="40" value="' + esc(me) + '" placeholder="Ej.: Alexis Gonzalez" style="flex:1;min-width:200px;padding:12px 14px">' +
+          '<button class="btn" type="submit"><span class="ico">' + App.ico("check-simple") + '</span> Guardar nombre</button>' +
+        '</form>' +
+        '<p class="small" data-memsg style="margin:8px 0 0">' + (me ? '<span class="ico">' + App.ico("check-simple") + '</span> Listo: vas a figurar como <b>' + esc(me) + '</b>.' : '<span class="muted">Todavía no escribiste tu nombre.</span>') + '</p>' +
+      '</div>' +
       '<div class="grid two" style="margin-top:14px">' +
-        '<div class="card"><span class="eyebrow">Quién sos</span><label class="field"><span>Tu nombre o código (aparece en los créditos del video)</span><input type="text" data-me maxlength="40" value="' + esc(me) + '" placeholder="Ej.: María G. — Asociación de Sordos"></label></div>' +
         '<div class="card"><span class="eyebrow">Validaciones de este equipo</span><p style="margin:0 0 6px"><strong>' + Md.validacionesHechas().length + ' de ' + total + '</strong> señas validadas en este navegador.</p>' +
           '<p class="small muted" style="margin:0 0 10px">Validar no es grabar: se mira el video que ya está y se confirma si la seña está bien. Quedan guardadas acá; descargá el archivo para que se carguen al proyecto y las vean todos los equipos.</p>' +
           '<button class="btn ghost" type="button" data-valexp><span class="ico">' + App.ico("descarga") + '</span> Descargar validaciones</button></div>' +
@@ -49,7 +60,18 @@ window.App = window.App || {};
       '<div class="section-title"><h2>Señas</h2><div class="row chips" data-f></div></div><div data-list></div>' +
       '<div class="grid two" style="margin-top:18px"><a class="card link-card" href="#/entrenar"><span class="tip-ico">' + App.ico("mano") + '</span><strong>Enseñarle señas a la cámara</strong><span class="small muted">Capturá ejemplos de varias personas y medí el falso rechazo.</span></a>' +
         '<div class="card"><span class="eyebrow">PIN del modo referente</span><p class="small muted" style="margin-top:0">' + (R.pin ? "Hay un PIN configurado." : "Sin PIN: cualquiera puede entrar.") + '</p><form class="row" data-pinf><input type="password" inputmode="numeric" maxlength="8" placeholder="Nuevo PIN (vacío = sin PIN)" data-pin style="flex:1;min-width:140px"><button class="btn ghost" type="submit">Guardar PIN</button></form></div></div>';
-    App.$("[data-me]", root).addEventListener("change", function () { App.data.set("ref-name", this.value.trim()); App.toast("Guardado"); });
+    /* El nombre se guarda solo mientras se escribe, y también con el botón Guardar. */
+    var campoMe = App.$("[data-me]", root), msgMe = App.$("[data-memsg]", root);
+    function guardarMe(avisar) {
+      var v = (campoMe.value || "").trim();
+      App.data.set("ref-name", v); me = v;
+      if (msgMe) msgMe.innerHTML = v ? '<span class="ico">' + App.ico("check-simple") + '</span> Listo: vas a figurar como <b>' + esc(v) + '</b>.'
+                                     : '<span class="muted">Escribí tu nombre para poder validar.</span>';
+      if (avisar) { App.fx("ok"); App.toast(v ? "Guardado: " + v : "Nombre borrado"); }
+    }
+    campoMe.addEventListener("input", function () { App.data.set("ref-name", this.value.trim()); me = this.value.trim(); });
+    campoMe.addEventListener("change", function () { guardarMe(false); });
+    App.$("[data-meform]", root).addEventListener("submit", function (e) { e.preventDefault(); guardarMe(true); });
     App.$("[data-valexp]", root).addEventListener("click", function () {
       var lista = Md.validacionesHechas();
       if (!lista.length) { App.toast("Todavía no validaste ninguna seña en este equipo"); return; }
@@ -82,7 +104,7 @@ window.App = window.App || {};
         var ul = App.$("ul", box);
         rows.forEach(function (it) {
           var m = Md.info(it.id);
-          var st = !m ? '<span class="tag">Sin video</span>' : m.validatedBy ? '<span class="tag good"><span class="ico">' + App.ico("check-simple") + '</span> ' + esc(m.validatedBy) + '</span>' : '<span class="tag warn">Por validar</span>';
+          var st = !m ? '<span class="tag">Sin video</span>' : m.validatedBy ? '<span class="tag good"><span class="ico">' + App.ico("check-simple") + '</span> ' + esc(m.validatedBy) + (m.selfValidated ? ' · propia' : '') + '</span>' : '<span class="tag warn">Por validar</span>';
           var li = App.el('<li><span class="grow"><strong>' + esc(App.itemTitle(it)) + '</strong> ' + st + (m ? '<br><small class="muted">Seña: ' + esc(m.signer || "—") + (m.source === "file" ? " · archivo de la app" : "") + '</small>' : "") + '</span>' +
             '<a class="btn small" href="#/grabar/' + encodeURIComponent(it.id) + '">' + (m ? "Ver / regrabar" : "Grabar") + '</a></li>');
           ul.appendChild(li);
@@ -121,18 +143,44 @@ window.App = window.App || {};
       if (m) {
         cur.appendChild(App.mediaFor(it));
         act.appendChild(App.el('<div class="card"><span class="eyebrow">Video actual</span><p>Seña: <strong>' + esc(m.signer || "—") + '</strong><br>' + (m.validatedBy ? "Validó: <strong>" + esc(m.validatedBy) + "</strong>" : "Todavía no lo validó otra persona.") + '</p></div>'));
-        /* Validar = mirar el video que ya está y decir «está bien». No hay que grabar nada. */
+        /* Validar = mirar el video que ya está y decir «está bien». No hay que grabar nada.
+           Si todavía no escribió su nombre, el campo aparece acá mismo. */
         if (!m.validatedBy) {
-          act.appendChild(App.el('<p class="small muted" style="margin:0 0 8px">Mirá el video de arriba. Si la seña está bien hecha y se ve completa, tocá el botón verde. ' +
-            'La validación la hace otra persona sorda, distinta de la que señó.</p>'));
-          var vb = App.el('<button class="btn block good" type="button"><span class="ico">' + App.ico("check-simple") + '</span> Validar este video</button>');
-          vb.addEventListener("click", function () {
-            if (!me) { App.toast("Primero escribí tu nombre en el panel del referente"); return; }
-            if (me === m.signer) { App.toast("La validación tiene que hacerla otra persona referente"); return; }
-            Md.validate(it.id, me).then(function () { App.fx("ok"); App.toast("Validado: " + me); view(); });
-          });
-          act.appendChild(vb);
+          if (!me) {
+            act.appendChild(App.el('<div class="card"><span class="eyebrow">Paso 1 · Tu nombre</span>' +
+              '<p style="margin:2px 0 8px">Para validar hace falta saber <b>quién</b> valida: es lo que queda escrito en el crédito del video. ' +
+              'Escribí <b>tu</b> nombre (la persona que revisa), no el de quien señaló.</p>' +
+              '<form class="row" data-nameg style="gap:8px"><input type="text" data-namegi maxlength="40" placeholder="Ej.: Alexis Gonzalez" style="flex:1;min-width:180px;padding:12px 14px" aria-label="Tu nombre">' +
+              '<button class="btn" type="submit">Guardar</button></form></div>'));
+            App.$("[data-namegi]", act).focus();
+            App.$("[data-nameg]", act).addEventListener("submit", function (e) {
+              e.preventDefault();
+              var v = (App.$("[data-namegi]", act).value || "").trim();
+              if (!v) { App.toast("Escribí tu nombre"); return; }
+              App.data.set("ref-name", v); me = v; App.fx("ok"); App.toast("Listo: " + v); view();
+            });
+          } else {
+            var esPropia = Md.mismoNombre(me, m.signer);
+            act.appendChild(App.el('<p class="small muted" style="margin:0 0 8px">Mirá el video de arriba. Si la seña está bien hecha y se ve completa, tocá el botón verde. ' +
+              'Valida: <b>' + esc(me) + '</b>.' + (esPropia ? ' La app va a anotar que la revisaste <b>vos, que también la señalaste</b> (revisión propia).' : '') + '</p>'));
+            var vb = App.el('<button class="btn block good" type="button"><span class="ico">' + App.ico("check-simple") + '</span> Validar este video</button>');
+            vb.addEventListener("click", function () {
+              Md.validate(it.id, me, esPropia).then(function () {
+                App.fx("ok"); App.toast(esPropia ? "Validado (revisión propia): " + me : "Validado: " + me); view();
+              });
+            });
+            act.appendChild(vb);
+          }
         } else {
+          if (m.selfValidated && me && !Md.mismoNombre(me, m.validatedBy)) {
+            act.appendChild(App.el('<p class="small muted" style="margin:0 0 8px">Este video lo revisó <b>' + esc(m.validatedBy) + '</b>, la misma persona que lo señaló. ' +
+              'Si lo revisás vos, queda como <b>segunda mirada</b>.</p>'));
+            var sb = App.el('<button class="btn block good" type="button"><span class="ico">' + App.ico("check-simple") + '</span> Hacer la segunda mirada</button>');
+            sb.addEventListener("click", function () {
+              Md.validate(it.id, me, false).then(function () { App.fx("ok"); App.toast("Segunda mirada: " + me); view(); });
+            });
+            act.appendChild(sb);
+          }
           var qb = App.el('<button class="btn ghost small" type="button">Quitar la validación</button>');
           qb.addEventListener("click", function () {
             Md.unvalidate(it.id).then(function () { App.toast("Validación quitada"); view(); });

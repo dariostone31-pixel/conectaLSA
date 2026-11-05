@@ -132,11 +132,12 @@ window.App = window.App || {};
         '<span class="lp-eyebrow">Por qué es confiable</span>' +
         '<h2>Las señas las enseñan personas sordas</h2>' +
         '<p class="lp-lead">La Ley 27.710 reconoce a la Lengua de Señas Argentina como una lengua natural y originaria. ' +
-          'Por eso acá nada se inventa: cada seña la graba una persona sorda y la revisa otra persona sorda antes de darse por buena.</p>' +
+          'Por eso acá nada se inventa: las señas las graban personas sordas y las revisan personas sordas. Cuando la revisión la hace ' +
+          'la misma persona que grabó, la app lo aclara: <b>«revisión propia»</b>.</p>' +
         '<div class="lp-tarjetas">' +
           '<div class="lp-tarjeta"><h3><span class="lp-tick">✓</span> Grabadas por personas sordas</h3>' +
             '<p>Los ' + n.videos + ' videos los filmaron personas sordas, con un encuadre pensado para que la mano se vea completa.</p>' +
-            '<p><b>' + (n.videos - n.validados) + ' están pendientes de revisión</b>' + (n.validados ? ' y ' + n.validados + ' ya revisadas' : ' por un segundo referente sordo') + '. La app lo dice en cada video, sin esconderlo.</p></div>' +
+            '<p><b>' + (n.videos - n.validados) + ' están pendientes de revisión</b>' + (n.validados ? ' y ' + n.validados + ' ya revisadas' : ' por un referente sordo') + '. La app lo dice en cada video, sin esconderlo.</p></div>' +
           '<div class="lp-tarjeta"><h3><span class="lp-tick">✓</span> La cámara no mira la cara</h3>' +
             '<p>La cámara solo sigue <b>21 puntos de la mano</b> y guarda números, nunca imágenes. No reconoce el rostro, ni la edad, ni el género, ni las emociones.</p>' +
             '<p>La expresión de la cara la explica una persona y la evalúa un docente: la app no la corrige.</p></div>' +
