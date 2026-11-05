@@ -141,6 +141,11 @@ Archivos tocados: `js/core.js`, `js/main.js`, `js/views-acceso.js`, `js/views-pr
 4. **Todos los videos en un ZIP.** En el panel del referente, «Descargar todos los videos (ZIP)» baja un solo archivo con cada video (`<id>.webm` o `.mp4`) y un `CREDITOS.txt` con quién señaló y quién validó cada uno.
 5. **Deletreo automático más firme.** La cámara avanza sola cuando la letra se sostiene 600 ms, con un aviso en pantalla («¡Es la S, sostenela…»). Si la cámara todavía no conoce esa letra, lo dice y ofrece un enlace directo para enseñársela.
 
+## Novedades de la versión 1.4.6 (6/11/2026)
+
+- **El entrenamiento muestra el video de la seña elegida, ahí mismo.** Debajo de la cámara (y arriba, en el celular) aparece un recuadro con el video de esa seña y el texto «Así se hace». Antes había que ir hasta el diccionario, mirar la seña y volver: ahora se mira y se hace en la misma pantalla. El video cambia solo al elegir otra seña en la lista.
+- **El enlace directo acepta nivel y seña** (`#/entrenar/dias/lunes`); antes solo entendía `#/entrenar/<seña>` y podía abrir el entrenamiento en la letra A.
+
 ## Novedades de la versión 1.4.5 (6/11/2026)
 
 - **Con una sola seña entrenada la cámara ya evalúa.** Antes la práctica esperaba que hubiera dos señas aprendidas para mostrar el porcentaje y las pistas; ahora alcanza con la seña que se está practicando. Es el arreglo más importante de esta versión: el chico practicaba a ciegas aunque la seña ya estuviera enseñada.
