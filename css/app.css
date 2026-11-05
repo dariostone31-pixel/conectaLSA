@@ -336,6 +336,7 @@ main { padding: 20px max(16px, env(safe-area-inset-left)) 110px; min-width: 0; o
 .conf-list { list-style: none; margin: 0; padding: 0; }
 .conf-list li { display: grid; grid-template-columns: 70px 1fr 48px; gap: 10px; align-items: center; margin-bottom: 8px; font-weight: 700; }
 .conf-list .bar { height: 12px; }
+.conf-list li.muted, .conf-list li.msg { display: block; font-weight: 500; }
 .fingers { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
 .finger { text-align: center; font-size: .8em; font-weight: 700; }
 .finger .col { height: 70px; border-radius: 10px; background: var(--surface-2); position: relative; overflow: hidden; margin-bottom: 4px; }
@@ -592,6 +593,9 @@ body.focus-mode main { padding-bottom: 40px; }
 .ref-list li:last-child { border-bottom: 0; }
 details.card summary { cursor: pointer; }
 .recorder { display: grid; gap: 12px; max-width: 760px; }
+.cam-wrap { position: relative; }
+.cam-wrap .rec-count { border-radius: 16px; }
+
 .rec-box { position: relative; aspect-ratio: 16 / 9; background: #0B1A1F; border-radius: 16px; overflow: hidden; }
 .rec-box video { width: 100%; height: 100%; object-fit: contain; }
 /* La imagen se muestra en espejo solo con la cámara frontal (para reconocerse).
