@@ -26,7 +26,7 @@ window.App = window.App || {};
         '<div class="card"><span class="eyebrow">Estado</span><ul class="checklist" data-checks>' +
           '<li data-c="hand">Mano visible</li><li data-c="light">Buena luz</li><li data-c="size">Distancia adecuada</li><li data-c="edge">Mano dentro del recuadro</li></ul></div>' +
         '<div class="card"><span class="eyebrow">Extensión de cada dedo</span><div class="fingers" data-fingers>' + VI.FINGERS.map(function (f) { return '<div class="finger"><div class="col"><i style="height:0%"></i></div>' + f.name + '</div>'; }).join("") + '</div><p class="small muted" data-meta style="margin:8px 0 0"></p></div>' +
-        (M.ready() ? '<div class="card"><span class="eyebrow">Señas que reconoce</span><ul class="conf-list" data-pred><li class="muted">Mostrá una seña…</li></ul></div>' : '') +
+        (Object.keys(M.labels()).some(function (k) { return M.labels()[k] >= 5; }) ? '<div class="card"><span class="eyebrow">Lo que reconoce la cámara</span><ul class="conf-list" data-pred><li class="msg muted">Mostrá una seña…</li></ul></div>' : '') +
       '</div></div>' +
       '<div class="section-title"><h2>Si la cámara no te reconoce</h2></div><div class="grid three">' +
         why("bombilla", "Luz de frente", "Una ventana o lámpara delante tuyo, no detrás.") +
@@ -56,16 +56,27 @@ window.App = window.App || {};
   /* =======================================================
      ENTRENAR LA IA (solo referentes; guarda números, nunca imágenes)
      ======================================================= */
-  V.entrenar = function (root) {
+  V.entrenar = function (root, params) {
     if (!App.refGate(root)) return;
     var M = VI.Model;
     var who = App.data.get("trainer-who", "persona-1");
     var label = App.data.get("trainer-label", "A");
+    /* Si se llega desde una seña o una lección (#/entrenar/<id>), se elige esa seña. */
+    var clave = params && params[0] ? decodeURIComponent(params[0]) : "";
+    var pedida = clave ? C.ITEMS[clave] : null;
+    /* También acepta el nombre de la seña tal como lo usa la IA («A», «Ñ»), que es lo que
+       manda el deletreo. */
+    if (!pedida && clave) {
+      Object.keys(C.ITEMS).some(function (id) { if (C.ITEMS[id].aiLabel === clave) { pedida = C.ITEMS[id]; return true; } return false; });
+    }
+    if (pedida && pedida.aiLabel) label = pedida.aiLabel;
     var capturing = null, cam = null;
     root.innerHTML = '<a class="link" href="#/referente">← Modo referente</a><span class="eyebrow" style="margin-top:10px">Modo referente</span><h1>Enseñarle señas a la cámara</h1>' +
       '<p class="muted" style="max-width:72ch">Para que la cámara no rechace señas bien hechas necesita ejemplos de <strong>muchas personas distintas</strong> (meta: al menos 3 por seña, idealmente 10), con distintas manos, luces y distancias.</p>' +
+      '<div class="note" style="margin-top:10px"><p style="margin:0"><strong>No se usan fotos.</strong> La cámara mira la mano <strong>en vivo</strong> durante tres segundos y guarda solo la forma (21 puntos). ' +
+      'Una sola tanda de 30 ejemplos alcanza para que esa seña empiece a reconocerse en las prácticas; se puede repetir con otras personas para que sea más confiable.</p></div>' +
       '<div class="note good"><p><span class="ico">' + App.ico("candado") + '</span> Solo se guardan números (21 puntos de la mano). Nunca imágenes. Pedí consentimiento y usá un código, no el nombre.</p></div>' +
-      '<div class="lab-grid" style="margin-top:14px"><div><div data-cam></div></div><div class="stack"><div class="card">' +
+      '<div class="lab-grid" style="margin-top:14px"><div><div class="cam-wrap"><div data-cam></div><div class="rec-count" data-capcount hidden></div></div></div><div class="stack"><div class="card">' +
         '<label class="field"><span>Código de la persona que hace la seña</span><input type="text" data-who value="' + esc(who) + '" placeholder="persona-1" autocomplete="off"></label>' +
         '<label class="field"><span>Seña a entrenar</span><select data-label>' + C.LEVELS.map(function (lv) {
           return '<optgroup label="' + esc(lv.title) + '">' + lv.items.map(function (id) { var it = C.ITEMS[id]; return '<option value="' + esc(it.aiLabel) + '">' + esc(App.itemTitle(it)) + '</option>'; }).join("") + '</optgroup>';
@@ -73,7 +84,7 @@ window.App = window.App || {};
         '<p class="small muted" data-mvnote hidden>Esta seña tiene movimiento. La cámara aprende la forma de la mano en un instante: capturá la posición más característica. Sirve de apoyo, no de evaluación final.</p>' +
         '<button class="btn big block" type="button" data-cap>⏺ Capturar 30 ejemplos</button><div class="bar" style="margin-top:10px" hidden data-capbar><i style="width:0%"></i></div>' +
         '<p class="small muted" style="margin-top:8px">Durante la captura mové un poco la mano: acercala, alejala y girala levemente.</p></div>' +
-        '<div class="card"><span class="eyebrow">Prueba en vivo</span><ul class="conf-list" data-live><li class="muted">Entrená al menos 2 señas con 5 ejemplos cada una.</li></ul></div>' +
+        '<div class="card"><span class="eyebrow">Prueba en vivo</span><ul class="conf-list" data-live><li class="muted">Capturá 30 ejemplos de una seña y esta lista se llena sola.</li></ul></div>' +
       '</div></div>' +
       '<div class="section-title"><h2>Datos de entrenamiento</h2><span class="muted small" data-summary></span></div>' +
       '<div class="card"><div class="table-wrap" data-table></div><div class="row" style="margin-top:14px"><button class="btn alt" type="button" data-eval><span class="ico">' + App.ico("grafico") + '</span> Medir precisión</button><button class="btn ghost" type="button" data-export>⬇ Exportar modelo</button>' +
@@ -104,10 +115,24 @@ window.App = window.App || {};
       if (capturing) return;
       var btn = this, bar = App.$("[data-capbar]", root), n = 3;
       btn.disabled = true; bar.hidden = false; bar.firstChild.style.width = "0%";
+      btn.textContent = "Preparate…";
+      var cont = App.$("[data-capcount]", root);
+      function pintar(txt, chico) {
+        if (!cont) return;
+        cont.hidden = false;
+        cont.innerHTML = "<span>" + txt + "</span>" + (chico ? "<small>" + chico + "</small>" : "");
+      }
+      pintar(n, "Mostrá la seña");
       var tick = setInterval(function () {
-        if (n > 0) { btn.textContent = "Preparate… " + n; App.fx("tick"); n--; return; }
-        clearInterval(tick); btn.textContent = "Capturando… mové levemente la mano"; capturing = { n: 0, target: 30, last: 0 };
-      }, 800);
+        n--; App.fx("tick");
+        if (n > 0) { pintar(n, "Mostrá la seña"); return; }
+        clearInterval(tick); pintar("¡Ahora!", "");
+        setTimeout(function () {
+          if (cont) cont.hidden = true;
+          btn.textContent = "Capturando… mové levemente la mano";
+          capturing = { n: 0, target: 30, last: 0 };
+        }, 320);
+      }, 900);
     });
     cam = new VI.Camera(App.$("[data-cam]", root), { intro: "Activá la cámara para entrenar", autostart: App.camOK, onStart: function () { App.camOK = true; },
       onFrame: function (info) {
@@ -121,8 +146,10 @@ window.App = window.App || {};
           }
         }
         var live = App.$("[data-live]", root);
-        if (!M.ready()) return;
-        if (!h) { live.innerHTML = '<li class="muted">Mostrá una seña…</li>'; return; }
+        if (!h) { live.innerHTML = '<li class="msg muted">Mostrá la mano…</li>'; return; }
+        if (!Object.keys(M.labels()).some(function (k) { return M.labels()[k] >= 5; })) {
+          live.innerHTML = '<li class="msg muted">Todavía no hay ninguna seña con 5 ejemplos o más.</li>'; return;
+        }
         live.innerHTML = bars(M.predict(VI.features(h.canon)));
       } });
     App.$("[data-eval]", root).addEventListener("click", function () {

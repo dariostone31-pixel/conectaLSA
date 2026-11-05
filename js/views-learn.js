@@ -117,7 +117,7 @@ window.App = window.App || {};
     /* --- 2. Practicá con la cámara (IA si está entrenada; si no, espejo + autoevaluación) --- */
     function stepPractice(stage, s) {
       var it = s.item, label = it.aiLabel, M = App.Vision.Model, camOn = App.state().settings.camera !== false;
-      var aiReady = camOn && M.has(label) && M.ready(), done = false, nx;
+      var aiReady = camOn && M.has(label), done = false, nx;
       st.scored++;
       stage.innerHTML = '<span class="step-kicker">' + App.ico("mano") + ' Practicá</span><h2>' + title(it) + '</h2>' +
         '<p class="muted">' + (aiReady ? "Hacé la seña frente a la cámara. Te vamos a decir qué tan parecida está y qué ajustar." : camOn ? "Usá la cámara como espejo y compará con el video. Después contanos cómo te salió." : "Hacé la seña mirando el video y contanos cómo te salió.") + '</p>' +
@@ -132,7 +132,7 @@ window.App = window.App || {};
         '<p class="small muted" style="margin:8px 0 0">La cámara no analiza el rostro: la expresión la mirás vos ' +
         '(o te la corrige una persona sorda). <a class="link" href="#/cara">Ver las 5 expresiones</a></p></div>'));
       if (aiReady) {
-        side.appendChild(App.el('<div class="card" style="margin-top:12px"><span class="eyebrow">Lo que ve la cámara</span><ul class="conf-list" data-conf><li class="muted">Esperando tu mano…</li></ul><ul class="hint-list" data-hints></ul></div>'));
+        side.appendChild(App.el('<div class="card" style="margin-top:12px"><span class="eyebrow">Lo que ve la cámara</span><ul class="conf-list" data-conf><li class="msg muted">Esperando tu mano…</li></ul><ul class="hint-list" data-hints></ul></div>'));
         side.appendChild(App.el('<p class="small muted">¿Sabés que la hacés bien y no te reconoce? No es tu culpa: la IA puede necesitar más ejemplos. <button class="link" type="button" data-self>Marcar como lograda</button></p>'));
         var sm = new App.Vision.Smoother(12);
         st.cam = new App.Vision.Camera(App.$("[data-cam]", stage), { intro: "Practicá " + App.itemTitle(it), autostart: App.camOK, onStart: function () { App.camOK = true; },
@@ -156,7 +156,9 @@ window.App = window.App || {};
       } else {
         if (camOn) {
           st.cam = new App.Vision.Camera(App.$("[data-cam]", stage), { intro: "Usá la cámara como espejo", autostart: App.camOK, onStart: function () { App.camOK = true; } });
-          side.appendChild(App.el('<p class="small muted" style="margin-top:10px"><span class="ico">' + App.ico("mano") + '</span> La cámara todavía no aprendió esta seña: necesita ejemplos de referentes sordos. Mientras tanto, autoevaluate.</p>'));
+          side.appendChild(App.el('<div><p class="small muted" style="margin-top:10px"><span class="ico">' + App.ico("mano") + '</span> La cámara todavía no aprendió esta seña: necesita ejemplos de una persona que la haga. ' +
+            'Mientras tanto, usá la cámara de espejo y autoevaluá cómo te salió.</p>' +
+            '<p class="small" style="margin:6px 0 0"><a class="link" href="#/entrenar/' + encodeURIComponent(it.id) + '">Enseñarle esta seña a la cámara</a> (lo hace una persona referente, una sola vez).</p></div>'));
         }
         var self = App.el('<div><p style="margin:14px 0 0;font-weight:700">¿Cómo te salió?</p><div class="self-eval"><button type="button" data-v="ok" data-focus><span>😄</span>Me salió</button><button type="button" data-v="casi"><span>🙂</span>Casi</button><button type="button" data-v="rep"><span>🔁</span>Repetir</button></div></div>');
         side.appendChild(self);
@@ -289,7 +291,7 @@ window.App = window.App || {};
     } else {
       App.sample(items, Math.min(8, items.length)).forEach(function (it, k) {
         var M = App.Vision.Model;
-        if (App.state().settings.camera !== false && M.has(it.aiLabel) && M.ready() && k % 2 === 0) steps.push({ type: "practice", item: it });
+        if (App.state().settings.camera !== false && M.has(it.aiLabel) && k % 2 === 0) steps.push({ type: "practice", item: it });
         else if (App.Media.has(it.id)) steps.push(k % 2 ? { type: "write", item: it } : (mediaPool.length >= 3 ? { type: "quiz", item: it, pool: mediaPool } : { type: "write", item: it }));
         else steps.push({ type: "card", item: it });
       });
@@ -375,7 +377,8 @@ window.App = window.App || {};
       '<div class="stack"><div class="card"><span class="eyebrow">Tu progreso con esta seña</span>' +
         (r ? '<p>Vista ' + r.seen + ' ' + (r.seen === 1 ? "vez" : "veces") + ' · escrita bien ' + r.wOk + ' · reconocida por la cámara ' + r.ai + '</p><p class="small muted">' + (App.mastered(it.id) ? "Dominada" : "Seguí practicando: aparece en tu repaso.") + '</p>' : '<p class="muted">Todavía no la practicaste.</p>') +
         '<a class="btn block" href="#/practicar/' + encodeURIComponent(it.id) + '">' + App.ico("mano") + ' Practicar esta seña</a></div>' +
-        '<div class="card"><span class="eyebrow">Cámara</span><p class="small" style="margin:0">' + (ai ? "La cámara puede reconocer esta seña (forma de la mano)." : "La cámara todavía no aprendió esta seña.") + '</p></div></div></div>';
+        '<div class="card"><span class="eyebrow">Cámara</span><p class="small" style="margin:0 0 8px">' + (ai ? "La cámara puede reconocer esta seña (forma de la mano)." : "La cámara todavía no aprendió esta seña.") + '</p>' +
+        (ai ? '' : '<a class="link small" href="#/entrenar/' + encodeURIComponent(it.id) + '">Enseñarle esta seña a la cámara</a>') + '</div></div></div>';
     App.$("[data-media]", root).appendChild(App.mediaFor(it));
   };
 
@@ -471,17 +474,17 @@ window.App = window.App || {};
         if (!finished) { finished = true; info.innerHTML = '<div class="feedback good">¡Palabra deletreada!<p>' + (aiCount ? aiCount + " letras reconocidas por la cámara." : "Practicá con una persona sorda para recibir devolución.") + '</p></div>'; App.fx("win"); onDone(aiCount); }
         return;
       }
-      var L = letters[i], has = camOn && M.has(L) && M.ready();
+      var L = letters[i], has = camOn && M.has(L);
       var caraP = App.caraDePalabra(word), tip = App.$("[data-cara-tip]", info);
       if (tip) tip.innerHTML = App.caraSVG(caraP.id, "sm") + '<div><strong>Tu cara: ' + esc(caraP.name.toLowerCase()) + '</strong>' +
         '<p class="small" style="margin:2px 0 0">' + esc(caraP.como) + '</p></div>';
       App.$("[data-cur]", info).textContent = L;
       var modo = App.$("[data-mode]", info);
       modo.textContent = has ? "La cámara conoce esta letra: avanza sola cuando la sostenés un momento."
-        : (camOn && M.ready() ? "La cámara todavía no conoce esta letra: hacela y tocá «Siguiente letra»." : "Hacé la letra y tocá «Siguiente letra».");
+        : "La cámara todavía no conoce esta letra: hacela y tocá «Siguiente letra».";
       if (!has && camOn) {
-        modo.insertAdjacentHTML("afterend", '<p class="small" style="margin:6px 0 0"><a class="link" href="#/entrenar">' +
-          App.ico("mano") + ' Enseñarle esta letra a la cámara</a> (una persona la muestra varias veces y queda aprendida).</p>');
+        modo.insertAdjacentHTML("afterend", '<p class="small" style="margin:6px 0 0"><a class="link" href="#/entrenar/' + encodeURIComponent(letters[i]) + '">' +
+          App.ico("mano") + ' Enseñarle esta letra a la cámara</a> (una persona referente la muestra tres segundos y queda aprendida).</p>');
       }
       App.$("[data-conf]", info).innerHTML = ""; App.$("[data-hints]", info).innerHTML = "";
       sm.reset(); gate.reset();
@@ -492,7 +495,7 @@ window.App = window.App || {};
     if (camOn) cam = new App.Vision.Camera(App.$("[data-cam]", wrap), { intro: "Deletreá frente a la cámara", autostart: App.camOK, onStart: function () { App.camOK = true; },
       onFrame: function (f) {
         if (i >= letters.length) return;
-        var L = letters[i]; if (!(M.has(L) && M.ready())) return;
+        var L = letters[i]; if (!M.has(L)) return;
         var h = f.hands[0]; if (!h) { sm.push(null); return; }
         var r = M.predict(App.Vision.features(h.canon)), top = r.unknown ? null : r.top[0];
         var res = sm.push(top ? top.label : null, top ? top.p : 0);
