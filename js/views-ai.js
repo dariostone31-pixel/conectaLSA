@@ -62,7 +62,9 @@ window.App = window.App || {};
     var who = App.data.get("trainer-who", "persona-1");
     var label = App.data.get("trainer-label", "A");
     /* Si se llega desde una seña o una lección (#/entrenar/<id>), se elige esa seña. */
-    var clave = params && params[0] ? decodeURIComponent(params[0]) : "";
+    /* Acepta #/entrenar/<id de la seña> y también #/entrenar/<nivel>/<id>. */
+    var crudas = (params || []).map(function (x) { try { return decodeURIComponent(x); } catch (e) { return x; } });
+    var clave = crudas.filter(function (x) { return C.ITEMS[x]; })[0] || crudas[crudas.length - 1] || "";
     var pedida = clave ? C.ITEMS[clave] : null;
     /* También acepta el nombre de la seña tal como lo usa la IA («A», «Ñ»), que es lo que
        manda el deletreo. */
@@ -76,7 +78,8 @@ window.App = window.App || {};
       '<div class="note" style="margin-top:10px"><p style="margin:0"><strong>No se usan fotos.</strong> La cámara mira la mano <strong>en vivo</strong> durante tres segundos y guarda solo la forma (21 puntos). ' +
       'Una sola tanda de 30 ejemplos alcanza para que esa seña empiece a reconocerse en las prácticas; se puede repetir con otras personas para que sea más confiable.</p></div>' +
       '<div class="note good"><p><span class="ico">' + App.ico("candado") + '</span> Solo se guardan números (21 puntos de la mano). Nunca imágenes. Pedí consentimiento y usá un código, no el nombre.</p></div>' +
-      '<div class="lab-grid" style="margin-top:14px"><div><div class="cam-wrap"><div data-cam></div><div class="rec-count" data-capcount hidden></div></div></div><div class="stack"><div class="card">' +
+      '<div class="lab-grid" style="margin-top:14px"><div><div class="cam-wrap"><div data-cam></div><div class="rec-count" data-capcount hidden></div></div>' +
+        '<div class="trainer-ref" data-refsena></div></div><div class="stack"><div class="card">' +
         '<label class="field"><span>Código de la persona que hace la seña</span><input type="text" data-who value="' + esc(who) + '" placeholder="persona-1" autocomplete="off"></label>' +
         '<label class="field"><span>Seña a entrenar</span><select data-label>' + C.LEVELS.map(function (lv) {
           return '<optgroup label="' + esc(lv.title) + '">' + lv.items.map(function (id) { var it = C.ITEMS[id]; return '<option value="' + esc(it.aiLabel) + '">' + esc(App.itemTitle(it)) + '</option>'; }).join("") + '</optgroup>';
@@ -92,7 +95,27 @@ window.App = window.App || {};
         '<p class="small muted" style="margin-top:10px">Para usar el mismo modelo en todos los equipos, exportalo y después importalo en cada uno.</p></div><div data-evalout></div>';
     var sel = App.$("[data-label]", root), whoEl = App.$("[data-who]", root);
     sel.value = label; if (!sel.value) { sel.selectedIndex = 0; }
-    function onSel() { label = sel.value; App.data.set("trainer-label", label); App.$("[data-mvnote]", root).hidden = /^[A-ZÑ]$/.test(label) && "JKÑZ".indexOf(label) < 0; }
+    /** Busca la seña de contenido que corresponde a la etiqueta de la IA («A», «rojo»…). */
+    function itemDe(l) { var f = null; Object.keys(C.ITEMS).some(function (id) { if (C.ITEMS[id].aiLabel === l) { f = C.ITEMS[id]; return true; } return false; }); return f; }
+    /** Recuadro chico con el video de muestra de la seña elegida: así no hay que ir hasta
+        el diccionario y volver. */
+    function pintarRef() {
+      var box = App.$("[data-refsena]", root); if (!box) return;
+      var viejo = box.querySelector("video"); if (viejo) { try { viejo.pause(); } catch (e) {} }
+      box.innerHTML = "";
+      var it = itemDe(label), conVideo = !!(it && App.Media.has(it.id)), txt = '<div class="trainer-ref-txt">';
+      if (conVideo) {
+        box.appendChild(App.el('<div class="trainer-ref-video"></div>'));
+        box.querySelector(".trainer-ref-video").appendChild(App.mediaFor(it, { compact: true }));
+      }
+      txt += '<span class="eyebrow">Así se hace</span><strong>' + esc(it ? App.itemTitle(it) : label) + '</strong>' +
+        '<p class="small muted" style="margin:4px 0 0">' + (conVideo ? "Miralo y después hacé la seña frente a la cámara."
+          : "Todavía no tiene video de muestra: guiate por la ficha de la seña.") + '</p>' +
+        (it ? '<p class="small" style="margin:6px 0 0"><a class="link" href="#/sena/' + encodeURIComponent(it.id) + '">Ver la seña completa</a></p>' : "") +
+        '</div>';
+      box.appendChild(App.el(txt));
+    }
+    function onSel() { label = sel.value; App.data.set("trainer-label", label); App.$("[data-mvnote]", root).hidden = /^[A-ZÑ]$/.test(label) && "JKÑZ".indexOf(label) < 0; pintarRef(); }
     sel.addEventListener("change", onSel); onSel();
     whoEl.addEventListener("change", function () { who = whoEl.value.trim() || "persona-1"; App.data.set("trainer-who", who); });
     function renderTable() {
