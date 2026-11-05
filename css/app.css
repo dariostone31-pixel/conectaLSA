@@ -597,7 +597,11 @@ details.card summary { cursor: pointer; }
 .rec-cams .cam-pills { display: flex; flex-wrap: wrap; gap: 8px; }
 .rec-cams .chip { font-size: .92em; }
 .rec-frame { position: absolute; inset: 6% 28% 0; border: 3px dashed rgba(255,255,255,.4); border-bottom: 0; border-radius: 40% 40% 0 0; display: flex; flex-direction: column; justify-content: space-between; align-items: center; color: rgba(255,255,255,.6); font-size: .75em; padding: 6px; pointer-events: none; }
-.rec-count { position: absolute; inset: 0; display: grid; place-items: center; font-size: 6em; font-weight: 700; color: #fff; background: rgba(0,0,0,.35); }
+.rec-count { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; text-align: center; color: #fff; background: rgba(6, 18, 32, .58); -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px); }
+.rec-count span { display: block; font-size: clamp(3.6rem, 15vw, 6.4rem); font-weight: 800; line-height: .95; letter-spacing: -.03em; text-shadow: 0 10px 40px rgba(0,0,0,.6); animation: recTick .9s ease-out; }
+.rec-count small { display: block; font-size: clamp(.8rem, 3.4vw, 1rem); letter-spacing: .18em; text-transform: uppercase; opacity: .9; font-weight: 700; }
+@keyframes recTick { 0% { transform: scale(1.5); opacity: 0; } 45% { opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .rec-count span { animation: none; } }
 .rec-dot { position: absolute; top: 10px; left: 10px; background: #C62828; color: #fff; padding: 4px 10px; border-radius: 999px; font-weight: 700; font-size: .85em; }
 
 /* Aviso de versión de prueba (se oculta solo cuando todas las señas tienen video validado) */

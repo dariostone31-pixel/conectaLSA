@@ -112,13 +112,18 @@ body.landing-mode main { padding: 0 0 0; }
 .lp-phone-1 { transform: translateY(18px) rotate(-4.5deg); z-index: 1; }
 .lp-phone-2 { transform: translateY(-14px) scale(1.045); z-index: 3; margin-left: -46px; }
 .lp-phone-3 { transform: translateY(26px) rotate(4.5deg); z-index: 2; margin-left: -46px; }
-.lp-sello {
-  position: absolute; z-index: 4; right: 0; bottom: 0;
-  width: 116px; height: 116px; border-radius: 50%; display: grid; place-items: center; text-align: center;
-  background: #FFC23D; color: #3B2C00; font-weight: 700; font-size: .78rem; line-height: 1.2; letter-spacing: .02em;
-  box-shadow: 0 18px 34px -16px rgba(0,0,0,.6); transform: rotate(-8deg);
+/* Tarjeta flotante sobre los teléfonos: dice cuántos videos hay y quién los hizo. */
+.lp-flota {
+  position: absolute; z-index: 4; right: 0; bottom: 3%;
+  display: flex; align-items: center; gap: 11px; max-width: 250px;
+  padding: 11px 16px 11px 12px; border-radius: 15px;
+  background: #FFFFFF; color: #0B1B33;
+  box-shadow: 0 22px 44px -20px rgba(0,0,0,.62), 0 0 0 1px rgba(11,27,51,.05);
 }
-.lp-sello b { display: block; font-size: 1.5rem; line-height: 1; margin-bottom: 2px; }
+.lp-flota-ico { width: 34px; height: 34px; border-radius: 10px; flex: none; display: grid; place-items: center; background: #E7F0FF; color: #1553C4; }
+.lp-flota-ico svg { width: 18px; height: 18px; }
+.lp-flota b { display: block; font-size: .96rem; line-height: 1.15; letter-spacing: -.01em; }
+.lp-flota small { display: block; font-size: .75rem; line-height: 1.25; color: #52617A; margin-top: 3px; }
 
 /* ---------- Cinta de datos ---------- */
 .lp-cinta { background: #06224E; color: #fff; padding: 26px 0; }
@@ -222,8 +227,10 @@ body.landing-mode main { padding: 0 0 0; }
   .lp-phone-3 { display: none; }
   .lp-phone img { border-radius: 19px; }
   .lp-phone-2 { margin-left: -34px; }
-  .lp-sello { width: 88px; height: 88px; font-size: .64rem; right: 6px; bottom: -6px; }
-  .lp-sello b { font-size: 1.15rem; }
+  .lp-flota { right: 8px; bottom: 4px; padding: 9px 13px 9px 10px; gap: 9px; max-width: 208px; border-radius: 13px; }
+  .lp-flota-ico { width: 28px; height: 28px; border-radius: 8px; }
+  .lp-flota b { font-size: .86rem; }
+  .lp-flota small { font-size: .68rem; }
   .lp-sec { padding: 52px 0; }
   .lp-hero .lp-acciones .lp-btn,
   .lp-cierre .lp-acciones .lp-btn { width: 100%; }
@@ -241,7 +248,9 @@ body.landing-mode main { padding: 0 0 0; }
 :root[data-theme="dark"] .lp-hero { background: linear-gradient(160deg, #04162F 0%, #062A5C 40%, #0A3F94 70%, #0B6BA8 100%); }
 :root[data-theme="dark"] .lp-cinta,
 :root[data-theme="dark"] .lp-pie { background: #04162F; }
-:root[data-theme="dark"] .lp-sello { background: #E0A81E; color: #241A00; }
+:root[data-theme="dark"] .lp-flota { background: #101F38; color: #EEF3FF; box-shadow: 0 22px 44px -20px rgba(0,0,0,.8), 0 0 0 1px rgba(255,255,255,.08); }
+:root[data-theme="dark"] .lp-flota-ico { background: #1B3563; color: #9CC2FF; }
+:root[data-theme="dark"] .lp-flota small { color: #A9C4EC; }
 :root[data-contrast="more"] .lp-header { background: #000; }
 :root[data-contrast="more"] .lp-paso,
 :root[data-contrast="more"] .lp-funcion,
