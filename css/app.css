@@ -118,6 +118,11 @@ img, video, canvas { max-width: 100%; display: block; }
 .pill { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 999px; background: rgba(255,255,255,.16); box-shadow: 0 0 0 1px rgba(255,255,255,.18) inset; font-weight: 700; font-size: .88em; white-space: nowrap; }
 .pill.ava-pill { text-decoration: none; color: inherit; font-size: 1.1em; padding: 3px 8px; background: rgba(255,255,255,.24); }
 
+/* Tarjeta «¿Quién valida los videos?» del panel del referente: bien visible. */
+.ref-yo { border: 2px solid var(--accent); background: var(--accent-soft); }
+.ref-yo h2 { color: var(--ink); }
+.ref-yo input { background: var(--surface); }
+
 /* ---------- Layout + navegación ---------- */
 .layout { display: grid; grid-template-columns: 1fr; max-width: 1180px; margin: 0 auto; }
 main { padding: 20px max(16px, env(safe-area-inset-left)) 110px; min-width: 0; outline: none; }
