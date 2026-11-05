@@ -141,6 +141,19 @@ Archivos tocados: `js/core.js`, `js/main.js`, `js/views-acceso.js`, `js/views-pr
 4. **Todos los videos en un ZIP.** En el panel del referente, «Descargar todos los videos (ZIP)» baja un solo archivo con cada video (`<id>.webm` o `.mp4`) y un `CREDITOS.txt` con quién señaló y quién validó cada uno.
 5. **Deletreo automático más firme.** La cámara avanza sola cuando la letra se sostiene 600 ms, con un aviso en pantalla («¡Es la S, sostenela…»). Si la cámara todavía no conoce esa letra, lo dice y ofrece un enlace directo para enseñársela.
 
+## Novedades de la versión 1.4.4 (5/11/2026)
+
+- **La misma persona que grabó puede revisar sus videos.** Se sacó el bloqueo que lo impedía. Cuando Alexis valida una seña que grabó él, la app lo anota como **«revisión propia»** y así se muestra en el crédito del video y en la lista del panel.
+- **Si después aparece otra persona sorda, puede hacer la «segunda mirada»**: al abrir una seña revisada por quien la grabó, aparece el botón verde **«Hacer la segunda mirada»** y su nombre pasa a reemplazar al anterior. El crédito queda como «Seña: Alexis Joel Gonzalez · Validó: María Sorda».
+- Los nombres se comparan **sin importar acentos, mayúsculas ni un segundo nombre de más** («Alexis Gonzalez» reconoce a «Alexis Joel Gonzalez»).
+- En la presentación, el texto de confianza ahora cuenta esto tal cual: las señas las graban y las revisan personas sordas, y si la revisión la hace la misma persona que grabó, la app lo aclara.
+
+## Novedades de la versión 1.4.3 (5/11/2026)
+
+- **Ya están los créditos: los 75 videos dicen «Seña: Alexis Joel González»**, el nombre de quien los grabó. Se cargó en `C.MEDIA` de `js/content.js`.
+- **El lugar para escribir el nombre de quien valida ahora se ve.** Es una tarjeta azul arriba de todo en el panel del referente: **«Paso 1 · ¿Quién valida los videos?»**, con el campo y el botón **«Guardar nombre»**. Antes el campo estaba en una columna angosta y pasaba desapercibido.
+- Si alguien entra directo a una seña **sin haber escrito su nombre**, la app le pide el nombre ahí mismo, en la misma pantalla, sin mandarlo de vuelta al panel.
+
 ## Novedades de la versión 1.4.2 (5/11/2026)
 
 - **Cualquier video se puede validar desde la app, sin grabar nada.** Antes el botón «Validar este video» aparecía solo con los videos cargados en ese equipo; los 75 que vienen con la app no se podían validar. Ahora se abre la seña, se mira el video y se toca el botón verde: la validación queda guardada en ese navegador y la seña pasa a mostrar «Validado por …».
