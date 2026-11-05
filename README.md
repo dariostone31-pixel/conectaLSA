@@ -141,6 +141,14 @@ Archivos tocados: `js/core.js`, `js/main.js`, `js/views-acceso.js`, `js/views-pr
 4. **Todos los videos en un ZIP.** En el panel del referente, «Descargar todos los videos (ZIP)» baja un solo archivo con cada video (`<id>.webm` o `.mp4`) y un `CREDITOS.txt` con quién señaló y quién validó cada uno.
 5. **Deletreo automático más firme.** La cámara avanza sola cuando la letra se sostiene 600 ms, con un aviso en pantalla («¡Es la S, sostenela…»). Si la cámara todavía no conoce esa letra, lo dice y ofrece un enlace directo para enseñársela.
 
+## Novedades de la versión 1.4.5 (6/11/2026)
+
+- **Con una sola seña entrenada la cámara ya evalúa.** Antes la práctica esperaba que hubiera dos señas aprendidas para mostrar el porcentaje y las pistas; ahora alcanza con la seña que se está practicando. Es el arreglo más importante de esta versión: el chico practicaba a ciegas aunque la seña ya estuviera enseñada.
+- **Desde la práctica se puede enseñar la seña ahí mismo.** Cuando la cámara todavía no conoce una seña, el aviso ofrece el enlace **«Enseñarle esta seña a la cámara»**, que abre el entrenamiento con esa seña ya elegida (sirve desde las lecciones, desde la ficha de cada seña y desde el deletreo).
+- **El entrenamiento dice claramente que no se usan fotos.** Un recuadro nuevo explica que la cámara mira la mano en vivo durante tres segundos y guarda solo la forma (21 puntos), y que una tanda de 30 ejemplos alcanza para que esa seña empiece a reconocerse.
+- **La cuenta regresiva 3 · 2 · 1 se ve en grande sobre la cámara**, con el cartel «Mostrá la seña» y el «¡Ahora!» antes de capturar. Antes el número aparecía chico, dentro del botón.
+- **Se corrigió un texto que se veía en una sola columna angosta** en la lista de la cámara («Esperando tu mano…», «Mostrá la mano…») y el aviso de la prueba suelta de cámara ya no pide dos señas.
+
 ## Novedades de la versión 1.4.4 (5/11/2026)
 
 - **La misma persona que grabó puede revisar sus videos.** Se sacó el bloqueo que lo impedía. Cuando Alexis valida una seña que grabó él, la app lo anota como **«revisión propia»** y así se muestra en el crédito del video y en la lista del panel.
