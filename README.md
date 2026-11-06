@@ -141,6 +141,12 @@ Archivos tocados: `js/core.js`, `js/main.js`, `js/views-acceso.js`, `js/views-pr
 4. **Todos los videos en un ZIP.** En el panel del referente, «Descargar todos los videos (ZIP)» baja un solo archivo con cada video (`<id>.webm` o `.mp4`) y un `CREDITOS.txt` con quién señaló y quién validó cada uno.
 5. **Deletreo automático más firme.** La cámara avanza sola cuando la letra se sostiene 600 ms, con un aviso en pantalla («¡Es la S, sostenela…»). Si la cámara todavía no conoce esa letra, lo dice y ofrece un enlace directo para enseñársela.
 
+## Novedades de la versión 1.4.7 (6/11/2026)
+
+- **Todos los videos se ven en 4:3, sin franjas negras.** El recuadro ya era 4:3, pero el video entraba entero (16:9) y quedaban dos franjas oscuras arriba y abajo. Ahora el video **llena el recuadro y se recortan los costados** (`object-fit: cover`, 12,5 % de cada lado). Se revisaron los 75 videos: en ninguno la mano o el cuerpo quedan cortados.
+- **El nombre del video, al lado del video.** Cada recuadro lleva su etiqueta pegada arriba: **A**, **VERDE**, **ENERO**, **BUEN DÍA**, en mayúsculas y en azul, con el nivel al lado («Vocales», «Colores», «Meses del año»). Lo pidió el equipo sordo en la reunión de prueba: los chicos saben qué están mirando sin buscarlo en el título de la página. Se oculta en los ejercicios donde el nombre es la respuesta (deletreo, adivinanza).
+- **Al grabar, la app marca qué parte se va a ver.** En la pantalla de grabación hay dos líneas punteadas: lo que queda entre ellas es exactamente lo que se ve en la app. Así las próximas grabaciones (frases con señas) ya salen bien encuadradas.
+
 ## Novedades de la versión 1.4.6 (6/11/2026)
 
 - **El entrenamiento muestra el video de la seña elegida, ahí mismo.** Debajo de la cámara (y arriba, en el celular) aparece un recuadro con el video de esa seña y el texto «Así se hace». Antes había que ir hasta el diccionario, mirar la seña y volver: ahora se mira y se hace en la misma pantalla. El video cambia solo al elegir otra seña en la lista.
