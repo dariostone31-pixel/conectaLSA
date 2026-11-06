@@ -215,9 +215,17 @@ window.App = window.App || {};
     opts = opts || {};
     var st = App.state().settings, P = App.P();
     var mirror = st.mirrorVideos;
-    var box = App.el('<div class="media"><div class="media-box' + (mirror ? " mirror" : "") + '"></div><div class="media-controls"></div><div class="credit"></div></div>');
+    var box = App.el('<div class="media' + (opts.compact ? " compact" : "") + '"><div class="media-box' + (mirror ? " mirror" : "") + '"></div><div class="media-controls"></div><div class="credit"></div></div>');
     var mb = box.querySelector(".media-box"), ctr = box.querySelector(".media-controls"), cr = box.querySelector(".credit");
     var info = M.info(item.id);
+    /* El nombre de la seña va pegado al cuadro del video, para que no haya que buscarlo
+       arriba en la página (lo pidió el equipo sordo en la prueba con la app). */
+    if (!opts.hideLabel && opts.cap !== false) {
+      var nivel = App.level(item.level);
+      box.insertBefore(App.el('<div class="media-cap"><strong>' + esc(String(item.label).toUpperCase()) + '</strong>' +
+        (nivel ? '<span>' + esc(nivel.title) + '</span>' : '') + '</div>'), mb);
+      box.classList.add("has-cap");
+    }
     if (!info) {
       mb.innerHTML = placeholder(item, opts);
       ctr.remove();

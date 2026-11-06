@@ -55,7 +55,7 @@ window.App = window.App || {};
       '</div>' +
       '<details class="card" style="margin-top:14px"><summary><strong><span class="ico">' + App.ico("documento") + '</span> Cómo grabar un buen video</strong></summary><ul>' +
         '<li>Fondo liso y ropa lisa que contraste con la piel. Luz de frente.</li><li>Encuadre de la cabeza a la cintura, con espacio a los costados para el movimiento.</li>' +
-        '<li>Empezá y terminá con las manos abajo. Hacé la seña con la expresión facial correspondiente.</li><li>Celular o cámara fija y horizontal. Máximo 6 segundos.</li>' +
+        '<li>Empezá y terminá con las manos abajo. Hacé la seña con la expresión facial correspondiente.</li><li>Celular o cámara fija y horizontal, apuntando al centro del pecho: la app recorta el video a 4:3 y lo que queda afuera no se ve. Máximo 6 segundos.</li>' +
         '<li>Antes de grabar, confirmá que la persona dio su consentimiento para publicar el video.</li></ul></details>' +
       '<div class="section-title"><h2>Señas</h2><div class="row chips" data-f></div></div><div data-list></div>' +
       '<div class="grid two" style="margin-top:18px"><a class="card link-card" href="#/entrenar"><span class="tip-ico">' + App.ico("mano") + '</span><strong>Enseñarle señas a la cámara</strong><span class="small muted">Capturá ejemplos de varias personas y medí el falso rechazo.</span></a>' +
@@ -206,7 +206,11 @@ window.App = window.App || {};
       if (!me) { App.toast("Primero escribí tu nombre en el panel del referente"); App.go("#/referente"); return; }
       root.innerHTML = '<button class="link" type="button" data-back>← Cancelar</button><h1 style="margin-top:10px">Grabar: ' + esc(it.label) + '</h1>' +
         '<div class="recorder"><div class="rec-cams" data-cams role="group" aria-label="Elegir cámara"></div>' +
-        '<div class="rec-box"><video playsinline muted autoplay></video><div class="rec-frame" aria-hidden="true"><span>cabeza</span><span>cintura</span></div><div class="rec-count" hidden></div><span class="rec-dot" hidden>● REC</span></div>' +
+        '<div class="rec-box"><video playsinline muted autoplay></video><div class="rec-frame" aria-hidden="true"><span>cabeza</span><span>cintura</span></div>' +
+        '<div class="rec-safe" aria-hidden="true"><i></i><i></i><span>Lo que se ve en la app</span></div>' +
+        '<div class="rec-count" hidden></div><span class="rec-dot" hidden>● REC</span></div>' +
+        '<p class="small muted" style="margin-top:8px">La app muestra los videos en <strong>4:3</strong>: se ven las <strong>dos franjas de adentro de las líneas</strong>. ' +
+        'Hacé la seña dentro de ellas, a la altura del pecho.</p>' +
         '<label class="check"><input type="checkbox" data-ok> La persona que aparece dio su consentimiento para usar este video en ConectaLSA.</label>' +
         '<div class="row"><button class="btn big" type="button" data-go disabled>⏺ Empezar (cuenta 3, graba hasta 6 s)</button><button class="btn ghost" type="button" data-stop hidden>⏹ Terminar</button></div>' +
         '<div class="bar" hidden data-pb><i style="width:0%"></i></div></div>';

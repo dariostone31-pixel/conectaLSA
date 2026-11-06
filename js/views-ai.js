@@ -108,7 +108,7 @@ window.App = window.App || {};
         box.appendChild(App.el('<div class="trainer-ref-video"></div>'));
         box.querySelector(".trainer-ref-video").appendChild(App.mediaFor(it, { compact: true }));
       }
-      txt += '<span class="eyebrow">Así se hace</span><strong>' + esc(it ? App.itemTitle(it) : label) + '</strong>' +
+      txt += '<span class="eyebrow">Así se hace</span>' +
         '<p class="small muted" style="margin:4px 0 0">' + (conVideo ? "Miralo y después hacé la seña frente a la cámara."
           : "Todavía no tiene video de muestra: guiate por la ficha de la seña.") + '</p>' +
         (it ? '<p class="small" style="margin:6px 0 0"><a class="link" href="#/sena/' + encodeURIComponent(it.id) + '">Ver la seña completa</a></p>' : "") +
