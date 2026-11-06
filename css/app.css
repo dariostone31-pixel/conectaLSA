@@ -243,7 +243,21 @@ main { padding: 20px max(16px, env(safe-area-inset-left)) 110px; min-width: 0; o
 .player-actions .grow { flex: 1; }
 
 .media-box { position: relative; border-radius: 18px; overflow: hidden; background: #071223; aspect-ratio: 4 / 3; display: grid; place-items: center; }
-.media-box video { width: 100%; height: 100%; object-fit: contain; background: #071223; }
+/* 4:3 de verdad: el video llena el cuadro y se recortan los costados.
+   Antes entraba entero (16:9 dentro de 4:3) y quedaban franjas negras arriba y abajo. */
+.media-box video { width: 100%; height: 100%; object-fit: cover; background: #071223; }
+/* El nombre de la seña, pegado al video (ARRIBA: se lee antes de mirar) */
+.media-cap { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; margin: 0 0 8px; padding: 7px 12px;
+  background: var(--surface-2); border: 1px solid var(--line); border-radius: 12px; }
+.media-cap strong { font-size: 1.4rem; letter-spacing: .06em; line-height: 1.1; color: var(--s5, #1A5FD0); }
+.media-cap span { font-size: .74rem; color: var(--muted); font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+  border: 1px solid var(--line); border-radius: 999px; padding: 2px 8px; }
+@media (max-width: 560px) { .media-cap strong { font-size: 1.3rem; } }
+.media.compact .media-cap { padding: 5px 10px; margin-bottom: 6px; }
+/* Pegada al video: se lee como el título del cuadro, no como un cartel suelto. */
+.media.has-cap .media-cap { margin-bottom: 0; border-radius: 16px 16px 0 0; border-bottom: 0; }
+.media.has-cap .media-box { border-radius: 0 0 18px 18px; }
+.media.compact .media-cap strong { font-size: 1.05rem; }
 .media-box.mirror video { transform: scaleX(-1); }
 .media-controls { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 .placeholder { text-align: center; color: #E9E9F2; padding: 22px; }
@@ -628,6 +642,13 @@ details.card summary { cursor: pointer; }
 .rec-count small { display: block; font-size: clamp(.8rem, 3.4vw, 1rem); letter-spacing: .18em; text-transform: uppercase; opacity: .9; font-weight: 700; }
 @keyframes recTick { 0% { transform: scale(1.5); opacity: 0; } 45% { opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .rec-count span { animation: none; } }
+/* Zona que se ve en la app: el video se graba 16:9 y se muestra recortado a 4:3 (se
+   pierden 12,5% de cada costado). Las líneas ayudan a encuadrar la seña adentro. */
+.rec-safe { position: absolute; inset: 0; pointer-events: none; }
+.rec-safe i { position: absolute; top: 0; bottom: 0; width: 0; border-left: 2px dashed rgba(255,255,255,.55); }
+.rec-safe i:first-child { left: 12.5%; }
+.rec-safe i:nth-child(2) { right: 12.5%; }
+.rec-safe span { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); color: #fff; background: rgba(6,18,32,.62); font-size: .7em; font-weight: 700; letter-spacing: .05em; padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
 .rec-dot { position: absolute; top: 10px; left: 10px; background: #C62828; color: #fff; padding: 4px 10px; border-radius: 999px; font-weight: 700; font-size: .85em; }
 
 /* Aviso de versión de prueba (se oculta solo cuando todas las señas tienen video validado) */
