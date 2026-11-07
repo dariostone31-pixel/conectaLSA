@@ -609,21 +609,64 @@ details.card summary { cursor: pointer; }
 .recorder { display: grid; gap: 12px; max-width: 760px; }
 .cam-wrap { position: relative; }
 /* Recuadro con el video de muestra, al lado/bajo de la cámara del entrenamiento */
-.trainer-ref { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-start; margin-top: 12px; padding: 12px; border-radius: 16px; background: var(--surface-2); border: 1px solid var(--line); }
+.trainer-col { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.trainer-ref { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-start; padding: 12px; border-radius: 16px; background: var(--surface-2); border: 1px solid var(--line); }
 .trainer-ref:empty { display: none; }
 .trainer-ref-video { width: 220px; max-width: 100%; flex: 0 0 auto; }
 .trainer-ref-video .media { margin: 0; }
 .trainer-ref-video .media-box { border-radius: 12px; }
 .trainer-ref-txt { flex: 1 1 200px; min-width: 160px; }
 .trainer-ref-txt strong { display: block; font-size: 1.05rem; margin-top: 2px; }
+/* Panel de captura: va inmediatamente debajo de la cámara, con la seña elegida a la vista. */
+.trainer-ctrl { padding: 14px; }
+.trainer-pick select { font-size: 1.08rem; font-weight: 700; padding: 13px 12px; cursor: pointer; }
+.trainer-pick-note { margin: 4px 0 0; font-size: .82rem; line-height: 1.25; }
+.trainer-has { margin: 8px 0 10px; font-weight: 700; font-size: .9rem; }
+.trainer-has:empty { display: none; }
+.trainer-ctrl .btn.big { min-height: 58px; }
+.trainer-ctrl .btn.big[disabled] { opacity: .6; }
 .lab-grid > div:first-child { display: flex; flex-direction: column; }
+/* Pantallas bajas (portátiles de 768 px): se achica lo decorativo para que la cámara y el
+   botón de capturar entren juntos, sin bajar la página. */
+@media (min-width: 980px) and (max-height: 880px) {
+  .trainer-intro { display: none; }
+  .trainer-ref { padding: 6px 10px; }
+  .trainer-ref-video { width: 96px; }
+  .trainer-ref-txt .small, .trainer-ref-txt .link { display: none; }
+  .cam { max-height: 38vh; }
+  .trainer-ctrl { padding: 10px 12px; }
+}
+/* En pantalla grande el video de muestra va compacto al lado del texto, para que la cámara
+   y el botón de capturar entren juntos en la misma pantalla. */
+@media (min-width: 701px) {
+  .trainer-ref { flex-wrap: nowrap; gap: 14px; align-items: center; padding: 10px 12px; }
+  .trainer-ref-video { width: 136px; }
+  .trainer-ref-txt strong { font-size: 1rem; }
+}
+/* En pantalla grande todo entra junto: el video de muestra chico, la cámara y,
+   justo debajo, el botón de capturar. Nada flota encima de la cámara. */
+@media (min-width: 980px) {
+  /* Selector y botón en la misma fila: la cámara, el selector y el botón se ven juntos. */
+  .trainer-ctrl { padding: 12px 14px; display: grid; gap: 6px 14px; align-items: start;
+    grid-template-columns: minmax(0, 1fr) 250px;
+    grid-template-areas: "pick cap" "note cap" "has has" "bar bar" "hint hint" "mv mv"; }
+  .trainer-pick { grid-area: pick; }
+  .trainer-ctrl [data-cap] { grid-area: cap; align-self: start; min-height: 64px; }
+  .trainer-pick-note { grid-area: note; margin: 0 !important; }
+  .trainer-has { grid-area: has; margin: 2px 0 0 !important; }
+  .trainer-bar { grid-area: bar; margin-top: 6px !important; }
+  .trainer-hint { grid-area: hint; margin: 2px 0 0 !important; }
+  .trainer-ctrl [data-mvnote] { grid-area: mv; margin: 2px 0 0 !important; }
+}
 @media (max-width: 700px) {
-  /* En el celular el video de muestra va ARRIBA de la cámara: primero se mira, después se hace. */
-  .trainer-ref { order: -1; margin: 0 0 10px; padding: 10px; flex-wrap: nowrap; gap: 10px; align-items: center; }
+  /* En el celular: video de muestra compacto, cámara y DEBAJO la barra de captura. */
+  .trainer-ref { padding: 10px; flex-wrap: nowrap; gap: 10px; align-items: center; }
   .trainer-ref-video { width: 132px; }
   .trainer-ref-txt { flex: 1 1 auto; min-width: 0; }
   .trainer-ref-txt strong { font-size: 1rem; }
   .trainer-ref-txt .small { font-size: .86rem; }
+  .trainer-ctrl { padding: 12px; }
+  .trainer-ctrl .btn.big { min-height: 62px; }
 }
 .cam-wrap .rec-count { border-radius: 16px; }
 
