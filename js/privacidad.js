@@ -7,11 +7,11 @@ window.App = window.App || {};
 (function (App) {
   "use strict";
 
-  var CONTACTO = "[completar antes de publicar: correo o teléfono de la Dirección de Innovación]";
+  var CONTACTO = "direccion.innovacionssjujuy@gmail.com";
 
   App.PRIVACIDAD = {
-    version: "2.0",
-    fecha: "29 de octubre de 2026",
+    version: "2.1",
+    fecha: "7 de noviembre de 2026",
     contacto: CONTACTO,
     responsable: "Dirección de Innovación de la Municipalidad de San Salvador de Jujuy · Punto Digital Jorge Cafrune",
     secciones: [
@@ -168,7 +168,7 @@ window.App = window.App || {};
       {
         t: "Tus derechos (Ley 25.326)",
         p: ["Cualquier persona puede ejercer los derechos de <strong>acceso, rectificación, actualización, supresión y oposición</strong> "
-          + "sobre sus datos, en forma gratuita, escribiendo a la Dirección de Innovación. Si no obtiene respuesta en el plazo legal, "
+          + "sobre sus datos, en forma gratuita, escribiendo a la Dirección de Innovación (" + CONTACTO + "). Si no obtiene respuesta en el plazo legal, "
           + "puede presentarse ante la Agencia de Acceso a la Información Pública (AAIP).",
           "Como la app no guarda datos en servidores, el borrado de los datos de uso se hace desde la propia app "
           + "(Ajustes → Eliminar perfil), o borrando los datos del sitio en el navegador. Para los videos publicados, la vía es la "

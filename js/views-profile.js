@@ -34,7 +34,7 @@ window.App = window.App || {};
     var f = { name: "", avatar: "fox", hand: "right", goal: 30 };
     root.innerHTML = '<section class="welcome">' +
       (first ? '<div class="welcome-hero"><span class="brand-mark xl" aria-hidden="true"><img src="icons/logo-blanco.svg" alt="" width="58" height="58"></span><h1>Aprendé Lengua de Señas Argentina</h1><p>Lecciones cortas con videos de personas sordas, práctica con la cámara y repaso para no olvidarte. Gratis, sin publicidad y sin registro en internet.</p></div>' : '<a class="link" href="#/perfiles">← Perfiles</a><h1>Nuevo perfil</h1>') +
-      (first ? App.betaNote() : "") +
+      (first ? App.avisoContenido() : "") +
       '<form class="card stack" data-f autocomplete="off">' +
         '<label class="field"><span>¿Cómo te llamás?</span><input type="text" data-name maxlength="20" placeholder="Tu nombre o apodo" required></label>' +
         '<div class="field"><span>Elegí tu avatar <small class="muted">(desbloqueás más juntando estrellas)</small></span>' + avatarPicker("fox", 0) + '</div>' +
@@ -77,7 +77,7 @@ window.App = window.App || {};
     var g = App.$("[data-g]", root);
     App.profiles().forEach(function (p) {
       var b = App.el('<button class="who' + (cur && p.id === cur.id ? " cur" : "") + '" type="button"><span class="ava big">' + App.avatar(p.avatar).ico + '</span><strong>' + esc(p.name) + '</strong><small>' +
-        (App.hasPin(p) ? '<span class="ico">' + App.ico("candado") + '</span> ' : "") + App.totalStars(p) + ' estrellas · ' + App.streak(p) + ' días</small></button>');
+        (App.hasPin(p) ? '<span class="ico">' + App.ico("candado") + '</span> ' : "") + App.cant(App.totalStars(p), "estrella", "estrellas") + ' · ' + App.cant(App.streak(p), "día", "días") + '</small></button>');
       b.addEventListener("click", function () {
         if (App.hasPin(p) && (!cur || cur.id !== p.id)) { App.go("#/entrar/" + encodeURIComponent(p.id)); return; }
         App.switchProfile(p.id); App.toast("Hola, " + p.name); App.go("#/niveles");
@@ -99,7 +99,7 @@ window.App = window.App || {};
     root.innerHTML =
       '<section class="profile-head"><span class="ava xl">' + av.ico + '</span><div><h1>' + esc(p.name) + '</h1><p class="muted">' + Math.round((p.seconds || 0) / 60) + ' min de práctica · ' + p.xp + ' puntos</p></div><a class="btn ghost" href="#/perfiles">Cambiar perfil</a></section>' +
       '<div class="stats">' +
-        stat("estrella-llena", ts, "estrellas") + stat("fuego", App.streak(p), "días seguidos") + stat("check", mastered, "señas dominadas") + stat("mano", p.aiOk, "reconocidas por la cámara") +
+        stat("estrella-llena", ts, ts === 1 ? "estrella" : "estrellas") + stat("fuego", App.streak(p), App.streak(p) === 1 ? "día seguido" : "días seguidos") + stat("check", mastered, mastered === 1 ? "seña dominada" : "señas dominadas") + stat("mano", p.aiOk, p.aiOk === 1 ? "reconocida por la cámara" : "reconocidas por la cámara") +
       '</div>' +
       '<div class="section-title"><h2>Medallas</h2></div><div class="badges" data-b></div>' +
       '<div class="section-title"><h2>Avatar</h2><span class="small muted">Juntá estrellas para desbloquear</span></div><div data-ava></div>' +
@@ -150,7 +150,7 @@ window.App = window.App || {};
       var hard = Object.keys(p.items).map(function (id) { var r = p.items[id]; return { id: id, r: r, score: (r.wFail || 0) * 2 + (r.self === "rep" ? 1.5 : r.self === "casi" ? 0.5 : 0) - (r.wOk || 0) * 0.5 }; })
         .filter(function (x) { return C.ITEMS[x.id] && x.score > 0; }).sort(function (a, b) { return b.score - a.score; }).slice(0, 8);
       App.$("[data-detail]", root).innerHTML = '<div class="card" style="margin-top:16px"><h2>' + App.avatar(p.avatar).ico + ' ' + esc(p.name) + '</h2>' +
-        '<p>Escritura: ' + p.written.ok + ' bien / ' + p.written.fail + ' a repasar · Cámara: ' + p.aiOk + ' señas reconocidas · Repasos: ' + p.reviews + ' · Palabras deletreadas: ' + p.spelled + '</p>' +
+        '<p>Escritura: ' + p.written.ok + ' bien / ' + p.written.fail + ' a repasar · Cámara: ' + App.cant(p.aiOk, "seña reconocida", "señas reconocidas") + ' · Repasos: ' + p.reviews + ' · Palabras deletreadas: ' + p.spelled + '</p>' +
         '<h3>Señas para reforzar</h3>' + (hard.length ? '<ul class="hard">' + hard.map(function (x) { return '<li><a href="#/sena/' + encodeURIComponent(x.id) + '">' + esc(App.itemTitle(C.ITEMS[x.id])) + '</a> <small class="muted">· ' + esc(App.level(C.ITEMS[x.id].level).title) + '</small></li>'; }).join("") + '</ul>' : '<p class="muted">¡Ninguna por ahora!</p>') + '</div>';
     }
     if (ps.length) detail(App.P() || ps[0]);
@@ -281,7 +281,7 @@ window.App = window.App || {};
       '<div class="card"><span class="eyebrow">Estado del contenido en este equipo</span><ul>' +
         '<li>' + App.allItems().length + ' señas en ' + C.LEVELS.length + ' niveles</li>' +
         '<li><span class="ico">' + App.ico("camara") + '</span> ' + n + ' videos cargados · ' + nv + ' validados por un segundo referente</li>' +
-        '<li><span class="ico">' + App.ico("mano") + '</span> La cámara reconoce ' + ai + ' señas (forma de la mano)</li></ul></div>' +
+        '<li><span class="ico">' + App.ico("mano") + '</span> La cámara reconoce ' + App.cant(ai, "seña", "señas") + ' (forma de la mano)</li></ul></div>' +
       '<div class="card"><span class="eyebrow">Compromisos</span><ul>' +
         '<li><strong>Las señas las enseñan personas sordas.</strong> Cada video muestra quién la seña y quién la validó (Ley 27.710).</li>' +
         '<li><strong>La cámara nunca graba.</strong> Analiza cada imagen en el equipo y la descarta. No se envía nada a internet.</li>' +
@@ -326,8 +326,11 @@ window.App = window.App || {};
       html += '</div>';
     });
 
+    // El contacto se muestra como enlace si es un correo; si algún día es un teléfono, queda como texto.
+    var esMail = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(P.contacto);
+    var contactoHtml = esMail ? '<a href="mailto:' + P.contacto + '">' + P.contacto + '</a>' : P.contacto;
     html += '<div class="card"><h3>Contacto</h3><p>Para consultas, pedidos o reclamos sobre datos personales: ' +
-      '<strong>' + P.contacto + '</strong></p>' +
+      '<strong>' + contactoHtml + '</strong></p>' +
       '<p class="small muted" style="margin:0">Este texto es el mismo que la app publica en internet y que se entrega impreso ' +
       'a las personas que graban sus señas.</p></div>';
     root.innerHTML = html;

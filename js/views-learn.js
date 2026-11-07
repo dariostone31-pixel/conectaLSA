@@ -24,7 +24,7 @@ window.App = window.App || {};
         '<div class="hello-goal"><div class="ring" style="--p:' + pct + '"><span>' + tx + '/' + goal + '</span></div><div><strong>Meta de hoy</strong><br><span class="small">' + App.ico("fuego") + ' ' + App.streak() + (App.streak() === 1 ? ' día seguido' : ' días seguidos') + ' · ' + App.ico("estrella-llena") + ' ' + App.totalStars() + (App.totalStars() === 1 ? ' estrella' : ' estrellas') + '</span></div></div>' +
         '<div class="row">' + (next ? '<a class="btn big" href="#/leccion/' + next.level.id + '/' + next.lesson.id + '">' + App.ico("play") + ' Continuar: ' + esc(next.level.title) + '</a>' : '<span class="tag good">' + App.ico("trofeo") + ' ¡Completaste todos los niveles!</span>') +
         (due ? '<a class="btn alt" href="#/repaso">' + App.ico("repaso") + ' Repasar (' + due + ')</a>' : "") + '</div>' +
-      '</section>' + App.betaNote() +
+      '</section>' + App.avisoContenido() +
       '<div class="section-title"><h2>Niveles</h2><span class="small muted">Todos abiertos: empezá por donde quieras</span></div>' +
       '<ol class="path" data-path></ol>' +
       '<div class="section-title"><h2>Consejos para señar mejor</h2><a class="small" href="#/consejos">Ver todos</a></div>' +
@@ -268,7 +268,7 @@ window.App = window.App || {};
       App.fx("win");
       stage.innerHTML = '<div class="celebrate"><div class="big">' + (n === 3 ? App.ico("trofeo") : n === 2 ? App.ico("fuego") : App.ico("mano")) + '</div><h2>' + esc(res.title || "¡Lección terminada!") + '</h2>' +
         '<div class="stars xl">' + stars(n) + '</div>' +
-        '<p class="muted">' + (st.scored ? Math.round(ratio * 100) + "% de aciertos" : "") + (st.ai ? " · " + st.ai + " señas reconocidas por la cámara" : "") + '</p>' +
+        '<p class="muted">' + (st.scored ? Math.round(ratio * 100) + "% de aciertos" : "") + (st.ai ? " · " + App.cant(st.ai, "seña reconocida por la cámara", "señas reconocidas por la cámara") : "") + '</p>' +
         (n < 3 ? '<p class="small muted">Podés repetirla cuando quieras para sumar estrellas. Nada se bloquea.</p>' : "") +
         '<div class="row center">' + (res.again ? '<a class="btn ghost" href="' + res.again + '" data-again>↺ Repetir</a>' : "") + (res.next ? '<a class="btn big" href="' + res.next + '">' + esc(res.nextLabel || "Siguiente lección →") + '</a>' : '<a class="btn big" href="' + cfg.exit + '">Volver</a>') + '</div></div>';
       var again = App.$("[data-again]", stage); if (again) again.addEventListener("click", function (e) { e.preventDefault(); st = { i: 0, ok: 0, scored: 0, ai: 0, cam: null }; render(); });
@@ -306,7 +306,7 @@ window.App = window.App || {};
     var idx = lv.lessons.indexOf(l), nextL = lv.lessons[idx + 1];
     var li = C.LEVELS.indexOf(lv), nextLv = C.LEVELS[li + 1];
     return runPlayer(root, buildSteps(lv, l), {
-      note: l.challenge ? App.betaNote(lv.items, true) : "",
+      note: l.challenge ? App.avisoContenido(lv.items, true) : "",
       exit: "#/nivel/" + lv.id,
       onFinish: function (n) {
         App.setStars(lv.id + "/" + l.id, n); App.addXp(10);
@@ -363,7 +363,7 @@ window.App = window.App || {};
       });
       var g = App.$("[data-grid]", root); g.innerHTML = "";
       list.forEach(function (it) { g.appendChild(signCard(it)); });
-      App.$("[data-count]", root).textContent = list.length + " señas · con video · video en producción · dominada";
+      App.$("[data-count]", root).textContent = App.cant(list.length, "seña", "señas") + " · con video · video en producción · dominada";
     }
     draw();
   };

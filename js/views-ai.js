@@ -138,7 +138,7 @@ window.App = window.App || {};
     whoEl.addEventListener("change", function () { who = whoEl.value.trim() || "persona-1"; App.data.set("trainer-who", who); });
     function renderTable() {
       var labs = M.labels(), people = M.people();
-      App.$("[data-summary]", root).textContent = M.samples.length + " ejemplos · " + Object.keys(labs).length + " señas · " + people.length + " persona" + (people.length === 1 ? "" : "s");
+      App.$("[data-summary]", root).textContent = App.cant(M.samples.length, "ejemplo", "ejemplos") + " · " + App.cant(Object.keys(labs).length, "seña", "señas") + " · " + App.cant(people.length, "persona", "personas");
       var keys = Object.keys(labs).sort();
       if (!keys.length) { App.$("[data-table]", root).innerHTML = '<p class="muted">Todavía no hay ejemplos. Elegí una seña y tocá «Capturar».</p>'; return; }
       var h = '<table class="matrix" style="width:100%"><thead><tr><th style="text-align:left">Seña</th><th>Ejemplos</th><th>Personas</th><th>Estado</th><th></th></tr></thead><tbody>';
@@ -209,7 +209,7 @@ window.App = window.App || {};
     App.$("[data-import]", root).addEventListener("change", function (ev) {
       var f = ev.target.files[0]; if (!f) return;
       var rd = new FileReader();
-      rd.onload = function () { try { var n = M.import(rd.result, confirm("¿Reemplazar los datos actuales? (Aceptar = reemplazar · Cancelar = sumar)")); App.toast("Importados " + n + " ejemplos"); renderTable(); } catch (e) { App.toast("El archivo no es un modelo válido"); } };
+      rd.onload = function () { try { var n = M.import(rd.result, confirm("¿Reemplazar los datos actuales? (Aceptar = reemplazar · Cancelar = sumar)")); App.toast((n === 1 ? "Importado " : "Importados ") + App.cant(n, "ejemplo", "ejemplos")); renderTable(); } catch (e) { App.toast("El archivo no es un modelo válido"); } };
       rd.readAsText(f);
     });
     App.$("[data-clear]", root).addEventListener("click", function () { if (confirm("¿Borrar TODOS los datos de entrenamiento de este dispositivo?")) { M.clear(); renderTable(); } });

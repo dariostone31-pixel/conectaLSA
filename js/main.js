@@ -9,7 +9,7 @@
   V.practica = function (root) {
     var due = App.dueItems().length;
     root.innerHTML = '<span class="eyebrow">Practicar</span><h1>¿Qué querés practicar?</h1><div class="hub">' +
-      card("#/repaso", "repaso", "Repaso inteligente", due ? due + " señas para repasar hoy" : "Al día: no hay señas pendientes", due ? "coral" : "") +
+      card("#/repaso", "repaso", "Repaso inteligente", due ? App.cant(due, "seña para repasar hoy", "señas para repasar hoy") : "Al día: no hay señas pendientes", due ? "coral" : "") +
       card("#/deletreo", "dado", "Deletreá", "Tu nombre o palabras con el alfabeto manual") +
       card("#/diccionario", "buscar", "Elegí una seña", "Buscá en el diccionario y practicala con la cámara") +
       card("#/camara", "camara", "¿Cómo te ve la cámara?", "Probá la luz y el encuadre antes de practicar") +

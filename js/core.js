@@ -11,7 +11,7 @@ window.App = window.App || {};
   "use strict";
 
   var KEY = "conectalsa-v1";
-  App.VERSION = "1.4.8";
+  App.VERSION = "1.4.9";
 
   function defaultSettings() {
     return { sound: true, vibration: true, theme: "auto", fs: "100", contrast: "normal", motion: "auto",
@@ -152,19 +152,34 @@ window.App = window.App || {};
   };
   App.totalStars = function (p) { p = p || App.P(); return p ? Object.keys(p.stars).reduce(function (s, k) { return s + p.stars[k]; }, 0) : 0; };
 
-  /* ---------- Aviso de versión de prueba ----------
-     Se muestra mientras falten videos validados. Desaparece solo cuando están todos. */
-  App.betaNote = function (ids, compact) {
+  /* ---------- Aviso de contenido en revisión ----------
+     Se muestra mientras el contenido no esté completo o falten validaciones.
+     No dice «versión de prueba»: los videos existen y se usan. Desaparece solo
+     cuando las 75 señas están grabadas y validadas por un segundo referente. */
+  App.avisoContenido = function (ids, compact) {
     if (!App.Media || !App.Media.status) return "";
     var s = App.Media.status(ids);
     if (s.complete) return "";
-    var cuenta = s.videos + " de " + s.total + (s.total === 1 ? " seña" : " señas") + " con video" + (s.videos ? " (" + s.validated + " validadas)" : "");
-    if (compact) return '<div class="beta-note compact" role="note"><strong><span class="ico">' + App.ico("alerta") + '</span> Versión de prueba.</strong> ' +
-      (ids ? "En este nivel hay " : "Hay ") + cuenta + '. Sin video, el desafío es de memoria: pedile a una persona sorda o a tu docente que te muestre las señas.</div>';
-    return '<div class="beta-note" role="note"><strong><span class="ico">' + App.ico("alerta") + '</span> Versión de prueba</strong><p>Los videos de las señas los están grabando y validando <strong>referentes sordos</strong>. Por ahora hay ' + cuenta + '.</p>' +
-      '<p>Mientras tanto podés recorrer los niveles, practicar el deletreo y autoevaluarte. Para aprender cada seña, pedile a una persona sorda o a tu docente que te la muestre.</p>' +
+    var faltanVideos = s.videos < s.total;
+    var conVideo = App.cant(s.videos, "seña con video", "señas con video");
+    var validados = s.validated + " de " + s.total;
+    if (compact) {
+      return '<div class="beta-note compact" role="note"><strong><span class="ico">' + App.ico("informacion") + '</span> Contenido en revisión.</strong> ' +
+        (ids
+          ? (faltanVideos ? "En este nivel hay " + conVideo + ". Donde falta el video, el desafío es de memoria: pedile a una persona sorda o a tu docente que te muestre las señas."
+                          : "En este nivel los videos ya están cargados. Validados por un segundo referente: " + validados + ".")
+          : (faltanVideos ? "Hay " + conVideo + ". Mientras falta el video, el desafío es de memoria: pedile a una persona sorda o a tu docente que te muestre las señas."
+                          : "Los " + s.total + " videos ya están cargados. Validados por un segundo referente: " + validados + ".")) + '</div>';
+    }
+    var cuerpo = faltanVideos
+      ? '<p>Los videos de las señas los graban y validan <strong>personas sordas referentes</strong>. En este momento hay <strong>' + conVideo + '</strong>.</p>' +
+        '<p>Mientras tanto podés recorrer los niveles, practicar el deletreo y autoevaluarte. Para aprender cada seña, pedile a una persona sorda o a tu docente que te la muestre.</p>'
+      : '<p>Los <strong>' + s.total + ' videos de las señas ya están cargados</strong>. Un <strong>segundo referente sordo</strong> revisa cada uno y deja constancia de cuáles quedaron validados: <strong>' + validados + '</strong>.</p>' +
+        '<p>La app se usa con normalidad. El detalle de lo revisado en este equipo está en «Acerca de».</p>';
+    return '<div class="beta-note" role="note"><strong><span class="ico">' + App.ico("informacion") + '</span> Contenido en revisión</strong>' + cuerpo +
       '<a class="link small" href="#/acerca">Ver el estado del contenido</a></div>';
   };
+  App.betaNote = App.avisoContenido;   // nombre anterior, por compatibilidad
 
   /* ---------- Avatares (se desbloquean con estrellas) ---------- */
   App.AVATARS = [
@@ -207,6 +222,8 @@ window.App = window.App || {};
   App.$ = function (s, r) { return (r || document).querySelector(s); };
   App.$$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
   App.esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
+  /** Cantidad con su palabra en singular o plural: App.cant(1, "seña", "señas") -> "1 seña". */
+  App.cant = function (n, uno, varios) { return n + " " + (Number(n) === 1 ? uno : varios); };
   App.el = function (html) { var t = document.createElement("template"); t.innerHTML = html.trim(); return t.content.firstElementChild; };
   App.shuffle = function (a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; };
   App.sample = function (a, n) { return App.shuffle(a).slice(0, n); };
