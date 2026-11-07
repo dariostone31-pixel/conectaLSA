@@ -141,6 +141,13 @@ Archivos tocados: `js/core.js`, `js/main.js`, `js/views-acceso.js`, `js/views-pr
 4. **Todos los videos en un ZIP.** En el panel del referente, «Descargar todos los videos (ZIP)» baja un solo archivo con cada video (`<id>.webm` o `.mp4`) y un `CREDITOS.txt` con quién señaló y quién validó cada uno.
 5. **Deletreo automático más firme.** La cámara avanza sola cuando la letra se sostiene 600 ms, con un aviso en pantalla («¡Es la S, sostenela…»). Si la cámara todavía no conoce esa letra, lo dice y ofrece un enlace directo para enseñársela.
 
+## Novedades de la versión 1.4.8 (6/11/2026)
+
+- **La pantalla de entrenar la cámara se reordenó: el botón de capturar ahora está justo debajo de la cámara.** Antes quedaba después del código de la persona y de los textos largos: en el celular había que bajar media pantalla con la mano en el aire. Ahora el orden es **video de muestra → cámara → «1 · Elegí la seña» → «2 · Capturar 30 ejemplos»**. En pantalla grande el selector y el botón van en la misma fila, y en portátiles de 768 px entra todo sin scrollear.
+- **Se ve que la seña se elige de una lista de 75.** El selector es más grande y dice «1 · Elegí la seña», con el texto «Cualquiera de las 75 señas: letras, vocales, colores, días, meses y saludos». Antes parecía que solo existía la letra A.
+- **Aviso de lo que ya está entrenado.** Debajo del selector dice cuántos ejemplos tiene esa seña y de cuántas personas («30 ejemplos de 2 personas»), o «Sin ejemplos todavía».
+- **Guías nuevas para los referentes**, con letra grande y sin tecnicismos: `Guia_entrenar_la_camara.pdf` y `Guia_validar_los_videos_referentes.pdf` (3 páginas cada una, en `publicar/`).
+
 ## Novedades de la versión 1.4.7 (6/11/2026)
 
 - **Todos los videos se ven en 4:3, sin franjas negras.** El recuadro ya era 4:3, pero el video entraba entero (16:9) y quedaban dos franjas oscuras arriba y abajo. Ahora el video **llena el recuadro y se recortan los costados** (`object-fit: cover`, 12,5 % de cada lado). Se revisaron los 75 videos: en ninguno la mano o el cuerpo quedan cortados.
