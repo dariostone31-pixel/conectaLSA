@@ -19,7 +19,7 @@ Si abrís `index.html` con doble clic, la app funciona pero **la cámara no**: l
 | Función | En ConectaLSA |
 |---|---|
 | Perfil con avatar | Varios perfiles por equipo («¿Quién aprende hoy?»). Hay 12 avatares que se desbloquean con estrellas. Se elige la mano dominante (zurdos/as: videos en espejo) y una meta diaria. |
-| Mapa de niveles | 10 niveles: Vocales, Colores, Días, Saludos 1, Consonantes (4 bloques), Meses y Saludos 2. Son 74 señas (73 del plan + la LL, que se sumó como seña aparte). **Todos abiertos**, con un orden sugerido. |
+| Mapa de niveles | 10 niveles: Vocales, Colores, Días, Saludos 1, Consonantes (4 bloques), Meses y Saludos 2. Son 75 señas (73 del plan + la LL y la RR, que se sumaron como señas aparte). **Todos abiertos**, con un orden sugerido. |
 | Lecciones | 2–3 lecciones por nivel y un **desafío** que mezcla todo. Se ganan de 1 a 3 estrellas y se puede repetir para mejorar. |
 | Observar la seña | Video sin deformar, en velocidad normal, lenta o muy lenta, con repetir, pausa y espejo. **Créditos**: quién hace la seña y quién la validó. |
 | «¿Cómo se escribe?» | La corrección es **tolerante**: no importan mayúsculas, tildes, signos ni un error de tipeo en palabras largas. Siempre se muestra la forma correcta. Hay pista. |
@@ -63,7 +63,7 @@ Para fijar videos en la app, poné los archivos en `media/senas/` y declaralos e
 index.html · sw.js (offline) · manifest.webmanifest
 css/app.css
 js/core.js         estado, perfiles, puntos, repaso espaciado, ajustes, utilidades
-js/content.js      niveles, lecciones, 74 señas, consejos
+js/content.js      niveles, lecciones, 75 señas, consejos
 js/media.js        videos (IndexedDB + archivos), reproductor, paquetes
 js/vision.js       cámara + MediaPipe Hand Landmarker + clasificador k-NN
 js/views-learn.js  niveles, lección, repaso, diccionario, consejos, deletreo
@@ -96,14 +96,14 @@ Al publicar cambios, subí `VERSION` en `sw.js`.
 - Hacer una sesión de entrenamiento de la cámara con al menos 10 personas, medir falso rechazo y falsa aceptación (≤ 10% cada uno, también seña por seña) y recién ahí publicar el modelo.
 - Hacer un piloto con 5 a 10 personas (sordas y oyentes) antes del evento.
 
-## Versión de prueba (aviso automático)
+## Aviso «Contenido en revisión» (automático)
 
-Mientras falten videos validados, la app muestra el aviso **«🚧 Versión de prueba»** con la cuenta real («Por ahora hay 0 de 74 señas con video»):
+Mientras falten videos o validaciones, la app muestra un recuadro informativo **«ⓘ Contenido en revisión»** con el estado real. Si ya están todos los videos dice: «Los 75 videos de las señas ya están cargados. Un segundo referente sordo revisa cada uno… 0 de 75»; si faltara algún video, dice cuántas señas tienen video.
 
 - en la bienvenida y en el inicio;
 - al empezar cada desafío, con la cuenta de ese nivel.
 
-No hay que acordarse de quitarlo: el aviso de cada desafío desaparece cuando su nivel tiene todos los videos validados, y el general cuando están las 74 señas.
+No hay que acordarse de quitarlo: el aviso de cada desafío desaparece cuando su nivel tiene todos los videos validados, y el general cuando están las 75 señas. Antes decía «Versión de prueba», que se contradecía con los 75 videos cargados (cambiado en la 1.4.9).
 
 ## Publicar los videos para todo el público
 
@@ -140,6 +140,13 @@ Archivos tocados: `js/core.js`, `js/main.js`, `js/views-acceso.js`, `js/views-pr
 3. **Elegir cámara al grabar.** El grabador lista las cámaras del equipo (frontal, trasera del celular, webcam externa) con botones para cambiar sin mover la compu. La imagen se muestra en espejo solo con la cámara frontal; con la trasera o una webcam se ve igual que va a quedar grabada.
 4. **Todos los videos en un ZIP.** En el panel del referente, «Descargar todos los videos (ZIP)» baja un solo archivo con cada video (`<id>.webm` o `.mp4`) y un `CREDITOS.txt` con quién señaló y quién validó cada uno.
 5. **Deletreo automático más firme.** La cámara avanza sola cuando la letra se sostiene 600 ms, con un aviso en pantalla («¡Es la S, sostenela…»). Si la cámara todavía no conoce esa letra, lo dice y ofrece un enlace directo para enseñársela.
+
+## Novedades de la versión 1.4.9 (7/11/2026)
+
+- **El contacto de la política de privacidad está completo.** La política 2.1 (7 de noviembre de 2026) ya trae el correo oficial de la Dirección de Innovación (`direccion.innovacionssjujuy@gmail.com`), en el pie de la pantalla y en la sección de derechos (Ley 25.326). En la app se muestra como enlace para escribir directamente.
+- **El cartel «Versión de prueba» se reemplazó por «Contenido en revisión».** Decía «versión de prueba» y, en la misma frase, «75 de 75 señas con video»: se contradecía. Ahora informa el estado real en tono institucional: los 75 videos ya están cargados y un segundo referente sordo revisa cuáles quedaron validados («0 de 75»). Sigue desapareciendo solo cuando las 75 señas están validadas.
+- **El aviso dejó de ser amarillo de alerta:** es un recuadro informativo azul, con el ícono de información, y respeta el perfil visual, el modo oscuro y el alto contraste.
+- **Singular y plural en toda la app.** Se corrigieron 9 lugares que decían «1 señas», «1 estrellas», «1 días», «1 ejemplos»: Practicar («1 seña para repasar hoy»), el contador del diccionario, el resumen del entrenamiento, la lista de perfiles, las estadísticas de Mi perfil, el panel de progreso y «Acerca de». Se hizo con una sola regla interna (`App.cant`), así no vuelve a pasar en los textos nuevos.
 
 ## Novedades de la versión 1.4.8 (6/11/2026)
 
