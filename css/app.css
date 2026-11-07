@@ -694,15 +694,17 @@ details.card summary { cursor: pointer; }
 .rec-safe span { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); color: #fff; background: rgba(6,18,32,.62); font-size: .7em; font-weight: 700; letter-spacing: .05em; padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
 .rec-dot { position: absolute; top: 10px; left: 10px; background: #C62828; color: #fff; padding: 4px 10px; border-radius: 999px; font-weight: 700; font-size: .85em; }
 
-/* Aviso de versión de prueba (se oculta solo cuando todas las señas tienen video validado) */
-.beta-note { background: #FFF4DC; border: 2px solid #E9B949; color: #4A3708; border-radius: 16px; padding: 14px 16px; margin: 16px 0; }
+/* Aviso «Contenido en revisión»: informativo y sobrio, no de alarma.
+   Se oculta solo cuando las 75 señas están grabadas y validadas por un segundo referente. */
+.beta-note { background: var(--accent-soft); border: 1px solid var(--line); border-left: 4px solid var(--accent);
+  color: var(--ink); border-radius: 14px; padding: 13px 15px; margin: 16px 0; }
+.beta-note strong { color: var(--ink); }
 .beta-note p { margin: 6px 0 0; }
-.beta-note .link { display: inline-block; margin-top: 8px; color: #6B4E07; }
-.beta-note.compact { margin: 0 0 14px; padding: 10px 12px; font-size: .95em; }
-[data-theme="dark"] .beta-note { background: #3A2E12; border-color: #8C6D1F; color: #F6E7C1; }
-[data-theme="dark"] .beta-note .link { color: #F6D58A; }
-@media (prefers-contrast: more) { .beta-note { border-width: 3px; } }
-:root[data-contrast="high"] .beta-note { background: #fff; color: #000; border: 3px solid #000; }
+.beta-note .link { display: inline-block; margin-top: 8px; }
+.beta-note.compact { margin: 0 0 14px; padding: 9px 12px; font-size: .95em; border-radius: 12px; }
+[data-theme="dark"] .beta-note { background: rgba(127,178,255,.10); border-color: var(--line); border-left-color: var(--accent); }
+@media (prefers-contrast: more) { .beta-note { border-width: 2px; border-left-width: 6px; } }
+:root[data-contrast="high"] .beta-note { background: #fff; color: #000; border: 3px solid #000; border-left-width: 7px; }
 :root[data-theme="dark"][data-contrast="high"] .beta-note { background: #000; color: #fff; border-color: #fff; }
 :root[data-contrast="high"] .beta-note .link { color: inherit; }
 
