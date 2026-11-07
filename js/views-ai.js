@@ -74,20 +74,30 @@ window.App = window.App || {};
     if (pedida && pedida.aiLabel) label = pedida.aiLabel;
     var capturing = null, cam = null;
     root.innerHTML = '<a class="link" href="#/referente">← Modo referente</a><span class="eyebrow" style="margin-top:10px">Modo referente</span><h1>Enseñarle señas a la cámara</h1>' +
-      '<p class="muted" style="max-width:72ch">Para que la cámara no rechace señas bien hechas necesita ejemplos de <strong>muchas personas distintas</strong> (meta: al menos 3 por seña, idealmente 10), con distintas manos, luces y distancias.</p>' +
-      '<div class="note" style="margin-top:10px"><p style="margin:0"><strong>No se usan fotos.</strong> La cámara mira la mano <strong>en vivo</strong> durante tres segundos y guarda solo la forma (21 puntos). ' +
-      'Una sola tanda de 30 ejemplos alcanza para que esa seña empiece a reconocerse en las prácticas; se puede repetir con otras personas para que sea más confiable.</p></div>' +
-      '<div class="note good"><p><span class="ico">' + App.ico("candado") + '</span> Solo se guardan números (21 puntos de la mano). Nunca imágenes. Pedí consentimiento y usá un código, no el nombre.</p></div>' +
-      '<div class="lab-grid" style="margin-top:14px"><div><div class="cam-wrap"><div data-cam></div><div class="rec-count" data-capcount hidden></div></div>' +
-        '<div class="trainer-ref" data-refsena></div></div><div class="stack"><div class="card">' +
-        '<label class="field"><span>Código de la persona que hace la seña</span><input type="text" data-who value="' + esc(who) + '" placeholder="persona-1" autocomplete="off"></label>' +
-        '<label class="field"><span>Seña a entrenar</span><select data-label>' + C.LEVELS.map(function (lv) {
-          return '<optgroup label="' + esc(lv.title) + '">' + lv.items.map(function (id) { var it = C.ITEMS[id]; return '<option value="' + esc(it.aiLabel) + '">' + esc(App.itemTitle(it)) + '</option>'; }).join("") + '</optgroup>';
-        }).join("") + '</select></label>' +
-        '<p class="small muted" data-mvnote hidden>Esta seña tiene movimiento. La cámara aprende la forma de la mano en un instante: capturá la posición más característica. Sirve de apoyo, no de evaluación final.</p>' +
-        '<button class="btn big block" type="button" data-cap>⏺ Capturar 30 ejemplos</button><div class="bar" style="margin-top:10px" hidden data-capbar><i style="width:0%"></i></div>' +
-        '<p class="small muted" style="margin-top:8px">Durante la captura mové un poco la mano: acercala, alejala y girala levemente.</p></div>' +
-        '<div class="card"><span class="eyebrow">Prueba en vivo</span><ul class="conf-list" data-live><li class="muted">Capturá 30 ejemplos de una seña y esta lista se llena sola.</li></ul></div>' +
+      '<p class="muted trainer-intro" style="max-width:72ch;margin-bottom:10px"><strong>No se usan fotos</strong> ni se graba nada: la cámara mira la mano <strong>en vivo</strong> y guarda solo números. ' +
+      'Elegí la seña, mirá el video de muestra y tocá el botón que está <strong>debajo de la cámara</strong>.</p>' +
+      '<div class="lab-grid" style="margin-top:14px"><div class="trainer-col">' +
+        '<div class="trainer-ref" data-refsena></div>' +
+        '<div class="cam-wrap"><div data-cam></div><div class="rec-count" data-capcount hidden></div></div>' +
+        /* La barra de captura va PEGADA a la cámara: en el celular el botón queda a un dedo de la vista,
+           sin tener que bajar media pantalla con la mano en el aire. */
+        '<div class="card trainer-ctrl">' +
+          '<label class="field trainer-pick"><span>1 · Elegí la seña</span><select data-label>' + C.LEVELS.map(function (lv) {
+            return '<optgroup label="' + esc(lv.title) + '">' + lv.items.map(function (id) { var it = C.ITEMS[id]; return '<option value="' + esc(it.aiLabel) + '">' + esc(App.itemTitle(it)) + '</option>'; }).join("") + '</optgroup>';
+          }).join("") + '</select></label>' +
+          '<p class="small muted trainer-pick-note">Cualquiera de las <strong>75 señas</strong>: letras, vocales, colores, días, meses y saludos.</p>' +
+          '<p class="small trainer-has" data-has></p>' +
+          '<button class="btn big block" type="button" data-cap>2 · ⏺ Capturar 30 ejemplos</button><div class="bar trainer-bar" style="margin-top:10px" hidden data-capbar><i style="width:0%"></i></div>' +
+          '<p class="small muted trainer-hint" style="margin-top:8px">Durante la captura mové un poco la mano: acercala, alejala y girala levemente.</p>' +
+          '<p class="small muted" data-mvnote hidden>Esta seña tiene movimiento. La cámara aprende la forma de la mano en un instante: capturá la posición más característica. Sirve de apoyo, no de evaluación final.</p></div>' +
+      '</div><div class="stack">' +
+        '<div class="note" style="margin:0"><p style="margin:0"><strong>Meta:</strong> al menos <strong>3 personas distintas</strong> por seña (idealmente 10), con distintas manos, luces y distancias. ' +
+          'Una sola tanda de 30 ejemplos ya alcanza para que la seña empiece a reconocerse en las prácticas.</p></div>' +
+        '<div class="note good" style="margin:0"><p style="margin:0"><span class="ico">' + App.ico("candado") + '</span> Solo se guardan números (21 puntos de la mano). Nunca imágenes. Pedí consentimiento y usá un código, no el nombre.</p></div>' +
+        '<div class="card"><span class="eyebrow">Quién hace la seña</span>' +
+          '<label class="field"><span>Código de la persona que hace la seña</span><input type="text" data-who value="' + esc(who) + '" placeholder="persona-1" autocomplete="off"></label>' +
+          '<p class="small muted" style="margin:6px 0 0">Usá un código, no el nombre: así no se guardan datos de nadie. Cambialo cuando lo haga otra persona.</p></div>' +
+        '<div class="card"><span class="eyebrow">Prueba en vivo</span><ul class="conf-list" data-live><li class="msg muted">Capturá 30 ejemplos de una seña y esta lista se llena sola.</li></ul></div>' +
       '</div></div>' +
       '<div class="section-title"><h2>Datos de entrenamiento</h2><span class="muted small" data-summary></span></div>' +
       '<div class="card"><div class="table-wrap" data-table></div><div class="row" style="margin-top:14px"><button class="btn alt" type="button" data-eval><span class="ico">' + App.ico("grafico") + '</span> Medir precisión</button><button class="btn ghost" type="button" data-export>⬇ Exportar modelo</button>' +
@@ -115,7 +125,15 @@ window.App = window.App || {};
         '</div>';
       box.appendChild(App.el(txt));
     }
-    function onSel() { label = sel.value; App.data.set("trainer-label", label); App.$("[data-mvnote]", root).hidden = /^[A-ZÑ]$/.test(label) && "JKÑZ".indexOf(label) < 0; pintarRef(); }
+    /** Dice si la seña elegida ya tiene ejemplos y de cuántas personas: así se sabe qué falta. */
+    function pintarTiene() {
+      var el = App.$("[data-has]", root); if (!el) return;
+      var labs = M.labels(), k = labs[label] || 0, gente = M.peopleFor ? M.peopleFor(label) : 0;
+      if (!k) { el.innerHTML = '<span class="tag">Sin ejemplos todavía</span> Es la primera vez que se entrena esta seña.'; return; }
+      el.innerHTML = '<span class="tag ' + (k >= 5 ? "good" : "warn") + '">' + k + ' ejemplo' + (k === 1 ? "" : "s") + '</span> ' +
+        (gente === 1 ? "de 1 persona" : "de " + gente + " personas") + (k >= 30 && gente < 3 ? ". Sumá otra persona para que sea más confiable." : "");
+    }
+    function onSel() { label = sel.value; App.data.set("trainer-label", label); App.$("[data-mvnote]", root).hidden = /^[A-ZÑ]$/.test(label) && "JKÑZ".indexOf(label) < 0; pintarRef(); pintarTiene(); }
     sel.addEventListener("change", onSel); onSel();
     whoEl.addEventListener("change", function () { who = whoEl.value.trim() || "persona-1"; App.data.set("trainer-who", who); });
     function renderTable() {
@@ -130,7 +148,7 @@ window.App = window.App || {};
         h += '<tr><td style="text-align:left"><strong>' + esc(nameOf(k)) + '</strong></td><td>' + labs[k] + '</td><td>' + np + '</td><td>' + (np >= 3 ? '<span class="tag good">Robusta</span>' : ok ? '<span class="tag warn">Sumá personas</span>' : '<span class="tag">Faltan ejemplos</span>') + '</td><td><button class="link" type="button" data-del="' + esc(k) + '">Borrar</button></td></tr>';
       });
       App.$("[data-table]", root).innerHTML = h + '</tbody></table>';
-      App.$$("[data-del]", root).forEach(function (b) { b.addEventListener("click", function () { if (confirm("¿Borrar todos los ejemplos de esta seña?")) { M.removeLabel(b.dataset.del); renderTable(); } }); });
+      App.$$("[data-del]", root).forEach(function (b) { b.addEventListener("click", function () { if (confirm("¿Borrar todos los ejemplos de esta seña?")) { M.removeLabel(b.dataset.del); renderTable(); pintarTiene(); } }); });
     }
     renderTable();
     App.$("[data-cap]", root).addEventListener("click", function () {
@@ -165,7 +183,7 @@ window.App = window.App || {};
           App.$("[data-capbar] i", root).style.width = (capturing.n / capturing.target * 100) + "%";
           if (capturing.n >= capturing.target) {
             capturing = null; M.save(); App.fx("ok"); App.toast("30 ejemplos guardados: " + nameOf(label));
-            var b = App.$("[data-cap]", root); b.disabled = false; b.textContent = "⏺ Capturar 30 ejemplos más"; App.$("[data-capbar]", root).hidden = true; renderTable();
+            var b = App.$("[data-cap]", root); b.disabled = false; b.textContent = "2 · ⏺ Capturar 30 ejemplos más"; App.$("[data-capbar]", root).hidden = true; renderTable(); pintarTiene();
           }
         }
         var live = App.$("[data-live]", root);
