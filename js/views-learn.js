@@ -123,7 +123,8 @@ window.App = window.App || {};
         '<p class="muted">' + (aiReady ? "Hacé la seña frente a la cámara. Te vamos a decir qué tan parecida está y qué ajustar." : camOn ? "Usá la cámara como espejo y compará con el video. Después contanos cómo te salió." : "Hacé la seña mirando el video y contanos cómo te salió.") + '</p>' +
         '<div class="lab-grid">' + (camOn ? '<div data-cam></div>' : "") + '<div data-side></div></div>';
       var side = App.$("[data-side]", stage);
-      var ref = App.mediaFor(it, { compact: true }); side.appendChild(ref);
+      // La luz del cuadro solo tiene sentido si hay cámara que pueda verificar la seña.
+      var ref = App.mediaFor(it, { compact: true, luz: aiReady }); side.appendChild(ref);
       // La cámara mira la mano; la cara se explica con palabras (lo pidió la comunidad sorda).
       var cara = App.caraDe(it);
       side.appendChild(App.el('<div class="card cara-card"><span class="eyebrow">¿Y la cara?</span>' +
@@ -150,6 +151,8 @@ window.App = window.App || {};
             var hs = App.Vision.hints(h.canon, label);
             hintEl.innerHTML = hs.length ? hs.map(function (x) { return '<li><span class="ico">' + App.ico("bombilla") + '</span> ' + esc(x.text) + "</li>"; }).join("") : '<li class="ok"><span class="ico">' + App.ico("check-simple") + '</span> La forma se parece a la de referencia</li>';
             st.cam.root.classList.toggle("success", res.label === label);
+            // Luz del recuadro del video: ámbar mientras la forma se acerca, verde al confirmar.
+            if (!done) App.luzCuadro(ref, res.label === label ? "ok" : (top && top.label === label ? "casi" : "off"));
             if (res.full && res.label === label && res.ratio >= 0.6 && res.p >= 0.5) success(true);
           } });
         App.$("[data-self]", side).addEventListener("click", function () { success(false); });
@@ -175,10 +178,11 @@ window.App = window.App || {};
         if (done) return; done = true;
         st.ok++; if (byAI) { st.ai++; App.track(it.id, "ai"); } else App.track(it.id, "ok");
         App.addXp(byAI ? 10 : 5); App.fx("ok");
+        if (byAI) App.luzCuadro(ref, "ok");
         side.insertBefore(App.el('<div class="feedback good">' + (byAI ? "¡Muy bien! La cámara reconoció tu seña. +10" : "Marcada como lograda. +5") + '<p>' + (byAI ? "La cámara mira la forma de la mano; el movimiento y la cara los evalúa una persona." : "Gracias: esto ayuda a mejorar el entrenamiento.") + '</p></div>'), side.firstChild);
         if (nx) { nx.disabled = false; nx.focus(); }
       }
-      nx = actions(stage, { retry: aiReady ? function () { done = false; App.$$(".feedback", side).forEach(function (x) { x.remove(); }); st.cam && st.cam.root.classList.remove("success"); } : null });
+      nx = actions(stage, { retry: aiReady ? function () { done = false; App.$$(".feedback", side).forEach(function (x) { x.remove(); }); App.luzCuadro(ref, "off"); st.cam && st.cam.root.classList.remove("success"); } : null });
     }
 
     /* --- 3. ¿Cómo se escribe? (corrección tolerante: tildes, mayúsculas y signos no importan) --- */

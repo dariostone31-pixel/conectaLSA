@@ -211,12 +211,33 @@ window.App = window.App || {};
    * Video de la seña con controles, o tarjeta «video en producción».
    * opts.hideLabel: oculta el nombre (para ejercicios). opts.compact: sin controles.
    */
+  /* ---------- Luz del cuadro de video (semáforo de la cámara) ----------
+     estado: "off" (apagada) | "casi" (la forma se parece) | "ok" (la cámara confirma la seña).
+     Se usa desde la práctica: cuando la IA entrenada reconoce la seña, el recuadro del
+     video se pone verde y muestra «¡Bien!». Pensado para chicos: se entiende sin leer. */
+  App.LUZ_HTML = '<span class="luz" data-luz="off" aria-hidden="true"><i class="luz-dot"></i><b class="luz-txt">¡Bien!</b></span>';
+  App.luzCuadro = function (mediaEl, estado) {
+    if (!mediaEl) return;
+    var luz = mediaEl.querySelector ? mediaEl.querySelector("[data-luz]") : null;
+    if (!luz && mediaEl.classList && mediaEl.classList.contains("media-box")) luz = mediaEl.querySelector("[data-luz]");
+    if (!luz) return;
+    estado = estado === "ok" || estado === "casi" ? estado : "off";
+    luz.setAttribute("data-luz", estado);
+    var caja = luz.parentElement;
+    if (caja) caja.classList.toggle("luz-ok", estado === "ok");
+  };
+
   App.mediaFor = function (item, opts) {
     opts = opts || {};
     var st = App.state().settings, P = App.P();
     var mirror = st.mirrorVideos;
     var box = App.el('<div class="media' + (opts.compact ? " compact" : "") + '"><div class="media-box' + (mirror ? " mirror" : "") + '"></div><div class="media-controls"></div><div class="credit"></div></div>');
     var mb = box.querySelector(".media-box"), ctr = box.querySelector(".media-controls"), cr = box.querySelector(".credit");
+    /* Luz de la cámara: semáforo en la esquina del cuadro del video.
+       Apagada (gris) → «casi» (ámbar, la forma se acerca) → verde con «¡Bien!» cuando la
+       cámara entrenada confirma que la persona hizo la seña. Se maneja con App.luzCuadro().
+       No se agrega en los cuadros que no tienen cámara al lado (fichas del diccionario). */
+    if (opts.luz === true) mb.appendChild(App.el(App.LUZ_HTML));
     var info = M.info(item.id);
     /* El nombre de la seña va pegado al cuadro del video, para que no haya que buscarlo
        arriba en la página (lo pidió el equipo sordo en la prueba con la app). */
@@ -237,7 +258,14 @@ window.App = window.App || {};
     v.setAttribute("aria-label", opts.hideLabel ? "Video de una seña" : "Video de la seña: " + item.label);
     mb.appendChild(v);
     M.url(item.id).then(function (u) { if (u) { v.src = u; v.playbackRate = st.videoSpeed || 1; var pr = v.play(); if (pr && pr.catch) pr.catch(function () {}); } });
-    v.addEventListener("error", function () { mb.innerHTML = placeholder(item, opts, "No se pudo abrir el video."); });
+    v.addEventListener("error", function () {
+      /* Si el equipo está sin internet y este video nunca se guardó, se explica qué hacer
+         en vez de dejar un cuadro vacío (es el caso de las muestras en una jornada sin wifi). */
+      var sinRed = (typeof navigator !== "undefined" && navigator.onLine === false);
+      mb.innerHTML = placeholder(item, opts, sinRed
+        ? "Este video no está guardado en este equipo. Conectate a internet y, en Ajustes → Uso sin conexión, tocá «Descargar los 75 videos»."
+        : "No se pudo abrir el video. Probá de nuevo.");
+    });
     if (!opts.compact) {
       [[1, "Normal"], [0.5, "Lento"], [0.3, "Muy lento"]].forEach(function (s) {
         var b = App.el('<button class="chip" type="button" data-sp aria-pressed="' + ((st.videoSpeed || 1) === s[0]) + '">' + s[1] + '</button>');
@@ -266,4 +294,71 @@ window.App = window.App || {};
       (opts.hideLabel ? "" : '<strong>' + esc(App.itemTitle(item)) + '</strong>') +
       '<p>' + esc(extra || "Video en producción. Mientras tanto, pedile a una persona sorda o a tu docente que te muestre esta seña.") + '</p></div>';
   }
+  /* ---------- Uso sin conexión ----------
+     Para llevar la app a un lugar sin internet, los videos tienen que estar guardados
+     en este equipo. El service worker es el que guarda; acá solo se piden uno por uno
+     y se cuenta el progreso para mostrarlo en Ajustes. */
+  App.offline = {
+    /** Las direcciones de los videos que vienen con la app. */
+    lista: function () {
+      var out = [];
+      Object.keys(App.CONTENT.MEDIA).forEach(function (id) {
+        var m = App.CONTENT.MEDIA[id];
+        if (m && m.src && out.indexOf(m.src) < 0) out.push(m.src);
+      });
+      return out;
+    },
+    /** ¿Este navegador puede guardar la app para usarla sin internet? */
+    disponible: function () {
+      return !!window.caches && !!navigator.serviceWorker && !!navigator.serviceWorker.controller;
+    },
+    _caches: function () {
+      if (!window.caches) return Promise.resolve([]);
+      return caches.keys().then(function (ks) {
+        return Promise.all(ks.map(function (k) { return caches.open(k); }));
+      });
+    },
+    /** Cuántos videos ya están guardados en este equipo. */
+    guardados: function () {
+      var l = App.offline.lista();
+      return App.offline._caches().then(function (cs) {
+        var n = 0;
+        return l.reduce(function (p, u) {
+          return p.then(function () {
+            return Promise.all(cs.map(function (c) { return c.match(u, { ignoreSearch: true }); }))
+              .then(function (hs) { if (hs.some(function (h) { return !!h; })) n++; });
+          });
+        }, Promise.resolve()).then(function () { return n; });
+      }).catch(function () { return 0; });
+    },
+    /** Baja todos los videos. progreso({hechos, total, ok, mal}) se llama después de cada uno. */
+    bajarTodo: function (progreso) {
+      var l = App.offline.lista(), total = l.length, i = 0, ok = 0, mal = 0, activos = 0, limite = 3;
+      return new Promise(function (res) {
+        function siguiente() {
+          if (i >= total && activos === 0) return res({ total: total, ok: ok, mal: mal });
+          while (activos < limite && i < total) {
+            (function (u) {
+              activos++;
+              App.offline._caches()
+                .then(function (cs) {
+                  return Promise.all(cs.map(function (c) { return c.match(u, { ignoreSearch: true }); }));
+                })
+                .then(function (hs) {
+                  if (hs.some(function (h) { return !!h; })) { ok++; return; }
+                  return fetch(u, { cache: "reload" }).then(function (r) { if (r && r.ok) ok++; else mal++; });
+                })
+                .catch(function () { mal++; })
+                .then(function () {
+                  activos--;
+                  if (progreso) progreso({ hechos: ok + mal, total: total, ok: ok, mal: mal });
+                  siguiente();
+                });
+            })(l[i++]);
+          }
+        }
+        siguiente();
+      });
+    }
+  };
 })(window.App);

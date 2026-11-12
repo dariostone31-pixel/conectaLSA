@@ -32,6 +32,107 @@ window.App = window.App || {};
     App.go(App.profiles && App.profiles().length ? "#/entrar" : "#/bienvenida");
   }
 
+  /* =========================================================
+     Animaciones de la presentación (capa aparte, 1.6.0)
+     - Solo agrega clases: .lp-anim en el contenedor y .lp-rev / .lp-in
+       en los elementos que ya existen. No cambia HTML, textos ni eventos.
+     - Si el navegador no tiene IntersectionObserver, si la persona pidió
+       «reducir movimiento» (en el sistema o en Ajustes) o si algo falla,
+       no se agrega .lp-anim y la página se ve exactamente como antes.
+     - Devuelve una función para cortar todo al salir de la pantalla.
+     ========================================================= */
+  function animarPresentacion(root) {
+    var sinNada = function () {};
+    var l = root && root.querySelector ? root.querySelector(".landing") : null;
+    if (!l) return sinNada;
+    if (!("IntersectionObserver" in window)) return sinNada;
+    var quieto = false;
+    try {
+      if (document.documentElement.getAttribute("data-motion") === "reduce") quieto = true;
+      if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) quieto = true;
+    } catch (e) {}
+    if (quieto) return sinNada;
+
+    /* Qué aparece y con qué retardo, en grupos. El escalonado se corta a 480 ms
+       para que ninguna tarjeta tarde en entrar. */
+    var PLAN = [
+      [".lp-cinta .lp-dato", 60],
+      [".lp-sec > .lp-wrap > .lp-eyebrow", 70],
+      [".lp-sec > .lp-wrap > h2", 70],
+      [".lp-sec > .lp-wrap > .lp-lead", 70],
+      [".lp-pasos > .lp-paso", 110],
+      [".lp-funciones > .lp-funcion", 80],
+      [".lp-tarjetas > .lp-tarjeta", 110],
+      [".lp-cita blockquote", 0],
+      [".lp-cita cite", 110],
+      [".lp-faq > details", 55],
+      [".lp-cierre", 0],
+      [".lp-pie-grid > div", 80],
+      [".lp-pie .lp-firma", 40]
+    ];
+    var vistos = [], animables = [];
+    PLAN.forEach(function (par) {
+      var lista = Array.prototype.slice.call(l.querySelectorAll(par[0]));
+      lista.forEach(function (el, i) {
+        if (vistos.indexOf(el) >= 0) return;
+        vistos.push(el); animables.push(el);
+        el.classList.add("lp-rev");
+        el.style.transitionDelay = Math.min(i * par[1], 480) + "ms";
+      });
+    });
+    if (!animables.length) return sinNada;
+
+    var io = new IntersectionObserver(function (entradas) {
+      entradas.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        revelar(e.target);
+      });
+    }, { rootMargin: "0px 0px -40px 0px", threshold: 0.02 });
+
+    function revelar(el) {
+      if (!el || el.classList.contains("lp-in")) return;
+      el.classList.add("lp-in");
+      io.unobserve(el);
+    }
+
+    /* Red de seguridad: si alguna figura queda justo sobre el borde inferior
+       (o el navegador no dispara el observador), una pasada al desplazar la
+       muestra igual. Nunca queda contenido invisible. */
+    var pendiente = false;
+    function pasar() {
+      pendiente = false;
+      var alto = window.innerHeight || 0;
+      animables.forEach(function (el) {
+        if (el.classList.contains("lp-in")) return;
+        var r = el.getBoundingClientRect();
+        if (r.top <= alto - 4 && r.bottom >= 0) revelar(el);
+      });
+    }
+    function alDesplazar() {
+      if (pendiente) return;
+      pendiente = true;
+      if (window.requestAnimationFrame) window.requestAnimationFrame(pasar);
+      else setTimeout(pasar, 60);
+    }
+
+    /* La clase se agrega recién ahora, con los elementos ya listos: así no hay
+       ningún parpadeo ni queda nada oculto si algo no llega a correr. */
+    l.classList.add("lp-anim");
+    animables.forEach(function (el) { io.observe(el); });
+    window.addEventListener("scroll", alDesplazar, { passive: true });
+    window.addEventListener("resize", alDesplazar, { passive: true });
+
+    var vivo = true;
+    return function () {
+      if (!vivo) return;
+      vivo = false;
+      io.disconnect();
+      window.removeEventListener("scroll", alDesplazar);
+      window.removeEventListener("resize", alDesplazar);
+      animables.forEach(function (el) { el.style.transitionDelay = ""; });
+    };
+  }
+
   V.presentacion = function (root) {
     var n = cuenta();
     var hayPerfil = !!(App.profiles && App.profiles().length);
@@ -205,6 +306,7 @@ window.App = window.App || {};
         if (d) d.scrollIntoView({ behavior: "smooth", block: "start" });
       });
     });
-    return function () { document.body.classList.remove("landing-mode"); };
+    var limpiarAnimacion = animarPresentacion(root);
+    return function () { limpiarAnimacion(); document.body.classList.remove("landing-mode"); };
   };
 })(window.App);

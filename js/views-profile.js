@@ -198,6 +198,12 @@ window.App = window.App || {};
         '<div data-pin-box hidden style="margin-top:10px"></div>' +
         '<p class="small muted">Los números se guardan revueltos con una cuenta matemática (hash): ni vos ni nadie puede leerlos. No viajan a internet: ConectaLSA no tiene cuentas ni servidores con datos.</p>' +
         '<div class="row"><button class="btn ghost" type="button" data-logout>' + App.ico("salir") + ' Cerrar sesión</button></div></div>' +
+      '<div class="card"><span class="eyebrow">Uso sin conexión</span>' +
+        '<p class="small muted" style="margin-top:0">Para mostrar la app en un lugar sin internet, los videos tienen que estar guardados en este equipo. Son 75 videos y ocupan 35 MB.</p>' +
+        '<p class="small" data-off-txt>Comprobando…</p>' +
+        '<div style="height:8px;border-radius:99px;background:#E7EEF9;overflow:hidden;margin:8px 0 12px" data-off-wrap hidden><i data-off-bar style="display:block;height:100%;width:0;background:var(--azul,#0A3F94);transition:width .2s"></i></div>' +
+        '<div class="row"><button class="btn ghost" type="button" data-off>Descargar los 75 videos</button></div>' +
+        '<p class="small muted" data-off-note>Se pueden descargar de una vez, con internet, y después se ven sin red.</p></div>' +
       '<div class="card"><span class="eyebrow">Datos</span><p class="small muted">Todo queda en este dispositivo. No hay cuentas en internet, ni publicidad, ni analíticas.</p><div class="row"><button class="btn ghost" type="button" data-exp>' + App.ico("descarga") + ' Copia de seguridad</button><button class="btn bad" type="button" data-reset>Reiniciar mi progreso</button><button class="btn bad" type="button" data-del>Eliminar este perfil</button></div></div>';
     st.reduceMotion = st.motion === "reduce";
 
@@ -258,6 +264,44 @@ window.App = window.App || {};
     bindSeg(root, "goal", function (v) { p.goal = +v; App.save(); App.toast("Guardado"); });
     App.$("[data-name]", root).addEventListener("change", function () { var v = this.value.trim(); if (v) { p.name = v; App.save(); App.toast("Guardado"); } });
     App.$("[data-exp]", root).addEventListener("click", function () { App.exportProfile(); });
+
+    /* --- Uso sin conexión: guardar los 75 videos en este equipo --- */
+    (function () {
+      var btn = App.$("[data-off]", root), txt = App.$("[data-off-txt]", root),
+          nota = App.$("[data-off-note]", root), wrap = App.$("[data-off-wrap]", root), bar = App.$("[data-off-bar]", root);
+      if (!btn || !txt || !App.offline) return;
+      var total = App.offline.lista().length;
+      function pintar(n) {
+        txt.innerHTML = '<strong>' + n + ' de ' + total + ' videos guardados</strong> en este equipo.';
+        if (total && n >= total) nota.textContent = "Listo: los videos se ven sin internet, aunque no haya wifi.";
+      }
+      function comprobar() {
+        if (!App.offline.disponible()) {
+          txt.textContent = "Este navegador no permite guardar la app sin internet. Si la acabás de abrir, recargá la página una vez y volvé a esta pantalla.";
+          btn.disabled = true;
+          return;
+        }
+        App.offline.guardados().then(pintar);
+      }
+      comprobar();
+      btn.addEventListener("click", function () {
+        if (!navigator.onLine) { nota.textContent = "Ahora no hay conexión: conectate a internet para descargarlos."; return; }
+        btn.disabled = true; btn.textContent = "Guardando…";
+        wrap.hidden = false;
+        App.offline.bajarTodo(function (p) {
+          bar.style.width = Math.round(p.hechos / p.total * 100) + "%";
+          txt.innerHTML = '<strong>Guardando: ' + p.hechos + ' de ' + p.total + '</strong> videos.';
+        }).then(function (r) {
+          bar.style.width = "100%";
+          btn.disabled = false; btn.textContent = "Volver a comprobar";
+          nota.textContent = r.mal
+            ? "No se pudieron guardar " + r.mal + " videos. Revisá la conexión y tocá el botón otra vez."
+            : "Listo: los videos se ven sin internet, aunque no haya wifi.";
+          App.toast(r.mal ? "Faltaron " + r.mal + " videos" : "Videos guardados para usar sin conexión");
+          comprobar();
+        });
+      });
+    })();
     confirmBtn(App.$("[data-reset]", root), function () { App.resetProfile(p.id); App.toast("Progreso reiniciado"); App.go("#/niveles"); });
     confirmBtn(App.$("[data-del]", root), function () { App.deleteProfile(p.id); App.toast("Perfil eliminado"); App.go(App.P() ? "#/perfiles" : "#/bienvenida"); });
   };
