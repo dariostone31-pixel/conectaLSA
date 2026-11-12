@@ -46,12 +46,14 @@ window.App = window.App || {};
     var l = root && root.querySelector ? root.querySelector(".landing") : null;
     if (!l) return sinNada;
     if (!("IntersectionObserver" in window)) return sinNada;
-    var quieto = false;
+    /* Si la persona pidió «reducir animaciones» dentro de la app, no se anima nada.
+       Si lo pidió en el sistema (Windows, Chrome), se usa una versión suave:
+       solo aparece y desaparece el contenido, sin desplazamientos ni escalas. */
+    var suave = false;
     try {
-      if (document.documentElement.getAttribute("data-motion") === "reduce") quieto = true;
-      if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) quieto = true;
+      if (document.documentElement.getAttribute("data-motion") === "reduce") return sinNada;
+      if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) suave = true;
     } catch (e) {}
-    if (quieto) return sinNada;
 
     /* Qué aparece y con qué retardo, en grupos. El escalonado se corta a 480 ms
        para que ninguna tarjeta tarde en entrar. */
@@ -117,6 +119,7 @@ window.App = window.App || {};
 
     /* La clase se agrega recién ahora, con los elementos ya listos: así no hay
        ningún parpadeo ni queda nada oculto si algo no llega a correr. */
+    if (suave) l.classList.add("lp-suave");
     l.classList.add("lp-anim");
     animables.forEach(function (el) { io.observe(el); });
     window.addEventListener("scroll", alDesplazar, { passive: true });

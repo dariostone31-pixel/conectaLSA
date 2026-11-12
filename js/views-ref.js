@@ -10,16 +10,46 @@ window.App = window.App || {};
   var V = App.views = App.views || {};
   var C = App.CONTENT, esc = App.esc, Md = App.Media;
 
-  /** Puerta del modo referente: PIN opcional. Devuelve true si se puede pasar. */
+  /* =======================================================
+     CLAVE DEL MODO REFERENTE
+     Es la misma para TODOS los equipos: se escribe una sola vez
+     acá, entre las comillas, y se vuelve a subir este archivo.
+     No distingue mayúsculas ni espacios de más.
+     Si se deja vacía (""), no se pide clave y vale el PIN de
+     cada equipo, como antes.
+     Sirve para que nadie entre al modo referente sin permiso;
+     no es seguridad fuerte: el archivo es público, cualquiera
+     que lea el código puede ver la clave.
+     ======================================================= */
+  var CLAVE_REFERENTE = "JUJUY2026";
+
+  function normalizar(t) { return String(t == null ? "" : t).trim().toUpperCase(); }
+
+  /** Puerta del modo referente: clave compartida y/o PIN del equipo. Devuelve true si se puede pasar. */
   App.refGate = function (root) {
     var R = App.state().ref;
-    if (!R.pin || App.refUnlocked) return true;
-    root.innerHTML = '<a class="link" href="#/perfil">← Perfil</a><section class="stage narrow"><span class="eyebrow">Modo referente</span><h1>Ingresá el PIN</h1><form class="write" data-f><label class="sr" for="pin">PIN</label><input id="pin" type="password" inputmode="numeric" maxlength="8" autocomplete="off"><button class="btn" type="submit">Entrar</button></form><p class="small muted">El PIN evita que se modifiquen los videos por accidente en equipos compartidos.</p></section>';
+    var clave = normalizar(CLAVE_REFERENTE), hayClave = clave.length > 0, hayPin = !!R.pin;
+    if (App.refUnlocked) return true;
+    if (!hayClave && !hayPin) return true;
+    var pideAmbas = hayClave && hayPin;
+    var campoClave = hayClave;
+    root.innerHTML = '<a class="link" href="#/perfil">← Perfil</a><section class="stage narrow"><span class="eyebrow">Modo referente</span>' +
+      '<h1>' + (campoClave ? 'Ingresá la clave del modo referente' : 'Ingresá el PIN') + '</h1>' +
+      '<form class="write" data-f autocomplete="off">' +
+        (campoClave ? '<label class="sr" for="ref-clave">Clave del modo referente</label><input id="ref-clave" type="password" maxlength="40" autocomplete="off" placeholder="Clave">' : '') +
+        (hayPin && (!campoClave || pideAmbas) ? '<label class="sr" for="pin">PIN de este equipo</label><input id="pin" type="password" inputmode="numeric" maxlength="8" autocomplete="off" placeholder="PIN del equipo">' : '') +
+        '<button class="btn" type="submit">Entrar</button></form>' +
+      '<p class="small muted">' + (campoClave
+        ? 'La clave la define el responsable del proyecto y es la misma en todos los equipos: sin ella no se puede grabar, validar ni entrenar la cámara.'
+        : 'El PIN evita que se modifiquen los videos por accidente en equipos compartidos.') + '</p></section>';
     App.$("[data-f]", root).addEventListener("submit", function (e) {
       e.preventDefault();
-      if (App.$("#pin", root).value === R.pin) { App.refUnlocked = true; App.route(); } else { App.fx("bad"); App.toast("PIN incorrecto"); }
+      var okClave = !campoClave || normalizar(App.$("#ref-clave", root) && App.$("#ref-clave", root).value) === clave;
+      var okPin = !hayPin || !App.$("#pin", root) || App.$("#pin", root).value === R.pin;
+      if (okClave && okPin) { App.refUnlocked = true; App.route(); }
+      else { App.fx("bad"); App.toast(campoClave && !okClave ? "Clave incorrecta" : "PIN incorrecto"); }
     });
-    setTimeout(function () { var i = App.$("#pin", root); if (i) i.focus(); }, 50);
+    setTimeout(function () { var i = App.$("#ref-clave", root) || App.$("#pin", root); if (i) i.focus(); }, 50);
     return false;
   };
 
