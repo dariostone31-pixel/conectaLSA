@@ -402,6 +402,28 @@ body.landing-mode main { padding: 0 0 0; }
 .landing.lp-anim .lp-faq details.lp-rev.lp-in:hover {
   transform: translateY(-3px);
 }
+/* ---------- Si el sistema pide reducir movimiento: sin desplazamientos,
+   sin escalas y sin movimientos continuos. Solo un aparecer suave, que no
+   marea y mantiene la página viva. ---------- */
+.landing.lp-anim.lp-suave .lp-marca img,
+.landing.lp-anim.lp-suave .lp-hero::after,
+.landing.lp-anim.lp-suave .lp-kicker .dot,
+.landing.lp-anim.lp-suave .lp-btn,
+.landing.lp-anim.lp-suave .lp-paso,
+.landing.lp-anim.lp-suave .lp-funcion,
+.landing.lp-anim.lp-suave .lp-tarjeta,
+.landing.lp-anim.lp-suave .lp-faq details { animation: none !important; }
+.landing.lp-anim.lp-suave .lp-rev {
+  opacity: 0; transform: none !important;
+  transition: opacity .5s linear;
+}
+.landing.lp-anim.lp-suave .lp-rev.lp-in { opacity: 1; }
+.landing.lp-anim.lp-suave .lp-btn:hover,
+.landing.lp-anim.lp-suave .lp-btn:active,
+.landing.lp-anim.lp-suave .lp-paso:hover,
+.landing.lp-anim.lp-suave .lp-funcion:hover,
+.landing.lp-anim.lp-suave .lp-tarjeta:hover { transform: none; }
+
 /* ---------- Seguridad: nada queda invisible ---------- */
 @media (prefers-reduced-motion: reduce) {
   .landing .lp-marca img,
@@ -420,8 +442,8 @@ body.landing-mode main { padding: 0 0 0; }
   .landing .lp-faq details[open] > p {
     animation: none !important;
   }
-  .landing.lp-anim .lp-rev,
-  .landing.lp-anim .lp-rev.lp-in {
+  .landing.lp-anim:not(.lp-suave) .lp-rev,
+  .landing.lp-anim:not(.lp-suave) .lp-rev.lp-in {
     opacity: 1 !important;
     transform: none !important;
     transition: none !important;
