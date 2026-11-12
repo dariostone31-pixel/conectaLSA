@@ -141,6 +141,36 @@ Archivos tocados: `js/core.js`, `js/main.js`, `js/views-acceso.js`, `js/views-pr
 4. **Todos los videos en un ZIP.** En el panel del referente, «Descargar todos los videos (ZIP)» baja un solo archivo con cada video (`<id>.webm` o `.mp4`) y un `CREDITOS.txt` con quién señaló y quién validó cada uno.
 5. **Deletreo automático más firme.** La cámara avanza sola cuando la letra se sostiene 600 ms, con un aviso en pantalla («¡Es la S, sostenela…»). Si la cámara todavía no conoce esa letra, lo dice y ofrece un enlace directo para enseñársela.
 
+## Novedades de la versión 1.6.0 (29/10/2026)
+
+**Solo animaciones, en la presentación (#/presentacion).** No cambia diseño, medidas, colores, tipografías, textos, imágenes, enlaces, rutas ni funciones.
+
+- **Logo:** aparece con opacidad y escala y un brillo muy leve; el texto de al lado y el botón «Entrar» entran después. Conserva el archivo y el tamaño (28 × 28).
+- **Portada:** el título entra con un barrido suave; subtítulo, descripción, botones y las tres líneas de abajo, escalonados. Los tres teléfonos entran de a uno con profundidad y la tarjeta «75 videos» aterriza al final. El círculo decorativo del fondo se mueve muy lento (26 s) y el punto verde del rótulo respira.
+- **Botones:** elevación al pasar el mouse, más brillo, sombra dinámica, presión al hacer clic (se hunden 1 px) y foco de teclado visible (3 px celeste).
+- **Tarjetas:** aparición escalonada al entrar en pantalla, desplazamiento vertical corto y elevación mínima con sombra al pasar el mouse.
+- **Desplazamiento:** Intersection Observer revela cada bloque; grupos escalonados con retardos de 55 a 110 ms, recortados a 480 ms. Red de seguridad propia: además del observador, una pasada al desplazar y al cambiar el tamaño muestra lo que falte, así nunca queda contenido invisible.
+- **Transiciones entre secciones:** desplazamiento y opacidad suaves; el «+» de las preguntas frecuentes abre con una entrada corta. No se bloquea ni se altera el desplazamiento normal.
+- **Accesibilidad y rendimiento:** todo se anima con `transform`, `opacity` y `clip-path`; sin dependencias, sin desenfoques, sin desplazamiento horizontal (no hay CLS). Con `prefers-reduced-motion` o con «Reducir animaciones» en Ajustes no se anima nada y se ve todo. Si el navegador no tiene Intersection Observer, la presentación se ve como antes.
+- **Aislamiento:** todo el CSS nuevo cuelga de `.landing` o `.lp-*` y el JavaScript solo agrega clases (`.lp-anim`, `.lp-rev`, `.lp-in`). No se tocó ninguna otra pantalla ni ningún estilo global. El `VERSION` del service worker **no se cambió**: así los videos ya descargados siguen guardados.
+- **Pruebas automáticas: 96** (antes 85). La sección 8h comprueba medidas intactas, animación del logo, revelado al desplazar, que no quede nada invisible, transición de botones, foco de teclado, preguntas frecuentes y el modo «reducir movimiento».
+
+## Novedades de la versión 1.5.1 (29/10/2026)
+
+- **Arreglo: los videos no se veían sin internet.** En una jornada se probó la app sin wifi y los videos de muestra no aparecían. La causa: el reproductor pide los videos por pedazos y el servidor contesta con el pedazo (respuesta «206»), no con el archivo entero. El service worker guardaba ese pedazo incompleto como si fuera el video, así que sin conexión el reproductor recibía un archivo roto. Ahora, cuando un video no está guardado, se pide **entero**, se guarda entero y se entrega entero; con conexión no cambia nada de lo que se ve.
+- **Ajustes → «Uso sin conexión»: preparar el equipo antes de una jornada.** Un botón «Descargar los 75 videos» baja los 35 MB de una vez, con barra de progreso y un contador («75 de 75 videos guardados en este equipo»). Así la app se muestra sin wifi sin sorpresas.
+- **Aviso claro cuando falta un video sin conexión.** Si el equipo está sin internet y ese video nunca se guardó, el cuadro ya no queda vacío: dice «Este video no está guardado en este equipo. Conectate a internet y, en Ajustes → Uso sin conexión, tocá «Descargar los 75 videos».»
+- **Pruebas automáticas: 85** (antes 79). La sección nueva 8g comprueba que un video se reproduce sin conexión después de haberlo visto una vez.
+
+## Novedades de la versión 1.5.0 (7/11/2026)
+
+- **Luz verde en el recuadro del video cuando la cámara confirma que la seña está bien hecha.** En las prácticas con cámara (lección, desafío, repaso y «Practicar esta seña»), el cuadro donde se ve el video de la seña —el mismo que acompaña la cámara— trae ahora un **semáforo** en la esquina:
+  - **gris apagado**: la cámara todavía no reconoce la seña;
+  - **ámbar** («casi»): la forma de la mano se está acercando a la de referencia;
+  - **verde con «¡Bien!»**: la cámara entrenada confirma que la seña se hizo bien. El cuadro también se marca con un borde verde.
+  Pensado para chicos y adolescentes: se entiende sin leer nada. Solo aparece cuando esa seña ya está entrenada en el equipo (si no hay modelo, el cuadro queda como estaba y se usa la autoevaluación). Al tocar «Reintentar» la luz vuelve a gris.
+- **Accesibilidad:** la luz se apaga y se enciende sin depender del color (cambia también el texto y el borde), respeta «reducir animaciones», el alto contraste y los perfiles visuales, y no se muestra en el diccionario ni en las fichas (ahí no hay cámara).
+
 ## Novedades de la versión 1.4.9 (7/11/2026)
 
 - **El contacto de la política de privacidad está completo.** La política 2.1 (7 de noviembre de 2026) ya trae el correo oficial de la Dirección de Innovación (`direccion.innovacionssjujuy@gmail.com`), en el pie de la pantalla y en la sección de derechos (Ley 25.326). En la app se muestra como enlace para escribir directamente.
