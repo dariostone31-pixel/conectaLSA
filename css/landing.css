@@ -261,3 +261,182 @@ body.landing-mode main { padding: 0 0 0; }
 @media (prefers-reduced-motion: reduce) {
   .lp-btn:hover, .lp-paso:hover { transform: none; }
 }
+
+/* =========================================================
+   ANIMACIONES DE LA PRESENTACIÓN (1.6.0)
+   Capa decorativa, aislada: todo cuelga de .landing o de .lp-*,
+   así ninguna otra pantalla de la app se ve afectada.
+   Solo se animan transform y opacity (más clip-path en el título):
+   no cambia ninguna medida, color, tipografía ni contenido.
+   Si el JavaScript no corre, el contenido se ve igual: el estado
+   «oculto» se activa únicamente con la clase .lp-anim, que agrega
+   el JavaScript.
+   ========================================================= */
+
+/* ---------- A. Logo y barra ---------- */
+@keyframes lpA-logo {
+  0%   { opacity: 0; transform: scale(.82); filter: drop-shadow(0 0 0 rgba(147,197,255,0)); }
+  55%  { opacity: 1; transform: scale(1.03); filter: drop-shadow(0 0 7px rgba(147,197,255,.85)); }
+  100% { opacity: 1; transform: scale(1); filter: drop-shadow(0 0 0 rgba(147,197,255,0)); }
+}
+@keyframes lpA-entra { from { opacity: 0; } to { opacity: 1; } }
+@keyframes lpA-rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes lpA-titulo {
+  from { opacity: 0; transform: translateY(16px); clip-path: inset(0 0 26% 0); }
+  to   { opacity: 1; transform: translateY(0);   clip-path: inset(0 0 0 0); }
+}
+@keyframes lpA-foto {
+  from { opacity: 0; transform: translateY(26px) scale(.965); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes lpA-flota {
+  from { opacity: 0; transform: translateY(18px) scale(.94); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes lpA-orbita {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to   { transform: translate3d(-16px, -12px, 0) scale(1.05); }
+}
+@keyframes lpA-pulso {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(1.18); opacity: .78; }
+}
+
+.landing .lp-marca img { animation: lpA-logo .95s cubic-bezier(.2,.72,.3,1) both; }
+.landing .lp-marca span { animation: lpA-rise .65s .18s cubic-bezier(.2,.72,.3,1) both; }
+.landing .lp-header .lp-btn-mini { animation: lpA-entra .6s .34s ease both; }
+
+/* ---------- B. Portada ---------- */
+.landing .lp-kicker   { animation: lpA-rise .7s .1s  cubic-bezier(.2,.72,.3,1) both; }
+.landing .lp-hero h1  { animation: lpA-titulo 1.05s .22s cubic-bezier(.16,.84,.32,1) both; }
+.landing .lp-hero .lp-bajada   { animation: lpA-rise .8s .44s cubic-bezier(.2,.72,.3,1) both; }
+.landing .lp-hero .lp-acciones { animation: lpA-rise .8s .58s cubic-bezier(.2,.72,.3,1) both; }
+.landing .lp-hero .lp-micro    { animation: lpA-rise .8s .7s  cubic-bezier(.2,.72,.3,1) both; }
+/* Los teléfonos entran de a uno: la opacidad va en el marco (que ya tiene
+   su propia transformación) y el movimiento en la captura de adentro. */
+.landing .lp-phone-1 { animation: lpA-entra .9s .3s ease both; }
+.landing .lp-phone-2 { animation: lpA-entra .9s .42s ease both; }
+.landing .lp-phone-3 { animation: lpA-entra .9s .54s ease both; }
+.landing .lp-phone-1 img { animation: lpA-foto 1s .3s  cubic-bezier(.2,.72,.3,1) both; }
+.landing .lp-phone-2 img { animation: lpA-foto 1s .42s cubic-bezier(.2,.72,.3,1) both; }
+.landing .lp-phone-3 img { animation: lpA-foto 1s .54s cubic-bezier(.2,.72,.3,1) both; }
+.landing .lp-flota { animation: lpA-flota .9s .88s cubic-bezier(.2,.72,.3,1) both; }
+/* Movimiento ambiental: muy lento y sobre una sola figura decorativa. */
+.landing .lp-hero::after { animation: lpA-orbita 26s ease-in-out infinite alternate; will-change: transform; }
+.landing .lp-kicker .dot { animation: lpA-pulso 3.4s ease-in-out infinite; }
+
+/* ---------- C. Botones: luminosidad, sombra, presión y foco ---------- */
+.landing .lp-btn {
+  transition: transform .16s cubic-bezier(.2,.72,.3,1), box-shadow .24s ease,
+              background-color .22s ease, border-color .22s ease, filter .22s ease;
+}
+.landing .lp-btn:hover { filter: brightness(1.045); }
+.landing .lp-btn-solido:hover { box-shadow: 0 20px 42px -16px rgba(0,0,0,.62); }
+.landing .lp-hero .lp-btn-grande:hover { box-shadow: 0 26px 54px -20px rgba(0,0,0,.8), 0 0 0 1px rgba(255,255,255,.6) inset; }
+.landing .lp-btn-vidrio:hover { box-shadow: 0 16px 34px -22px rgba(0,0,0,.9); }
+.landing .lp-btn-azul:hover   { filter: brightness(1.06); box-shadow: 0 20px 38px -14px rgba(21,83,196,.95); }
+.landing .lp-btn-mini:hover   { box-shadow: 0 12px 26px -12px rgba(0,0,0,.75); }
+.landing .lp-btn:active,
+.landing .lp-btn:active:hover { transform: translateY(1px) scale(.985); transition-duration: .07s; }
+.landing .lp-btn:focus-visible,
+.landing .lp-faq summary:focus-visible,
+.landing .lp-pie a:focus-visible {
+  outline: 3px solid #12A3E3; outline-offset: 3px; border-radius: 14px;
+}
+.landing .lp-btn-grande .lp-flecha { transition: transform .18s cubic-bezier(.2,.72,.3,1); }
+
+/* ---------- D. Tarjetas: elevación mínima y sombra ---------- */
+.landing .lp-paso,
+.landing .lp-funcion,
+.landing .lp-tarjeta,
+.landing .lp-faq details {
+  transition: transform .28s cubic-bezier(.2,.72,.3,1), box-shadow .28s ease, border-color .28s ease;
+}
+.landing .lp-paso:hover,
+.landing .lp-funcion:hover,
+.landing .lp-tarjeta:hover,
+.landing .lp-faq details:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 22px 44px -30px rgba(11,27,51,.55), 0 2px 6px -4px rgba(11,27,51,.18);
+}
+.landing .lp-funcion:hover .lp-fi { transform: translateY(-1px) scale(1.04); }
+.landing .lp-fi { transition: transform .28s cubic-bezier(.2,.72,.3,1); }
+.landing .lp-dato b { transition: transform .3s cubic-bezier(.2,.72,.3,1); }
+.landing .lp-dato:hover b { transform: translateY(-2px) scale(1.03); }
+.landing .lp-faq summary { transition: opacity .2s ease; }
+.landing .lp-faq summary:hover { opacity: .88; }
+.landing .lp-faq details[open] > p { animation: lpA-rise .3s cubic-bezier(.2,.72,.3,1) both; }
+.landing .lp-pie a { transition: opacity .2s ease; }
+.landing .lp-pie a:hover { opacity: .92; }
+.landing .lp-cita blockquote,
+.landing .lp-cita cite { transition: transform .4s cubic-bezier(.2,.72,.3,1); }
+
+/* ---------- E. Aparición al desplazar (la activa el JavaScript) ---------- */
+.landing.lp-anim .lp-rev {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity .62s cubic-bezier(.22,.61,.36,1),
+              transform .7s cubic-bezier(.22,.61,.36,1);
+  will-change: opacity, transform;
+}
+/* Las tarjetas viajan un poco más: da profundidad sin mover el diseño. */
+.landing.lp-anim .lp-paso.lp-rev,
+.landing.lp-anim .lp-funcion.lp-rev,
+.landing.lp-anim .lp-tarjeta.lp-rev,
+.landing.lp-anim .lp-cierre.lp-rev {
+  transform: translateY(26px) scale(.994);
+}
+.landing.lp-anim .lp-rev.lp-in {
+  opacity: 1;
+  transform: none;
+  will-change: auto;
+}
+/* Una tarjeta ya revelada tiene que seguir respondiendo al mouse:
+   esta regla gana por especificidad a la de arriba. */
+.landing.lp-anim .lp-rev.lp-in.lp-paso:hover,
+.landing.lp-anim .lp-rev.lp-in.lp-funcion:hover,
+.landing.lp-anim .lp-rev.lp-in.lp-tarjeta:hover,
+.landing.lp-anim .lp-faq details.lp-rev.lp-in:hover {
+  transform: translateY(-3px);
+}
+/* ---------- Seguridad: nada queda invisible ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .landing .lp-marca img,
+  .landing .lp-marca span,
+  .landing .lp-header .lp-btn-mini,
+  .landing .lp-kicker,
+  .landing .lp-kicker .dot,
+  .landing .lp-hero h1,
+  .landing .lp-hero .lp-bajada,
+  .landing .lp-hero .lp-acciones,
+  .landing .lp-hero .lp-micro,
+  .landing .lp-hero::after,
+  .landing .lp-phone,
+  .landing .lp-phone img,
+  .landing .lp-flota,
+  .landing .lp-faq details[open] > p {
+    animation: none !important;
+  }
+  .landing.lp-anim .lp-rev,
+  .landing.lp-anim .lp-rev.lp-in {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .landing .lp-paso:hover,
+  .landing .lp-funcion:hover,
+  .landing .lp-tarjeta:hover,
+  .landing .lp-faq details:hover,
+  .landing .lp-btn:hover,
+  .landing .lp-btn:active { transform: none; }
+}
+/* Si alguien imprime la presentación, se ve todo. */
+@media print {
+  .landing .lp-marca img, .landing .lp-hero h1, .landing .lp-phone img { animation: none !important; }
+  .landing.lp-anim .lp-rev { opacity: 1 !important; transform: none !important; }
+}
+/* Modo oscuro: el foco tiene que seguir viéndose sobre fondo azul. */
+:root[data-theme="dark"] .landing .lp-btn:focus-visible { outline-color: #7FC4FF; }

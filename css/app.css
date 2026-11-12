@@ -897,3 +897,29 @@ svg.ico-svg { width: 1.15em; height: 1.15em; display: inline-block; vertical-ali
 .sin-nav .layout { grid-template-columns: 1fr; }
 @media (min-width: 900px) { .sin-nav .layout { grid-template-columns: 1fr; } .sin-nav main { padding-bottom: 40px; } }
 .pin-card h1 { font-size: 1.5em; }
+
+/* =========================================================
+   LUZ DEL CUADRO DE VIDEO (semáforo de la cámara)
+   Apagada · ámbar «casi» · verde «¡Bien!» cuando la cámara confirma la seña.
+   Vive en la esquina del recuadro del video, en la práctica con cámara.
+   ========================================================= */
+.luz { position: absolute; top: 10px; left: 10px; z-index: 3; display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 10px 5px 8px; border-radius: 999px; background: rgba(6,18,32,.62); border: 1px solid rgba(255,255,255,.28);
+  backdrop-filter: blur(2px); pointer-events: none; transition: background .18s ease, border-color .18s ease; }
+.luz-dot { width: 11px; height: 11px; border-radius: 50%; background: #8A99AD; box-shadow: 0 0 0 2px rgba(255,255,255,.18) inset; flex: none; }
+.luz-txt { font-size: .76rem; font-weight: 800; letter-spacing: .03em; color: #fff; opacity: 0; max-width: 0; overflow: hidden;
+  white-space: nowrap; transition: opacity .18s ease, max-width .18s ease; }
+.luz[data-luz="casi"] { background: rgba(120,78,0,.72); border-color: #FFC23D; }
+.luz[data-luz="casi"] .luz-dot { background: #FFC23D; }
+.luz[data-luz="ok"] { background: rgba(9,92,56,.86); border-color: #4BE38A; }
+.luz[data-luz="ok"] .luz-dot { background: #4BE38A; box-shadow: 0 0 0 3px rgba(75,227,138,.28); }
+.luz[data-luz="ok"] .luz-txt { opacity: 1; max-width: 6em; }
+.media-box.luz-ok { box-shadow: 0 0 0 3px var(--good) inset; }
+.media-box.luz-ok video { filter: saturate(1.06); }
+:root[data-contrast="high"] .luz { background: #fff; border: 2px solid #000; }
+:root[data-contrast="high"] .luz .luz-txt { color: #000; }
+:root[data-contrast="high"] .luz[data-luz="ok"] { background: #000; border-color: #fff; }
+:root[data-contrast="high"] .luz[data-luz="ok"] .luz-txt { color: #fff; }
+:root[data-contrast="high"] .luz[data-luz="ok"] .luz-dot { background: #4BE38A; }
+[data-motion="reduce"] .luz, [data-motion="reduce"] .luz-txt, [data-motion="reduce"] .luz-dot { transition: none; }
+@media (prefers-reduced-motion: reduce) { .luz, .luz-txt, .luz-dot { transition: none; } }
