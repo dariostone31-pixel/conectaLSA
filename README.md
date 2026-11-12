@@ -141,6 +141,15 @@ Archivos tocados: `js/core.js`, `js/main.js`, `js/views-acceso.js`, `js/views-pr
 4. **Todos los videos en un ZIP.** En el panel del referente, «Descargar todos los videos (ZIP)» baja un solo archivo con cada video (`<id>.webm` o `.mp4`) y un `CREDITOS.txt` con quién señaló y quién validó cada uno.
 5. **Deletreo automático más firme.** La cámara avanza sola cuando la letra se sostiene 600 ms, con un aviso en pantalla («¡Es la S, sostenela…»). Si la cámara todavía no conoce esa letra, lo dice y ofrece un enlace directo para enseñársela.
 
+## Novedades de la versión 1.6.1 (29/10/2026)
+
+Correcciones pedidas después de la reunión del 28/10:
+
+1. **Videos de «amarillo» y «azul» corregidos.** La comunidad sorda avisó que estaban invertidos. Los videos se renombraron a `media/senas/color-amarillo.mp4` y `media/senas/color-azul.mp4` (con el contenido correcto) y `js/content.js` apunta a ellos. Se usan nombres nuevos a propósito: así ningún equipo sigue mostrando el video viejo que tenía guardado.
+2. **El modo referente pide una clave en todos los equipos.** En `js/views-ref.js`, la constante `CLAVE_REFERENTE` (arriba del archivo) vale para cualquier equipo: sin esa clave no se entra al panel, ni a grabar, ni a entrenar la cámara. No distingue mayúsculas ni espacios de más; se vuelve a pedir al recargar la app. Es una traba para que nadie modifique los videos sin permiso, no seguridad fuerte: el código es público y la clave se puede leer en el archivo.
+3. **La presentación se anima también con «reducir movimiento» del sistema.** Antes, si Windows tenía apagados los efectos de animación, no se veía ninguna animación. Ahora, en ese caso, se usa una versión suave: el contenido aparece y desaparece con opacidad, sin desplazamientos ni escalas ni movimientos continuos. Si alguien activa «Reducir animaciones» dentro de la app (Ajustes), sigue sin animarse nada.
+4. **Pruebas automáticas: 103.** La sección nueva 8i comprueba que sin clave no se entra al modo referente, que una clave equivocada no abre el panel, que la correcta sí (sin importar mayúsculas) y que al recargar se vuelve a pedir.
+
 ## Novedades de la versión 1.6.0 (29/10/2026)
 
 **Solo animaciones, en la presentación (#/presentacion).** No cambia diseño, medidas, colores, tipografías, textos, imágenes, enlaces, rutas ni funciones.
